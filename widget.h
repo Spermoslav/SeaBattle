@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include "field.h"
+#include "ships.h"
 
 #include <QWidget>
 

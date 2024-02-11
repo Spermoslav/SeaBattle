@@ -1,6 +1,8 @@
 #ifndef FIELD_H
 #define FIELD_H
 
+#include "ships.h"
+
 #include <QWidget>
 #include <QGroupBox>
 #include <QResizeEvent>
