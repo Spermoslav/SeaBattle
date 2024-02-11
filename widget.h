@@ -1,6 +1,8 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
+#include "field.h"
+
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -17,5 +19,7 @@ public:
 
 private:
     Ui::Widget *ui;
+
+    Field *field;
 };
 #endif // WIDGET_H
