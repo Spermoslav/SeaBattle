@@ -11,10 +11,12 @@ CONFIG += c++17
 SOURCES += \
     field.cpp \
     main.cpp \
+    ships.cpp \
     widget.cpp
 
 HEADERS += \
     field.h \
+    ships.h \
     widget.h
 
 FORMS += \
