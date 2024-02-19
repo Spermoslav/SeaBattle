@@ -16,7 +16,7 @@ int Field::getSquareSize()
     return squareSize;
 }
 
-const int Field::getSquareCount()
+const uint Field::getSquareCount()
 {
     return squareCount;
 }

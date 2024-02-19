@@ -17,7 +17,7 @@ Ship::Ship(QWidget *parent, Field *field)
     shipPos = QPoint((width() - shipSize.width()) / 2, (height() - shipSize.height()) / 2);
 }
 
-int Ship::getMk()
+uint Ship::getMk()
 {
     return mk;
 }

@@ -12,6 +12,9 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 
+typedef unsigned int uint;
+typedef unsigned short int uint16;
+
 class Field;
 
 class ShipMk4;
@@ -24,7 +27,7 @@ class Ship : public QGroupBox
 public:
     Ship(QWidget *parent, Field *field);
 
-    int getMk();
+    uint getMk();
 
     bool getIsTarget();
 
@@ -48,9 +51,9 @@ protected:
     QPoint mousePosWhenPress;
     QSize shipSize;
 
-    int mk;
+    uint16 mk;
     int shipCenterX;
-    int shipCenterY = width() / 2;
+    int shipCenterY;
 
     bool isTarget;
 

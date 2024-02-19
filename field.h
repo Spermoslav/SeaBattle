@@ -8,6 +8,8 @@
 #include <QResizeEvent>
 #include <QPainter>
 
+typedef unsigned int uint;
+
 class Ships;
 class ShipMk4;
 class ShipMk3;
@@ -22,7 +24,7 @@ public:
     Field(QWidget *parent);
 
     int getSquareSize();
-    int const getSquareCount();
+    uint const getSquareCount();
 
     void updateSquareSize();
 
@@ -36,7 +38,7 @@ private:
     ShipMk3 *mk1;
 
     int squareSize;
-    int const squareCount = 10;
+    uint const squareCount = 10;
 };
 
 #endif // FIELD_H
