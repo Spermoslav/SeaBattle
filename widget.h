@@ -31,7 +31,10 @@ private:
 
     Field *field;
 
+
     ShipMk2 *mk2;
-    ShipMk3 *mk;
+    ShipMk3 *mk3_1;
+    ShipMk3 *mk3_2;
+    ShipMk4 *mk4;
 };
 #endif // WIDGET_H

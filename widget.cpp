@@ -11,8 +11,11 @@ Widget::Widget(QWidget *parent)
 
     field = new Field(this);
 
-    mk = new ShipMk3(field, field);
     mk2 = new ShipMk2(field, field);
+    mk3_1 = new ShipMk3(field, field);
+    mk3_2 = new ShipMk3(field, field);
+    mk4 = new ShipMk4(field, field);
+
 }
 
 Widget::~Widget()
@@ -26,8 +29,10 @@ void Widget::resizeEvent(QResizeEvent *e)
     field->updateSquareSize();
     field->setGeometry(0, 0,
                 field->getSquareSize() * field->getSquareCount(),field->getSquareSize() * field->getSquareCount());
-    mk->resize();
     mk2->resize();
+    mk3_1->resize();
+    mk3_2->resize();
+    mk4->resize();
 }
 
 void Widget::mousePressEvent(QMouseEvent *e)

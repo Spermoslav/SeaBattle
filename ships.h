@@ -12,6 +12,7 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 
+
 typedef unsigned int uint;
 typedef unsigned short int uint16;
 
@@ -41,14 +42,20 @@ private slots:
     void mousePressEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
     void mouseMoveEvent(QMouseEvent *e) override;
+protected:
+
+    bool checkCollision(QPoint const &newPos, auto const &ship);
+
 
 protected:
+
     QWidget *parent;
 
     Field *field;
 
     QPoint shipPos;
     QPoint mousePosWhenPress;
+    QPoint groupBoxPosWhenPress;
     QSize shipSize;
 
     uint16 mk;
@@ -56,6 +63,8 @@ protected:
     int shipCenterY;
 
     bool isTarget;
+
+    static inline std::vector<Ship*> allShips;
 
     enum Orientation {
         horizontal,
