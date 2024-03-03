@@ -46,7 +46,6 @@ protected:
 
     bool checkCollision(QPoint const &newPos, auto const &ship);
 
-
 protected:
 
     QWidget *parent;

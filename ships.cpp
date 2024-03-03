@@ -59,10 +59,12 @@ void Ship::rotate()
         orientation = Orientation::vertical;
     }
     for(auto const &ship : allShips){
-        if(checkCollision(QPoint(x(), y()), ship)) {
-           // setGeometry(x(), y(), oldSize.width(), oldSize.height());
-           // orientation = oldOr;
-            //return;
+        if(ship != this) {
+            if(checkCollision(QPoint(x(), y()), ship)) {
+                setGeometry(x(), y(), oldSize.width(), oldSize.height());
+                orientation = oldOr;
+                return;
+            }
         }
     }
 }
