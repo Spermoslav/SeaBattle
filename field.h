@@ -24,7 +24,7 @@ public:
     Field(QWidget *parent);
 
     int getSquareSize();
-    uint const getSquareCount();
+    uint getSquareCount();
 
     void updateSquareSize();
 
@@ -37,7 +37,7 @@ private:
 
     ShipMk3 *mk1;
 
-    int squareSize;
+    uint squareSize;
     uint const squareCount = 10;
 };
 

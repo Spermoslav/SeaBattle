@@ -16,7 +16,7 @@ int Field::getSquareSize()
     return squareSize;
 }
 
-const uint Field::getSquareCount()
+uint Field::getSquareCount()
 {
     return squareCount;
 }
@@ -38,8 +38,8 @@ void Field::paintEvent(QPaintEvent *e)
     QPainter p;
     p.begin(this);
     p.drawRect(0, 0, width() - 2, height() - 2);
-    for(int i = 0; i < squareCount; i++) {
-        for(int j = 0; j < squareCount; j++) {
+    for(uint i = 0; i < squareCount; i++) {
+        for(uint j = 0; j < squareCount; j++) {
             p.drawRect(i * squareSize, j * squareSize, squareSize, squareSize);
         }
     }

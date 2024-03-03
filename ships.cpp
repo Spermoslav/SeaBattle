@@ -89,8 +89,8 @@ void Ship::paintEvent(QPaintEvent *e)
 
 void Ship::mousePressEvent(QMouseEvent *e)
 {
-    if((e->x() >= shipPos.x() && e->x() <= shipSize.width() + shipPos.x() && e->button() == Qt::MouseButton::LeftButton)
-            && (e->y() >= shipPos.y() && e->y() <= shipSize.height() + shipPos.y())) {
+    if((e->position().x() >= shipPos.x() && e->position().x() <= shipSize.width() + shipPos.x() && e->button() == Qt::MouseButton::LeftButton)
+            && (e->position().y() >= shipPos.y() && e->position().y() <= shipSize.height() + shipPos.y())) {
         isTarget = true;
         mousePosWhenPress = e->position().toPoint();
         groupBoxPosWhenPress = QPoint(x(), y());
@@ -102,8 +102,8 @@ void Ship::mousePressEvent(QMouseEvent *e)
 
 void Ship::mouseReleaseEvent(QMouseEvent *e)
 {
+    Q_UNUSED(e)
     isTarget = false;
-    bool isOnOtherShip = false;
     QPoint nearSquare = QPoint((x() + field->getSquareSize() / 2) / field->getSquareSize(), (y() + field->getSquareSize() / 2) / field->getSquareSize());
     QPoint newPos = nearSquare * field->getSquareSize();
 
@@ -111,17 +111,16 @@ void Ship::mouseReleaseEvent(QMouseEvent *e)
         if(ship != this){
             if(checkCollision(newPos, ship)){
                 move(groupBoxPosWhenPress);
-                isOnOtherShip = true;
-                break;
+                return;
             }
         }
-        else isOnOtherShip = false;
     }
-    if (!isOnOtherShip) move(newPos);
+    move(newPos);
 }
 
 void Ship::mouseMoveEvent(QMouseEvent *e)
 {
+    Q_UNUSED(e)
     if(isTarget){
         move(e->position().x() + x() - mousePosWhenPress.x(), e->position().y() + y() - mousePosWhenPress.y());
     }
