@@ -27,8 +27,7 @@ void Widget::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
     field->updateSquareSize();
-    field->setGeometry(0, 0,
-                field->getSquareSize() * field->getSquareCount(),field->getSquareSize() * field->getSquareCount());
+    field->setGeometry(0, 0, field->getSquareSize() * field->getSquareCount(), field->getSquareSize() * field->getSquareCount());
     mk2->resize();
     mk3_1->resize();
     mk3_2->resize();

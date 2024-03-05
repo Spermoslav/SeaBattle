@@ -8,7 +8,7 @@ Field::Field(QWidget *parent)
 {
     this->parent = parent;
 
-    squareSize = std::min(parent->width(), parent->height()) / squareCount;
+    updateSquareSize();
 }
 
 int Field::getSquareSize()
@@ -23,7 +23,7 @@ uint Field::getSquareCount()
 
 void Field::updateSquareSize()
 {
-    squareSize = std::min(parent->width(), parent->height()) / squareCount;
+    squareSize = std::min(parent->width() / 2, parent->height() / 2) / squareCount;
 }
 
 void Field::resizeEvent(QResizeEvent *e)
