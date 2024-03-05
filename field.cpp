@@ -9,7 +9,6 @@ Field::Field(QWidget *parent)
     this->parent = parent;
 
     updateSquareSize();
-    setGeometry(0, 0, squareSize * squareCount, squareSize * squareCount);
 }
 
 int Field::getSquareSize()
