@@ -13,7 +13,7 @@ Ship::Ship(QWidget *parent, Field *field)
     shipCenterY = height() / 2;
     orientation = Orientation::vertical;
 
-    shipSize = QSize(field->getSquareSize() / 1.5, (field->getSquareSize() / 1.5) * mk);
+    shipSize = QSize(field->getSquareSize() / 1.5, field->getSquareSize() / 1.5 * mk);
     shipPos = QPoint((width() - shipSize.width()) / 2, (height() - shipSize.height()) / 2);
     groupBoxPosWhenPress = QPoint(x(), y());
     qDebug() << "Вызвался конструктор";
@@ -32,7 +32,7 @@ bool Ship::getIsTarget()
 void Ship::resize()
 {
     if(orientation == Orientation::vertical) {
-        setGeometry(x(), y(), field->getSquareSize(), field->getSquareSize() * mk);
+        setGeometry(x(), y(),field->getSquareSize() , field->getSquareSize()* mk);
         shipSize = QSize(field->getSquareSize() / 1.5, field->getSquareSize() / 1.5 * mk);
     }
     else {
@@ -51,12 +51,12 @@ void Ship::rotate()
     QSize oldSize = size();
     Orientation oldOr = orientation;
     if(orientation == Orientation::vertical) {
-        setGeometry(x(), y(), field->getSquareSize(), field->getSquareSize() * mk);
         orientation = Orientation::horizontal;
+        setGeometry(x(), y(),field->getSquareSize() * mk, field->getSquareSize());
     }
     else {
-        setGeometry(x(), y(),field->getSquareSize() * mk, field->getSquareSize());
         orientation = Orientation::vertical;
+        setGeometry(x(), y(), field->getSquareSize(), field->getSquareSize() * mk);
     }
     for(auto const &ship : allShips){
         if(ship != this) {
