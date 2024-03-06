@@ -6,7 +6,9 @@
 #include <QMouseEvent>
 
 #include "field.h"
+#include "tools.h"
 #include "ships.h"
+
 
 
 QT_BEGIN_NAMESPACE
@@ -30,6 +32,9 @@ private:
     Ui::Widget *ui;
 
     Field *field;
+
+    ToolsBar *tb;
+
 
 
     ShipMk2 *mk2;
