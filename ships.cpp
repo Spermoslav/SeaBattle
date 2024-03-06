@@ -30,12 +30,14 @@ bool Ship::getIsTarget()
 
 void Ship::resize()
 {
+    QPoint nearSquare = QPoint((x() + field->getSquareSize() / 2) / field->getSquareSize(), (y() + field->getSquareSize() / 2) / field->getSquareSize());
+    QPoint newPos = nearSquare * field->getSquareSize();
     if(orientation == Orientation::vertical) {
-        setGeometry(x(), y(),field->getSquareSize() , field->getSquareSize()* mk);
+        setGeometry(newPos.x(), newPos.y(), field->getSquareSize(), field->getSquareSize() * mk);
         shipSize = QSize(field->getSquareSize() / 1.5, field->getSquareSize() / 1.5 * mk);
     }
     else {
-        setGeometry(x(), y(), field->getSquareSize() * mk, field->getSquareSize());
+        setGeometry(newPos.x(), newPos.y(), field->getSquareSize() * mk, field->getSquareSize());
         shipSize = QSize(field->getSquareSize() / 1.5 * mk, field->getSquareSize() / 1.5);
     }
     shipPos = QPoint((width() - shipSize.width()) / 2, (height() - shipSize.height()) / 2);
@@ -84,7 +86,6 @@ void Ship::rotate()
 void Ship::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
-    resize();
 }
 
 void Ship::paintEvent(QPaintEvent *e)
