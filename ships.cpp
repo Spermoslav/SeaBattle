@@ -3,10 +3,9 @@
 
 class Field;
 
-Ship::Ship(QWidget *parent, Field *field)
-    : QGroupBox(parent)
+Ship::Ship(Field *field)
+    : QGroupBox(field)
 {
-    this->parent = parent;
     this->field = field;
     isTarget = false;
     shipCenterX = width() / 2;
@@ -58,12 +57,25 @@ void Ship::rotate()
         orientation = Orientation::vertical;
         setGeometry(x(), y(), field->getSquareSize(), field->getSquareSize() * mk);
     }
-    for(auto const &ship : allShips){
-        if(ship != this) {
-            if(checkCollision(QPoint(x(), y()), ship)) {
-                setGeometry(x(), y(), oldSize.width(), oldSize.height());
-                orientation = oldOr;
-                return;
+    if(field->getIsPlayerField()){
+        for(auto const &ship : playerShips){
+            if(ship != this) {
+                if(checkCollision(QPoint(x(), y()), ship)) {
+                    setGeometry(x(), y(), oldSize.width(), oldSize.height());
+                    orientation = oldOr;
+                    return;
+                }
+            }
+        }
+    }
+    else {
+        for(auto const &ship : botShips){
+            if(ship != this) {
+                if(checkCollision(QPoint(x(), y()), ship)) {
+                    setGeometry(x(), y(), oldSize.width(), oldSize.height());
+                    orientation = oldOr;
+                    return;
+                }
             }
         }
     }
@@ -107,11 +119,23 @@ void Ship::mouseReleaseEvent(QMouseEvent *e)
     QPoint nearSquare = QPoint((x() + field->getSquareSize() / 2) / field->getSquareSize(), (y() + field->getSquareSize() / 2) / field->getSquareSize());
     QPoint newPos = nearSquare * field->getSquareSize();
 
-    for(auto const &ship : allShips){
-        if(ship != this){
-            if(checkCollision(newPos, ship)){
-                move(groupBoxPosWhenPress);
-                return;
+    if(field->getIsPlayerField()){
+        for(auto const &ship : playerShips){
+            if(ship != this){
+                if(checkCollision(newPos, ship)){
+                    move(groupBoxPosWhenPress);
+                    return;
+                }
+            }
+        }
+    }
+    else {
+        for(auto const &ship : botShips){
+            if(ship != this){
+                if(checkCollision(newPos, ship)){
+                    move(groupBoxPosWhenPress);
+                    return;
+                }
             }
         }
     }
@@ -146,32 +170,36 @@ bool Ship::checkCollision(QPoint const &newPos, auto const &ship)
     else return false;
 }
 
-ShipMk4::ShipMk4(QWidget *parent, Field *field)
-    : Ship(parent, field)
+ShipMk4::ShipMk4(Field *field)
+    : Ship(field)
 {
     mk = 4;
-    allShips.push_back(this);
+    if(field->getIsPlayerField()) playerShips.push_back(this);
+    else botShips.push_back(this);
 }
 
-ShipMk3::ShipMk3(QWidget *parent, Field *field)
-    : Ship(parent, field)
+ShipMk3::ShipMk3(Field *field)
+    : Ship(field)
 {
     mk = 3; 
-    allShips.push_back(this);
+    if(field->getIsPlayerField()) playerShips.push_back(this);
+    else botShips.push_back(this);
 }
 
-ShipMk2::ShipMk2(QWidget *parent, Field *field)
-    : Ship(parent, field)
+ShipMk2::ShipMk2(Field *field)
+    : Ship(field)
 {
     mk = 2;
-    allShips.push_back(this);
+    if(field->getIsPlayerField()) playerShips.push_back(this);
+    else botShips.push_back(this);
 }
 
-ShipMk1::ShipMk1(QWidget *parent, Field *field)
-    : Ship(parent, field)
+ShipMk1::ShipMk1(Field *field)
+    : Ship(field)
 {
     mk = 1;
-    allShips.push_back(this);
+    if(field->getIsPlayerField()) playerShips.push_back(this);
+    else botShips.push_back(this);
 }
 
 

@@ -26,7 +26,7 @@ class ShipMk1;
 class Ship : public QGroupBox
 {
 public:
-    Ship(QWidget *parent, Field *field);
+    Ship(Field *field);
 
     uint getMk();
 
@@ -62,8 +62,10 @@ protected:
     int shipCenterY;
 
     bool isTarget;
+    bool isPlayerField;
 
-    static inline std::vector<Ship*> allShips;
+    static inline std::vector<Ship*> playerShips;
+    static inline std::vector<Ship*> botShips;
 
     enum Orientation {
         horizontal,
@@ -77,7 +79,7 @@ protected:
 class ShipMk4 : public Ship
 {
 public:
-    ShipMk4(QWidget *parent, Field *field);
+    ShipMk4(Field *field);
 
 private slots:
 
@@ -90,7 +92,7 @@ private:
 class ShipMk3 : public Ship
 {
 public:
-    ShipMk3(QWidget *parent, Field *field);
+    ShipMk3(Field *field);
 
 private slots:
 
@@ -103,7 +105,7 @@ private:
 class ShipMk2 : public Ship
 {
 public:
-    ShipMk2(QWidget *parent, Field *field);
+    ShipMk2(Field *field);
 
 private slots:
 
@@ -116,7 +118,7 @@ private:
 class ShipMk1 : public Ship
 {
 public:
-    ShipMk1(QWidget *parent, Field *field);
+    ShipMk1(Field *field);
 
 private slots:
 

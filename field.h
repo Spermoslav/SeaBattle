@@ -7,6 +7,7 @@
 #include <QPainter>
 
 typedef unsigned int uint;
+typedef unsigned short int uint16;
 
 class Ships;
 class ShipMk4;
@@ -24,6 +25,8 @@ public:
     int getSquareSize();
     uint getSquareCount();
 
+    bool getIsPlayerField();
+
     void updateSquareSize();
 
 private slots:
@@ -40,6 +43,9 @@ private:
 
     uint squareSize;
     uint const squareCount = 10;
+
+    static inline uint16 fieldCount = 0;
+    bool isPlayerField;
 };
 
 #endif // FIELD_H

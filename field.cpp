@@ -7,13 +7,16 @@ Field::Field(QWidget *parent)
     : QGroupBox(parent)
 {
     this->parent = parent;
+    fieldCount++;
+    if(fieldCount == 1) isPlayerField = true;
+    else isPlayerField = false;
 
     updateSquareSize();
 
-    shipMk1 = new ShipMk1(this, this);
-    shipMk2 = new ShipMk2(this, this);
-    shipMk3 = new ShipMk3(this, this);
-    shipMk4 = new ShipMk4(this, this);
+    shipMk1 = new ShipMk1(this);
+    shipMk2 = new ShipMk2(this);
+    shipMk3 = new ShipMk3(this);
+    shipMk4 = new ShipMk4(this);
 }
 
 int Field::getSquareSize()
@@ -24,6 +27,11 @@ int Field::getSquareSize()
 uint Field::getSquareCount()
 {
     return squareCount;
+}
+
+bool Field::getIsPlayerField()
+{
+    return isPlayerField;
 }
 
 void Field::updateSquareSize()
