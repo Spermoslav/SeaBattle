@@ -129,6 +129,8 @@ void Ship::mouseMoveEvent(QMouseEvent *e)
 bool Ship::checkCollision(QPoint const &newPos, auto const &ship)
 {
     if(newPos == ship->pos()) return true;
+    else if(newPos.x() + width() > field->width() || newPos.x() < 0) return true;
+    else if(newPos.y() + height() > field->height() || newPos.y() < 0) return true;
     else if(newPos.x() == ship->x() && ship->y() > newPos.y() && ship->y() < newPos.y() + height()) // равны по x
         return true;
     else if(newPos.x() == ship->x() && newPos.y() > ship->y() && newPos.y() < ship->y() + ship->height())
