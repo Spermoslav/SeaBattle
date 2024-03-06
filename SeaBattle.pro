@@ -12,11 +12,13 @@ SOURCES += \
     field.cpp \
     main.cpp \
     ships.cpp \
+    tools.cpp \
     widget.cpp
 
 HEADERS += \
     field.h \
     ships.h \
+    tools.h \
     widget.h
 
 FORMS += \

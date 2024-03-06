@@ -1,8 +1,6 @@
 #ifndef FIELD_H
 #define FIELD_H
 
-
-
 #include <QWidget>
 #include <QGroupBox>
 #include <QResizeEvent>
@@ -35,7 +33,10 @@ private slots:
 private:
     QWidget *parent;
 
-    ShipMk3 *mk1;
+    ShipMk1 *shipMk1;
+    ShipMk2 *shipMk2;
+    ShipMk3 *shipMk3;
+    ShipMk4 *shipMk4;
 
     uint squareSize;
     uint const squareCount = 10;

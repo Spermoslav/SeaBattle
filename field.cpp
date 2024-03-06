@@ -9,6 +9,11 @@ Field::Field(QWidget *parent)
     this->parent = parent;
 
     updateSquareSize();
+
+    shipMk1 = new ShipMk1(this, this);
+    shipMk2 = new ShipMk2(this, this);
+    shipMk3 = new ShipMk3(this, this);
+    shipMk4 = new ShipMk4(this, this);
 }
 
 int Field::getSquareSize()
@@ -30,6 +35,10 @@ void Field::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
     repaint();
+    shipMk1->resize();
+    shipMk2->resize();
+    shipMk3->resize();
+    shipMk4->resize();
 }
 
 void Field::paintEvent(QPaintEvent *e)
