@@ -9,15 +9,10 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
 
-    field = new Field(this);
+    fieldPlayer = new Field(this);
+    fieldBot = new Field(this);
 
     tb = new ToolsBar(this);
-
-    mk2 = new ShipMk2(field, field);
-    mk3_1 = new ShipMk3(field, field);
-    mk3_2 = new ShipMk3(field, field);
-    mk4 = new ShipMk4(field, field);
-
 }
 
 Widget::~Widget()
@@ -28,19 +23,12 @@ Widget::~Widget()
 void Widget::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
-    int fieldSize = field->getSquareSize() * field->getSquareCount();
-    field->updateSquareSize();
-<<<<<<< HEAD
-    field->setGeometry(0, 0, field->getSquareSize() * field->getSquareCount(), field->getSquareSize() * field->getSquareCount());
-=======
-    field->setGeometry(0, 0, fieldSize, fieldSize);
+    fieldBot->updateSquareSize();
+    fieldPlayer->updateSquareSize();
+    int fieldSize = fieldPlayer->getSquareSize() * fieldPlayer->getSquareCount();
+    fieldBot->setGeometry(0, 0, fieldSize, fieldSize);
+    fieldPlayer->setGeometry(0, fieldSize, fieldSize, fieldSize);
     tb->setGeometry(fieldSize, 0, width() - fieldSize, height());
-
->>>>>>> addTools
-    mk2->resize();
-    mk3_1->resize();
-    mk3_2->resize();
-    mk4->resize();
 }
 
 void Widget::mousePressEvent(QMouseEvent *e)
