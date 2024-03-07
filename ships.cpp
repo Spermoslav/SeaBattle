@@ -59,6 +59,7 @@ void Ship::rotate()
         orientation = Orientation::vertical;
         setGeometry(x(), y(), field->getSquareSize(), field->getSquareSize() * mk);
     }
+
     if(field->getIsPlayerField()){
         for(auto const &ship : playerShips){
             if(ship != this) {
@@ -81,6 +82,7 @@ void Ship::rotate()
             }
         }
     }
+    resize();
 }
 
 void Ship::resizeEvent(QResizeEvent *e)

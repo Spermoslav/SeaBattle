@@ -36,9 +36,15 @@ private slots:
 private:
     QWidget *parent;
 
-    ShipMk1 *shipMk1;
-    ShipMk2 *shipMk2;
-    ShipMk3 *shipMk3;
+    ShipMk1 *shipMk1_1;
+    ShipMk1 *shipMk1_2;
+    ShipMk1 *shipMk1_3;
+    ShipMk1 *shipMk1_4;
+    ShipMk2 *shipMk2_1;
+    ShipMk2 *shipMk2_2;
+    ShipMk2 *shipMk2_3;
+    ShipMk3 *shipMk3_1;
+    ShipMk3 *shipMk3_2;
     ShipMk4 *shipMk4;
 
     uint squareSize;

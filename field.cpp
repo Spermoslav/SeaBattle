@@ -13,10 +13,17 @@ Field::Field(QWidget *parent)
 
     updateSquareSize();
 
-    shipMk1 = new ShipMk1(this);
-    shipMk2 = new ShipMk2(this);
-    shipMk3 = new ShipMk3(this);
+    shipMk1_1 = new ShipMk1(this);
+    shipMk1_2 = new ShipMk1(this);
+    shipMk1_3 = new ShipMk1(this);
+    shipMk1_4 = new ShipMk1(this);
+    shipMk2_1 = new ShipMk2(this);
+    shipMk2_2 = new ShipMk2(this);
+    shipMk2_3 = new ShipMk2(this);
+    shipMk3_1 = new ShipMk3(this);
+    shipMk3_2 = new ShipMk3(this);
     shipMk4 = new ShipMk4(this);
+
 }
 
 int Field::getSquareSize()
@@ -43,9 +50,15 @@ void Field::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
     repaint();
-    shipMk1->resize();
-    shipMk2->resize();
-    shipMk3->resize();
+    shipMk1_1->resize();
+    shipMk1_2->resize();
+    shipMk1_3->resize();
+    shipMk1_4->resize();
+    shipMk2_1->resize();
+    shipMk2_2->resize();
+    shipMk2_3->resize();
+    shipMk3_1->resize();
+    shipMk3_2->resize();
     shipMk4->resize();
 }
 
