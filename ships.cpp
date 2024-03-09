@@ -155,12 +155,14 @@ void Ship::mouseMoveEvent(QMouseEvent *e)
 
 bool Ship::checkCollision(QPoint const &newPos, auto const &ship)
 {
-    uint sqSize = field->getSquareSize();
+
+    int sqSize = field->getSquareSize();
     if(newPos == ship->pos()) return true;
     else if(newPos.x() + width() > field->width() || newPos.x() < 0) return true; // за пределами поля
     else if(newPos.y() + height() > field->height() || newPos.y() < 0) return true;
     else if(newPos.x() >= ship->x() - sqSize && newPos.x() < ship->x() + ship->width() + sqSize && // проверка вхождения x и y target корабля в другой корабль
             newPos.y() >= ship->y() - sqSize && newPos.y() < ship->y() + ship->height() + sqSize) {
+        qDebug() << "xuy";
             return true;
     }
     else if(newPos.x() + width() > ship->x() - sqSize && newPos.x() + width() <= ship->x() + ship->width() + sqSize && // проверка вхождения x + width() и
@@ -172,7 +174,6 @@ bool Ship::checkCollision(QPoint const &newPos, auto const &ship)
 //        qDebug() << "2";
 //        return true;
 //    }
-
 }
 
 ShipMk4::ShipMk4(Field *field)
