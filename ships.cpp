@@ -155,22 +155,24 @@ void Ship::mouseMoveEvent(QMouseEvent *e)
 
 bool Ship::checkCollision(QPoint const &newPos, auto const &ship)
 {
+    uint sqSize = field->getSquareSize();
     if(newPos == ship->pos()) return true;
-    else if(newPos.x() + width() > field->width() || newPos.x() < 0) return true;
+    else if(newPos.x() + width() > field->width() || newPos.x() < 0) return true; // за пределами поля
     else if(newPos.y() + height() > field->height() || newPos.y() < 0) return true;
-    else if(newPos.x() == ship->x() && ship->y() > newPos.y() && ship->y() < newPos.y() + height()) // равны по x
-        return true;
-    else if(newPos.x() == ship->x() && newPos.y() > ship->y() && newPos.y() < ship->y() + ship->height())
-        return true;
-    else if(newPos.y() == ship->y() && newPos.x() > ship->x() && newPos.x() < ship->x() + ship->width()) // равны по y
-        return true;
-    else if(newPos.y() == ship->y() && ship->x() > newPos.x() && ship->x() < newPos.x() + width())
-        return true;
-    else if(newPos.x() > ship->x() && newPos.x() < ship->x() + ship->width() && ship->y() > newPos.y() && ship->y() < newPos.y() + height())// x и y не равны
-        return true;
-    else if(newPos.y() > ship->y() && newPos.y() < ship->y() + ship->height() && ship->x() > newPos.x() && ship->x() < newPos.x() + width())// x и y не равны
-        return true;
-    else return false;
+    else if(newPos.x() >= ship->x() - sqSize && newPos.x() < ship->x() + ship->width() + sqSize && // проверка вхождения x и y target корабля в другой корабль
+            newPos.y() >= ship->y() - sqSize && newPos.y() < ship->y() + ship->height() + sqSize) {
+            return true;
+    }
+    else if(newPos.x() + width() > ship->x() - sqSize && newPos.x() + width() <= ship->x() + ship->width() + sqSize && // проверка вхождения x + width() и
+            newPos.y() + height() > ship->y() - sqSize && newPos.y() + height() <= ship->y() + ship->height() + sqSize) { // y + height() target корабля в другой корабль
+            return true;
+    }
+//    else if(ship->x() >= newPos.x() - sqSize && ship->x() < newPos.x() + width() + sqSize && // проверка вхождения x и y другого корабля в target корабль
+//            ship->y() >= newPos.y() - sqSize && ship->y() < newPos.y() + height() + sqSize) {
+//        qDebug() << "2";
+//        return true;
+//    }
+
 }
 
 ShipMk4::ShipMk4(Field *field)
