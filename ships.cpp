@@ -1,5 +1,7 @@
 #include "ships.h"
 #include "field.h"
+#include <thread>
+#include <chrono>
 
 class Field;
 
@@ -8,19 +10,26 @@ Ship::Ship(Field *field)
 {
     this->field = field;
     isTarget = false;
-    shipCenterX = width() / 2;
-    shipCenterY = height() / 2;
     orientation = Orientation::vertical;
 
-    shipSize = QSize(field->getSquareSize() / 1.5, field->getSquareSize() / 1.5 * mk);
-    shipPos = QPoint((width() - shipSize.width()) / 2, (height() - shipSize.height()) / 2);
-    groupBoxPosWhenPress = QPoint(x(), y());
-    qDebug() << "Вызвался конструктор";
+    if(field->getAllShips().size() >= 6) mk = 1;
+    else if(field->getAllShips().size() >= 3) mk = 2;
+    else if(field->getAllShips().size() >= 1) mk = 3;
+    else if(field->getAllShips().size() == 0) mk = 4;
+
+    resize();
+
+    randomMove();
 }
 
 uint Ship::getMk()
 {
     return mk;
+}
+
+Field &Ship::getField() const
+{
+    return *field;
 }
 
 bool Ship::getIsTarget()
@@ -60,29 +69,51 @@ void Ship::rotate()
         setGeometry(x(), y(), field->getSquareSize(), field->getSquareSize() * mk);
     }
 
-    if(field->getIsPlayerField()){
-        for(auto const &ship : playerShips){
-            if(ship != this) {
-                if(checkCollision(QPoint(x(), y()), ship)) {
-                    setGeometry(x(), y(), oldSize.width(), oldSize.height());
-                    orientation = oldOr;
-                    return;
-                }
-            }
-        }
-    }
-    else {
-        for(auto const &ship : botShips){
-            if(ship != this) {
-                if(checkCollision(QPoint(x(), y()), ship)) {
-                    setGeometry(x(), y(), oldSize.width(), oldSize.height());
-                    orientation = oldOr;
-                    return;
-                }
+    for(auto const &ship : field->getAllShips()){
+        if(ship != this) {
+            if(checkCollision(QPoint(x(), y()), ship)) {
+                setGeometry(x(), y(), oldSize.width(), oldSize.height());
+                orientation = oldOr;
+                return;
             }
         }
     }
     resize();
+}
+
+void Ship::randomMove()
+{
+    QPoint newPos;
+    int sqX, sqY;
+    while(true) {
+        bool allShipsCheck = false;
+        sqX = rand() % (field->getSquareCount() + 1);
+        sqY = rand() % (field->getSquareCount() + 1);
+        newPos = QPoint(sqX * field->getSquareSize(), sqY * field->getSquareSize());
+        if(rand() % 2) rotate();
+        if(field->getAllShips().size() == 0) {
+            if(checkFieldCollision(newPos)) {
+                continue;
+            }
+            else {
+                move(newPos);
+                return;
+            }
+        }
+        for(auto const &ship : field->getAllShips()){
+            if(ship != this){
+                if(checkCollision(newPos, ship)){
+                    allShipsCheck = false;
+                    break;
+                }
+                else allShipsCheck = true;
+            }
+        }
+        if (allShipsCheck) {
+            move(newPos);
+            return;
+        }
+    }
 }
 
 void Ship::resizeEvent(QResizeEvent *e)
@@ -122,27 +153,16 @@ void Ship::mouseReleaseEvent(QMouseEvent *e)
     QPoint nearSquare = QPoint((x() + field->getSquareSize() / 2) / field->getSquareSize(), (y() + field->getSquareSize() / 2) / field->getSquareSize());
     QPoint newPos = nearSquare * field->getSquareSize();
 
-    if(field->getIsPlayerField()){
-        for(auto const &ship : playerShips){
-            if(ship != this){
-                if(checkCollision(newPos, ship)){
-                    move(groupBoxPosWhenPress);
-                    return;
-                }
-            }
-        }
-    }
-    else {
-        for(auto const &ship : botShips){
-            if(ship != this){
-                if(checkCollision(newPos, ship)){
-                    move(groupBoxPosWhenPress);
-                    return;
-                }
+    for(auto const &ship : field->getAllShips()){
+        if(ship != this){
+            if(checkCollision(newPos, ship)){
+                move(groupBoxPosWhenPress);
+                return;
             }
         }
     }
     move(newPos);
+    qDebug() << newPos;
 }
 
 void Ship::mouseMoveEvent(QMouseEvent *e)
@@ -155,57 +175,54 @@ void Ship::mouseMoveEvent(QMouseEvent *e)
 
 bool Ship::checkCollision(QPoint const &newPos, auto const &ship)
 {
+    return checkShipCollision(newPos, ship) || checkFieldCollision(newPos);
+}
 
-    int sqSize = field->getSquareSize();
+bool Ship::checkShipCollision(const QPoint &newPos, auto const &ship)
+{
+    const int sqSize = field->getSquareSize();
+
     if(newPos == ship->pos()) return true;
-    else if(newPos.x() + width() > field->width() || newPos.x() < 0) return true; // за пределами поля
-    else if(newPos.y() + height() > field->height() || newPos.y() < 0) return true;
     else if(newPos.x() >= ship->x() - sqSize && newPos.x() < ship->x() + ship->width() + sqSize && // проверка вхождения x и y target корабля в другой корабль
             newPos.y() >= ship->y() - sqSize && newPos.y() < ship->y() + ship->height() + sqSize) {
-        qDebug() << "xuy";
             return true;
     }
     else if(newPos.x() + width() > ship->x() - sqSize && newPos.x() + width() <= ship->x() + ship->width() + sqSize && // проверка вхождения x + width() и
             newPos.y() + height() > ship->y() - sqSize && newPos.y() + height() <= ship->y() + ship->height() + sqSize) { // y + height() target корабля в другой корабль
             return true;
     }
-//    else if(ship->x() >= newPos.x() - sqSize && ship->x() < newPos.x() + width() + sqSize && // проверка вхождения x и y другого корабля в target корабль
-//            ship->y() >= newPos.y() - sqSize && ship->y() < newPos.y() + height() + sqSize) {
-//        qDebug() << "2";
-//        return true;
-//    }
+}
+
+bool Ship::checkFieldCollision(const QPoint &newPos)
+{
+    int sqSize = field->getSquareSize();
+    if(newPos.x() + width() > field->width() || newPos.x() < 0) return true;
+    else if(newPos.y() + height() > field->height() || newPos.y() < 0) return true;
 }
 
 ShipMk4::ShipMk4(Field *field)
     : Ship(field)
 {
     mk = 4;
-    if(field->getIsPlayerField()) playerShips.push_back(this);
-    else botShips.push_back(this);
 }
 
 ShipMk3::ShipMk3(Field *field)
     : Ship(field)
 {
     mk = 3; 
-    if(field->getIsPlayerField()) playerShips.push_back(this);
-    else botShips.push_back(this);
 }
 
 ShipMk2::ShipMk2(Field *field)
     : Ship(field)
 {
     mk = 2;
-    if(field->getIsPlayerField()) playerShips.push_back(this);
-    else botShips.push_back(this);
 }
 
 ShipMk1::ShipMk1(Field *field)
     : Ship(field)
 {
     mk = 1;
-    if(field->getIsPlayerField()) playerShips.push_back(this);
-    else botShips.push_back(this);
 }
+
 
 

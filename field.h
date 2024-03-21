@@ -9,7 +9,7 @@
 typedef unsigned int uint;
 typedef unsigned short int uint16;
 
-class Ships;
+class Ship;
 class ShipMk4;
 class ShipMk3;
 class ShipMk2;
@@ -22,12 +22,16 @@ class Field : public QGroupBox
 public:
     Field(QWidget *parent);
 
-    int getSquareSize();
-    uint getSquareCount();
+    int getSquareSize() const;
+    uint getSquareCount() const;
 
     bool getIsPlayerField();
 
     void updateSquareSize();
+
+    void randomMoveAllShips();
+
+    std::vector<Ship*> getAllShips();
 
 private slots:
     void resizeEvent(QResizeEvent *e) override;
@@ -36,18 +40,9 @@ private slots:
 private:
     QWidget *parent;
 
-    ShipMk1 *shipMk1_1;
-    ShipMk1 *shipMk1_2;
-    ShipMk1 *shipMk1_3;
-    ShipMk1 *shipMk1_4;
-    ShipMk2 *shipMk2_1;
-    ShipMk2 *shipMk2_2;
-    ShipMk2 *shipMk2_3;
-    ShipMk3 *shipMk3_1;
-    ShipMk3 *shipMk3_2;
-    ShipMk4 *shipMk4;
+    std::vector<Ship*> allShips;
 
-    uint squareSize;
+    int squareSize;
     uint const squareCount = 10;
 
     static inline uint16 fieldCount = 0;

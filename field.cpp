@@ -7,31 +7,25 @@ Field::Field(QWidget *parent)
     : QGroupBox(parent)
 {
     this->parent = parent;
-    fieldCount++;
+    ++fieldCount;
     if(fieldCount == 1) isPlayerField = true;
     else isPlayerField = false;
 
     updateSquareSize();
+    int fieldSize = squareSize * squareCount;
+    resize(fieldSize, fieldSize);
+    for(std::size_t i = 0; i < 10; i ++) {
+        allShips.push_back(new Ship(this));
 
-    shipMk1_1 = new ShipMk1(this);
-    shipMk1_2 = new ShipMk1(this);
-    shipMk1_3 = new ShipMk1(this);
-    shipMk1_4 = new ShipMk1(this);
-    shipMk2_1 = new ShipMk2(this);
-    shipMk2_2 = new ShipMk2(this);
-    shipMk2_3 = new ShipMk2(this);
-    shipMk3_1 = new ShipMk3(this);
-    shipMk3_2 = new ShipMk3(this);
-    shipMk4 = new ShipMk4(this);
-
+    }
 }
 
-int Field::getSquareSize()
+int Field::getSquareSize() const
 {
     return squareSize;
 }
 
-uint Field::getSquareCount()
+uint Field::getSquareCount() const
 {
     return squareCount;
 }
@@ -46,20 +40,24 @@ void Field::updateSquareSize()
     squareSize = std::min(parent->width() / 2, parent->height() / 2) / squareCount;
 }
 
+void Field::randomMoveAllShips()
+{
+    for( auto const &ship : allShips)
+            ship->randomMove();
+}
+
+std::vector<Ship *> Field::getAllShips()
+{
+    return allShips;
+}
+
 void Field::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
     repaint();
-    shipMk1_1->resize();
-    shipMk1_2->resize();
-    shipMk1_3->resize();
-    shipMk1_4->resize();
-    shipMk2_1->resize();
-    shipMk2_2->resize();
-    shipMk2_3->resize();
-    shipMk3_1->resize();
-    shipMk3_2->resize();
-    shipMk4->resize();
+    for(auto const &ship : allShips) {
+        ship->resize();
+    }
 }
 
 void Field::paintEvent(QPaintEvent *e)

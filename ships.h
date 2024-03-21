@@ -26,14 +26,20 @@ class ShipMk1;
 class Ship : public QGroupBox
 {
 public:
+    Ship() = default;
+
     Ship(Field *field);
 
-    uint getMk();
+    uint          getMk();
 
-    bool getIsTarget();
+    inline Field &getField() const;
 
-    void resize();
-    void rotate();
+    bool          getIsTarget();
+
+    void          resize();
+    void          rotate();
+
+    void          randomMove();
 
 private slots:
     void resizeEvent(QResizeEvent *e) override;
@@ -43,8 +49,9 @@ private slots:
     void mouseReleaseEvent(QMouseEvent *e) override;
     void mouseMoveEvent(QMouseEvent *e) override;
 protected:
-
     bool checkCollision(QPoint const &newPos, auto const &ship);
+    bool checkShipCollision(QPoint const &newPos, auto const &ship);
+    bool checkFieldCollision(QPoint const &newPos);
 
 protected:
 
@@ -55,17 +62,16 @@ protected:
     QPoint shipPos;
     QPoint mousePosWhenPress;
     QPoint groupBoxPosWhenPress;
+
     QSize shipSize;
 
     uint16 mk;
     int shipCenterX;
     int shipCenterY;
+    static inline int shipCount = 0;
 
     bool isTarget;
     bool isPlayerField;
-
-    static inline std::vector<Ship*> playerShips;
-    static inline std::vector<Ship*> botShips;
 
     enum Orientation {
         horizontal,

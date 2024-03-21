@@ -13,6 +13,13 @@ Widget::Widget(QWidget *parent)
     fieldBot = new Field(this);
 
     tb = new ToolsBar(this);
+    fieldBot->updateSquareSize();
+    fieldPlayer->updateSquareSize();
+    int fieldSize = fieldPlayer->getSquareSize() * fieldPlayer->getSquareCount();
+    fieldBot->setGeometry(0, 0, fieldSize, fieldSize);
+    fieldPlayer->setGeometry(0, fieldSize, fieldSize, fieldSize);
+
+    tb->setGeometry(fieldSize, 0, width() - fieldSize, height());
 }
 
 Widget::~Widget()
