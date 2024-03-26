@@ -134,7 +134,6 @@ void Ship::randomMove()
 void Ship::takeDamage(const QPoint &damagePos)
 {
     for(auto const &dm : damage) {
-        dm->resize();
         if(findPosForDamage(damagePos) == dm->pos()){
             dm->show();
             if(++destroyItems == mk) {
@@ -255,7 +254,6 @@ Damage::Damage(Ship *parent)
 void Damage::resize()
 {
     static_cast<QWidget*> (this)->resize(parent->getField().getSquareSize(), parent->getField().getSquareSize());
-
 }
 
 void Damage::paintEvent(QPaintEvent *e)
@@ -266,14 +264,11 @@ void Damage::paintEvent(QPaintEvent *e)
     p.setPen(Qt::blue);
     p.drawLine(QPoint(0, 0), QPoint(width(), height()));
     p.drawLine(QPoint(width(), 0), QPoint(0, height()));
-
     p.end();
 }
 
 void Damage::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
-    qDebug() << size();
-    qDebug() << parent->getField().getSquareSize();
     update();
 }

@@ -26,7 +26,6 @@ class ShipMk1;
 class Ship : public QGroupBox
 {
     Q_OBJECT
-    friend Damage;
 public:
     Ship() = default;
 

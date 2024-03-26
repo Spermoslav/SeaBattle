@@ -45,10 +45,6 @@ void ToolsBar::startGamePBClicked()
         for(auto const &ship : parent->getFieldPlayer().getAllShips()) {
             if(targetShip != ship){
                 if(targetShip->checkShipCollision(targetShip->pos(), ship)) {
-                    qDebug() << "Корабли друг в друге";
-                    qDebug() << targetShip->pos() << targetShip->size();
-                    qDebug() << ship->pos() << ship->size();
-                    targetShip->checkShipCollision(targetShip->pos(), ship);
                     return;
                 }
             }

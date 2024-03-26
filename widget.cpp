@@ -1,21 +1,21 @@
 #include "widget.h"
 #include "ui_widget.h"
-#include <thread>
-#include <algorithm>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
-    check = false;
     gameStart = false;
+
     infoBar = new InfoBar(this);
 
     fieldPlayer = new Field(this);
     fieldPlayer->spawnShips();
+
     fieldBot = new Field(this);
     fieldBot->spawnShips();
+
     toolsBar = new ToolsBar(this);
 }
 
@@ -28,7 +28,9 @@ void Widget::updateWidgetsSize()
 {
 
     infoBar->resize(width() , height() * 0.1);
+
     const int fieldSize = std::min(width() / 2, (height() - infoBar->height()) / 2);
+
     fieldBot->reSize();
     fieldPlayer->reSize();
     infoBar->move(0, fieldSize);
@@ -60,11 +62,11 @@ void Widget::resizeEvent(QResizeEvent *e)
 
 void Widget::mousePressEvent(QMouseEvent *e)
 {
-
+    Q_UNUSED(e)
 }
 
 void Widget::mouseMoveEvent(QMouseEvent *e)
 {
-
+    Q_UNUSED(e)
 }
 

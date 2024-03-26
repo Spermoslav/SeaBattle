@@ -67,16 +67,8 @@ std::vector<Ship *> Field::getAllShips()
 
 void Field::mousePressEvent(QMouseEvent *e)
 {
-    for(auto const &ship : allShips) {
-        if(e->x() >= ship->x() && e->x() <= ship->x() + ship->width() &&
-           e->y() >= ship->y() && e->y() <= ship->y() + ship->height()){
-            return;
-        }
-        else {
-            missHits.push_back(findSquarePos(e->pos()));
-            update();
-        }
-    }
+    missHits.push_back(findSquarePos(e->pos()));
+    update();
 }
 
 QPoint Field::findNearSquarePos(const QPoint &pos)

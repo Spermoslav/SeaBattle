@@ -41,8 +41,6 @@ private:
 
     Ui::Widget *ui;
 
-    bool check;
-
     Field *fieldPlayer;
     Field *fieldBot;
 
