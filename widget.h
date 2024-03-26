@@ -23,17 +23,33 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
+    void updateWidgetsSize();
+
+    InfoBar &getInfoBar() const;
+
+    Field &getFieldBot() const;
+    Field &getFieldPlayer() const;
+
+    bool gameStart;
+
 private slots:
     void resizeEvent(QResizeEvent *e) override;
     void mousePressEvent(QMouseEvent *e) override;
     void mouseMoveEvent(QMouseEvent *e) override;
 
 private:
+
     Ui::Widget *ui;
+
+    bool check;
 
     Field *fieldPlayer;
     Field *fieldBot;
 
-    ToolsBar *tb;
+    ToolsBar *toolsBar;
+
+    InfoBar *infoBar;
+
+
 };
 #endif // WIDGET_H

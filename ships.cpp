@@ -10,6 +10,8 @@ Ship::Ship(Field *field)
 {
     this->field = field;
     isTarget = false;
+    isDestroy = false;
+    destroyItems = 0;
     orientation = Orientation::vertical;
 
     if(field->getAllShips().size() >= 6) mk = 1;
@@ -17,9 +19,10 @@ Ship::Ship(Field *field)
     else if(field->getAllShips().size() >= 1) mk = 3;
     else if(field->getAllShips().size() == 0) mk = 4;
 
-    resize();
-
-    randomMove();
+    for(size_t i = 0; i < mk; i++) {
+        damage.push_back(new Damage(this));
+        damage[i]->move(0, i * field->getSquareSize());
+    }
 }
 
 uint Ship::getMk()
@@ -39,20 +42,28 @@ bool Ship::getIsTarget()
 
 void Ship::resize()
 {
-    QPoint nearSquare = QPoint((x() + field->getSquareSize() / 2) / field->getSquareSize(), (y() + field->getSquareSize() / 2) / field->getSquareSize());
-    QPoint newPos = nearSquare * field->getSquareSize();
+    QPoint newPos = field->findNearSquarePos(pos());
     if(orientation == Orientation::vertical) {
         setGeometry(newPos.x(), newPos.y(), field->getSquareSize(), field->getSquareSize() * mk);
         shipSize = QSize(field->getSquareSize() / 1.5, field->getSquareSize() / 1.5 * mk);
+        for(size_t i = 0; i < damage.size(); i++) {
+            damage[i]->move(0, i * field->getSquareSize());
+            damage[i]->resize();
+        }
     }
     else {
         setGeometry(newPos.x(), newPos.y(), field->getSquareSize() * mk, field->getSquareSize());
         shipSize = QSize(field->getSquareSize() / 1.5 * mk, field->getSquareSize() / 1.5);
+        for(size_t i = 0; i < damage.size(); i++) {
+            damage[i]->move(i * field->getSquareSize(), 0);
+            damage[i]->resize();
+        }
     }
     shipPos = QPoint((width() - shipSize.width()) / 2, (height() - shipSize.height()) / 2);
     shipCenterX = width() / 2;
     shipCenterY = height() / 2;
     groupBoxPosWhenPress = QPoint(x(), y());
+
     repaint();
 }
 
@@ -60,12 +71,12 @@ void Ship::rotate()
 {
     QSize oldSize = size();
     Orientation oldOr = orientation;
-    if(orientation == Orientation::vertical) {
-        orientation = Orientation::horizontal;
+    if(orientation == vertical) {
+        orientation = horizontal;
         setGeometry(x(), y(),field->getSquareSize() * mk, field->getSquareSize());
     }
     else {
-        orientation = Orientation::vertical;
+        orientation = vertical;
         setGeometry(x(), y(), field->getSquareSize(), field->getSquareSize() * mk);
     }
 
@@ -78,6 +89,7 @@ void Ship::rotate()
             }
         }
     }
+
     resize();
 }
 
@@ -85,7 +97,10 @@ void Ship::randomMove()
 {
     QPoint newPos;
     int sqX, sqY;
-    while(true) {
+    int count = 0;
+    while(count < 1000) {
+        ++count;
+        if (count == 999) qDebug() << pos() << size() << mk;
         bool allShipsCheck = false;
         sqX = rand() % (field->getSquareCount() + 1);
         sqY = rand() % (field->getSquareCount() + 1);
@@ -116,6 +131,22 @@ void Ship::randomMove()
     }
 }
 
+void Ship::takeDamage(const QPoint &damagePos)
+{
+    for(auto const &dm : damage) {
+        dm->resize();
+        if(findPosForDamage(damagePos) == dm->pos()){
+            dm->show();
+            if(++destroyItems == mk) {
+                isDestroy = true;
+                update();
+            }
+        }
+        else {
+        }
+    }
+}
+
 void Ship::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
@@ -124,19 +155,23 @@ void Ship::resizeEvent(QResizeEvent *e)
 void Ship::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e)
-    QPainter p;
-    p.begin(this);
-    p.drawRect(0, 0, width() - 1, height() - 1);
-    p.setBrush(Qt::blue);
-    p.drawRect(shipPos.x(), shipPos.y(), shipSize.width(), shipSize.height());
-
-    p.end();
+    if(isDestroy || field->getIsPlayerField()) {
+        QPainter p;
+        p.begin(this);
+        p.drawRect(0, 0, width() - 1, height() - 1);
+        p.setBrush(Qt::blue);
+        p.drawRect(shipPos.x(), shipPos.y(), shipSize.width(), shipSize.height());
+        p.end();
+    }
 }
 
 void Ship::mousePressEvent(QMouseEvent *e)
 {
-    if((e->position().x() >= shipPos.x() && e->position().x() <= shipSize.width() + shipPos.x() && e->button() == Qt::MouseButton::LeftButton)
-            && (e->position().y() >= shipPos.y() && e->position().y() <= shipSize.height() + shipPos.y())) {
+    if(e->button() == Qt::MouseButton::LeftButton) {
+        if(!field->getIsPlayerField()) {
+            takeDamage(e->pos());
+            return;
+        }
         isTarget = true;
         mousePosWhenPress = e->position().toPoint();
         groupBoxPosWhenPress = QPoint(x(), y());
@@ -150,8 +185,7 @@ void Ship::mouseReleaseEvent(QMouseEvent *e)
 {
     Q_UNUSED(e)
     isTarget = false;
-    QPoint nearSquare = QPoint((x() + field->getSquareSize() / 2) / field->getSquareSize(), (y() + field->getSquareSize() / 2) / field->getSquareSize());
-    QPoint newPos = nearSquare * field->getSquareSize();
+    QPoint newPos = field->findNearSquarePos(pos());
 
     for(auto const &ship : field->getAllShips()){
         if(ship != this){
@@ -162,7 +196,6 @@ void Ship::mouseReleaseEvent(QMouseEvent *e)
         }
     }
     move(newPos);
-    qDebug() << newPos;
 }
 
 void Ship::mouseMoveEvent(QMouseEvent *e)
@@ -191,38 +224,56 @@ bool Ship::checkShipCollision(const QPoint &newPos, auto const &ship)
             newPos.y() + height() > ship->y() - sqSize && newPos.y() + height() <= ship->y() + ship->height() + sqSize) { // y + height() target корабля в другой корабль
             return true;
     }
+    else return false;
 }
 
 bool Ship::checkFieldCollision(const QPoint &newPos)
 {
-    int sqSize = field->getSquareSize();
     if(newPos.x() + width() > field->width() || newPos.x() < 0) return true;
     else if(newPos.y() + height() > field->height() || newPos.y() < 0) return true;
+    else return false;
 }
 
-ShipMk4::ShipMk4(Field *field)
-    : Ship(field)
+QPoint Ship::findPosForDamage(const QPoint &pos)
 {
-    mk = 4;
+    return QPoint((pos.x() / field->getSquareSize()),
+                  (pos.y() / field->getSquareSize())) * field->getSquareSize();
 }
 
-ShipMk3::ShipMk3(Field *field)
-    : Ship(field)
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Damage::Damage(Ship *parent)
+    : QWidget(parent)
 {
-    mk = 3; 
+    this->parent = parent;
+    hide();
+    update();
 }
 
-ShipMk2::ShipMk2(Field *field)
-    : Ship(field)
+void Damage::resize()
 {
-    mk = 2;
+    static_cast<QWidget*> (this)->resize(parent->getField().getSquareSize(), parent->getField().getSquareSize());
+
 }
 
-ShipMk1::ShipMk1(Field *field)
-    : Ship(field)
+void Damage::paintEvent(QPaintEvent *e)
 {
-    mk = 1;
+    Q_UNUSED(e)
+    QPainter p;
+    p.begin(this);
+    p.setPen(Qt::blue);
+    p.drawLine(QPoint(0, 0), QPoint(width(), height()));
+    p.drawLine(QPoint(width(), 0), QPoint(0, height()));
+
+    p.end();
 }
 
-
-
+void Damage::resizeEvent(QResizeEvent *e)
+{
+    Q_UNUSED(e)
+    qDebug() << size();
+    qDebug() << parent->getField().getSquareSize();
+    update();
+}

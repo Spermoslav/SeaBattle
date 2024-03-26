@@ -1,6 +1,7 @@
 #include "tools.h"
+#include "widget.h"
 
-ToolsBar::ToolsBar(QWidget *parent)
+ToolsBar::ToolsBar(Widget *parent)
     : QGroupBox(parent)
 {
     this->parent = parent;
@@ -15,9 +16,14 @@ ToolsBar::ToolsBar(QWidget *parent)
     startGamePB->setText("start game");
     connect(startGamePB, &QPushButton::clicked, this, &ToolsBar::startGamePBClicked);
 
+    randomMovePlayerShipsPB = new QPushButton;
+    randomMovePlayerShipsPB->setText("random move");
+    connect(randomMovePlayerShipsPB, &QPushButton::clicked, this, &ToolsBar::randomMovePlayerShipsPBClicked);
+
     toolsVBoxLayout = new QVBoxLayout(this);
     toolsVBoxLayout->addWidget(mainMenuPB);
     toolsVBoxLayout->addWidget(startGamePB);
+    toolsVBoxLayout->addWidget(randomMovePlayerShipsPB);
 
     mainMenu = new MainMenu(parent);
 }
@@ -30,12 +36,32 @@ void ToolsBar::resizeEvent(QResizeEvent *e)
 void ToolsBar::mainMenuPBClicked()
 {
     mainMenu->show();
-    mainMenu->getBGShadow().show();
+    mainMenu->getToolsBarGShadow().show();
 }
 
 void ToolsBar::startGamePBClicked()
 {
+    for(auto const &targetShip : parent->getFieldPlayer().getAllShips()) {
+        for(auto const &ship : parent->getFieldPlayer().getAllShips()) {
+            if(targetShip != ship){
+                if(targetShip->checkShipCollision(targetShip->pos(), ship)) {
+                    qDebug() << "Корабли друг в друге";
+                    qDebug() << targetShip->pos() << targetShip->size();
+                    qDebug() << ship->pos() << ship->size();
+                    targetShip->checkShipCollision(targetShip->pos(), ship);
+                    return;
+                }
+            }
+        }
+    }
+    parent->getFieldBot().randomMoveAllShips();
+    parent->gameStart = true;
+    startGamePB->setDisabled(true);
+}
 
+void ToolsBar::randomMovePlayerShipsPBClicked()
+{
+    parent->getFieldPlayer().randomMoveAllShips();
 }
 
 MainMenu::MainMenu(QWidget *parent)
@@ -64,7 +90,7 @@ MainMenu::MainMenu(QWidget *parent)
     backgroundShadow->hide();
 }
 
-QWidget &MainMenu::getBGShadow()
+QWidget &MainMenu::getToolsBarGShadow() const
 {
     return *backgroundShadow;
 }
@@ -92,3 +118,17 @@ void MainMenu::exitGamePBClicked()
 {
 
 }
+
+InfoBar::InfoBar(QWidget *parent)
+    : QGroupBox(parent)
+{
+    this->parent = parent;
+    setStyleSheet("border: 1px solid black;");
+}
+
+void InfoBar::resizeEvent(QResizeEvent *e)
+{
+
+}
+
+

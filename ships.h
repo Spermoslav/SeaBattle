@@ -17,7 +17,7 @@ typedef unsigned int uint;
 typedef unsigned short int uint16;
 
 class Field;
-
+class Damage;
 class ShipMk4;
 class ShipMk3;
 class ShipMk2;
@@ -25,6 +25,8 @@ class ShipMk1;
 
 class Ship : public QGroupBox
 {
+    Q_OBJECT
+    friend Damage;
 public:
     Ship() = default;
 
@@ -40,6 +42,11 @@ public:
     void          rotate();
 
     void          randomMove();
+    void takeDamage(const QPoint &damagePos);
+
+    bool checkCollision(QPoint const &newPos, auto const &ship);
+    bool checkShipCollision(QPoint const &newPos, auto const &ship);
+    bool checkFieldCollision(QPoint const &newPos);
 
 private slots:
     void resizeEvent(QResizeEvent *e) override;
@@ -48,12 +55,11 @@ private slots:
     void mousePressEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
     void mouseMoveEvent(QMouseEvent *e) override;
-protected:
-    bool checkCollision(QPoint const &newPos, auto const &ship);
-    bool checkShipCollision(QPoint const &newPos, auto const &ship);
-    bool checkFieldCollision(QPoint const &newPos);
+private:
 
-protected:
+    QPoint findPosForDamage(const QPoint &pos);
+
+private:
 
     QWidget *parent;
 
@@ -65,71 +71,41 @@ protected:
 
     QSize shipSize;
 
+    std::vector<Damage*> damage;
+
     uint16 mk;
+    uint16 destroyItems;
     int shipCenterX;
     int shipCenterY;
     static inline int shipCount = 0;
 
     bool isTarget;
     bool isPlayerField;
+    bool isDestroy;
 
     enum Orientation {
         horizontal,
         vertical
     };
     Orientation orientation;
-};
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-class ShipMk4 : public Ship
-{
-public:
-    ShipMk4(Field *field);
-
-private slots:
-
-private:
 
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-class ShipMk3 : public Ship
+class Damage : public QWidget
 {
+    Q_OBJECT
 public:
-    ShipMk3(Field *field);
+    Damage() = default;
 
-private slots:
+    Damage(Ship* parent);
 
+    void resize();
+public slots:
+    void paintEvent(QPaintEvent *e) override;
+    void resizeEvent(QResizeEvent *e) override;
 private:
-
-};
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-class ShipMk2 : public Ship
-{
-public:
-    ShipMk2(Field *field);
-
-private slots:
-
-private:
-
-};
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-class ShipMk1 : public Ship
-{
-public:
-    ShipMk1(Field *field);
-
-private slots:
-
-private:
-
+    Ship* parent;
 };
 
 #endif // Ship_H

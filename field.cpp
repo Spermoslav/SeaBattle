@@ -1,9 +1,9 @@
 #include "field.h"
 #include "ships.h"
-
+#include "widget.h"
 #include <algorithm>
 
-Field::Field(QWidget *parent)
+Field::Field(Widget *parent)
     : QGroupBox(parent)
 {
     this->parent = parent;
@@ -11,13 +11,7 @@ Field::Field(QWidget *parent)
     if(fieldCount == 1) isPlayerField = true;
     else isPlayerField = false;
 
-    updateSquareSize();
-    int fieldSize = squareSize * squareCount;
-    resize(fieldSize, fieldSize);
-    for(std::size_t i = 0; i < 10; i ++) {
-        allShips.push_back(new Ship(this));
-
-    }
+    reSize();
 }
 
 int Field::getSquareSize() const
@@ -35,15 +29,35 @@ bool Field::getIsPlayerField()
     return isPlayerField;
 }
 
+void Field::reSize()
+{
+    const int fieldSize = std::min(parent->width() / 2, (parent->height() - parent->getInfoBar().height()) / 2);
+    resize(fieldSize, fieldSize);
+    updateSquareSize();
+    for(auto &mh : missHits) {
+        mh = findNearSquarePos(mh);
+    }
+    repaint();
+}
+
 void Field::updateSquareSize()
 {
-    squareSize = std::min(parent->width() / 2, parent->height() / 2) / squareCount;
+    squareSize = width() / squareCount;
 }
 
 void Field::randomMoveAllShips()
 {
     for( auto const &ship : allShips)
-            ship->randomMove();
+        ship->randomMove();
+}
+
+void Field::spawnShips()
+{
+    if(allShips.empty()) {
+        for(std::size_t i = 0; i < 10; i ++) {
+            allShips.push_back(new Ship(this));
+        }
+    }
 }
 
 std::vector<Ship *> Field::getAllShips()
@@ -51,10 +65,35 @@ std::vector<Ship *> Field::getAllShips()
     return allShips;
 }
 
+void Field::mousePressEvent(QMouseEvent *e)
+{
+    for(auto const &ship : allShips) {
+        if(e->x() >= ship->x() && e->x() <= ship->x() + ship->width() &&
+           e->y() >= ship->y() && e->y() <= ship->y() + ship->height()){
+            return;
+        }
+        else {
+            missHits.push_back(findSquarePos(e->pos()));
+            update();
+        }
+    }
+}
+
+QPoint Field::findNearSquarePos(const QPoint &pos)
+{
+    return QPoint((pos.x() + squareSize / 2) / squareSize,
+                  (pos.y() + squareSize / 2) / squareSize) * squareSize;
+}
+
+QPoint Field::findSquarePos(const QPoint &pos)
+{
+    return QPoint((pos.x() / squareSize),
+                  (pos.y() / squareSize)) * squareSize;
+}
+
 void Field::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
-    repaint();
     for(auto const &ship : allShips) {
         ship->resize();
     }
@@ -70,6 +109,10 @@ void Field::paintEvent(QPaintEvent *e)
         for(uint j = 0; j < squareCount; j++) {
             p.drawRect(i * squareSize, j * squareSize, squareSize, squareSize);
         }
+    }
+    p.setBrush(Qt::cyan);
+    for(auto const &mh : missHits) {
+        p.drawEllipse(mh.x(), mh.y(), squareSize, squareSize);
     }
     p.end();
 }

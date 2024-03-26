@@ -7,23 +7,27 @@
 #include <QVBoxLayout>
 
 class MainMenu;
+class Widget;
+class Ships;
 
 class ToolsBar : public QGroupBox
 {
 public:
-    ToolsBar(QWidget *parent);
+    ToolsBar(Widget *parent);
 
 private slots:
 
     void resizeEvent(QResizeEvent *e) override;
     void mainMenuPBClicked();
     void startGamePBClicked();
+    void randomMovePlayerShipsPBClicked();
 
 private:
-    QWidget *parent;
+    Widget *parent;
 
     QPushButton *mainMenuPB;
     QPushButton *startGamePB;
+    QPushButton *randomMovePlayerShipsPB;
 
     QVBoxLayout *toolsVBoxLayout;
 
@@ -36,7 +40,7 @@ class MainMenu : public QGroupBox
 public:
     MainMenu(QWidget *parent);
 
-    QWidget &getBGShadow();
+    QWidget &getToolsBarGShadow() const;
 
 private slots:
     void resizeEvent(QResizeEvent *e) override;
@@ -53,5 +57,19 @@ private:
     QPushButton *resetGamePB;
     QPushButton *exitGamePB;
 };
+
+class InfoBar : public QGroupBox
+{
+public:
+    InfoBar(QWidget *parent);
+
+private slots:
+    void resizeEvent(QResizeEvent *e) override;
+
+private:
+    QWidget *parent;
+};
+
+
 
 #endif // TOOLS_H
