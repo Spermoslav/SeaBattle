@@ -1,8 +1,6 @@
 #include "ships.h"
 #include "field.h"
-#include <thread>
-#include <chrono>
-
+#include "widget.h"
 class Field;
 
 Ship::Ship(Field *field)
@@ -95,38 +93,39 @@ void Ship::rotate()
 
 void Ship::randomMove()
 {
-    QPoint newPos;
-    int sqX, sqY;
-    int count = 0;
-    while(count < 1000) {
-        ++count;
-        if (count == 999) qDebug() << pos() << size() << mk;
-        bool allShipsCheck = false;
-        sqX = rand() % (field->getSquareCount() + 1);
-        sqY = rand() % (field->getSquareCount() + 1);
-        newPos = QPoint(sqX * field->getSquareSize(), sqY * field->getSquareSize());
-        if(rand() % 2) rotate();
-        if(field->getAllShips().size() == 0) {
-            if(checkFieldCollision(newPos)) {
-                continue;
+    if(!field->getParent().gameStart) {
+        QPoint newPos;
+        int sqX, sqY;
+        int count = 0;
+        while(count < 1000) {
+            ++count;
+            bool allShipsCheck = false;
+            sqX = rand() % (field->getSquareCount() + 1);
+            sqY = rand() % (field->getSquareCount() + 1);
+            newPos = QPoint(sqX * field->getSquareSize(), sqY * field->getSquareSize());
+            if(rand() % 2) rotate();
+            if(field->getAllShips().size() == 0) {
+                if(checkFieldCollision(newPos)) {
+                    continue;
+                }
+                else {
+                    move(newPos);
+                    return;
+                }
             }
-            else {
+            for(auto const &ship : field->getAllShips()){
+                if(ship != this){
+                    if(checkCollision(newPos, ship)){
+                        allShipsCheck = false;
+                        break;
+                    }
+                    else allShipsCheck = true;
+                }
+            }
+            if (allShipsCheck) {
                 move(newPos);
                 return;
             }
-        }
-        for(auto const &ship : field->getAllShips()){
-            if(ship != this){
-                if(checkCollision(newPos, ship)){
-                    allShipsCheck = false;
-                    break;
-                }
-                else allShipsCheck = true;
-            }
-        }
-        if (allShipsCheck) {
-            move(newPos);
-            return;
         }
     }
 }
@@ -149,60 +148,6 @@ void Ship::takeDamage(const QPoint &damagePos)
 void Ship::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
-}
-
-void Ship::paintEvent(QPaintEvent *e)
-{
-    Q_UNUSED(e)
-    if(isDestroy || field->getIsPlayerField()) {
-        QPainter p;
-        p.begin(this);
-        p.drawRect(0, 0, width() - 1, height() - 1);
-        p.setBrush(Qt::blue);
-        p.drawRect(shipPos.x(), shipPos.y(), shipSize.width(), shipSize.height());
-        p.end();
-    }
-}
-
-void Ship::mousePressEvent(QMouseEvent *e)
-{
-    if(e->button() == Qt::MouseButton::LeftButton) {
-        if(!field->getIsPlayerField()) {
-            takeDamage(e->pos());
-            return;
-        }
-        isTarget = true;
-        mousePosWhenPress = e->position().toPoint();
-        groupBoxPosWhenPress = QPoint(x(), y());
-    }
-    else if(e->button() == Qt::MouseButton::RightButton){
-        rotate();
-    }
-}
-
-void Ship::mouseReleaseEvent(QMouseEvent *e)
-{
-    Q_UNUSED(e)
-    isTarget = false;
-    QPoint newPos = field->findNearSquarePos(pos());
-
-    for(auto const &ship : field->getAllShips()){
-        if(ship != this){
-            if(checkCollision(newPos, ship)){
-                move(groupBoxPosWhenPress);
-                return;
-            }
-        }
-    }
-    move(newPos);
-}
-
-void Ship::mouseMoveEvent(QMouseEvent *e)
-{
-    Q_UNUSED(e)
-    if(isTarget){
-        move(e->position().x() + x() - mousePosWhenPress.x(), e->position().y() + y() - mousePosWhenPress.y());
-    }
 }
 
 bool Ship::checkCollision(QPoint const &newPos, auto const &ship)
@@ -271,4 +216,86 @@ void Damage::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
     update();
+}
+
+PlayerShip::PlayerShip(Field *field)
+    : Ship(field)
+{
+}
+
+void PlayerShip::paintEvent(QPaintEvent *e)
+{
+    QPainter p;
+    p.begin(this);
+    p.drawRect(0, 0, width() - 1, height() - 1);
+    p.setBrush(Qt::blue);
+    p.drawRect(shipPos.x(), shipPos.y(), shipSize.width(), shipSize.height());
+    p.end();
+}
+
+void PlayerShip::mousePressEvent(QMouseEvent *e)
+{
+    if(e->button() == Qt::MouseButton::LeftButton) {
+        if(!field->getParent().gameStart) {
+            isTarget = true;
+            mousePosWhenPress = e->position().toPoint();
+            groupBoxPosWhenPress = QPoint(x(), y());
+        }
+    }
+    else if(e->button() == Qt::MouseButton::RightButton && !field->getParent().gameStart){
+        rotate();
+    }
+}
+
+void PlayerShip::mouseReleaseEvent(QMouseEvent *e)
+{
+    Q_UNUSED(e)
+    if(!field->getParent().gameStart) {
+        isTarget = false;
+        QPoint newPos = field->findNearSquarePos(pos());
+
+        for(auto const &ship : field->getAllShips()){
+            if(ship != this){
+                if(checkCollision(newPos, ship)){
+                    move(groupBoxPosWhenPress);
+                    return;
+                }
+            }
+        }
+        move(newPos);
+    }
+}
+
+void PlayerShip::mouseMoveEvent(QMouseEvent *e)
+{
+    Q_UNUSED(e)
+    if(isTarget){
+        move(e->position().x() + x() - mousePosWhenPress.x(), e->position().y() + y() - mousePosWhenPress.y());
+    }
+}
+
+BotShip::BotShip(Field *field)
+    : Ship(field)
+{
+
+}
+
+void BotShip::paintEvent(QPaintEvent *e)
+{
+    if(isDestroy) {
+        QPainter p;
+        p.begin(this);
+        p.drawRect(0, 0, width() - 1, height() - 1);
+        p.setBrush(Qt::blue);
+        p.drawRect(shipPos.x(), shipPos.y(), shipSize.width(), shipSize.height());
+        p.end();
+    }
+}
+
+void BotShip::mousePressEvent(QMouseEvent *e)
+{
+    Q_UNUSED(e)
+    if(field->getParent().gameStart) {
+        takeDamage(e->pos());
+    }
 }

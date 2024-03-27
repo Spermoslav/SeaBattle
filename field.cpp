@@ -7,9 +7,6 @@ Field::Field(Widget *parent)
     : QGroupBox(parent)
 {
     this->parent = parent;
-    ++fieldCount;
-    if(fieldCount == 1) isPlayerField = true;
-    else isPlayerField = false;
 
     reSize();
 }
@@ -22,11 +19,6 @@ int Field::getSquareSize() const
 uint Field::getSquareCount() const
 {
     return squareCount;
-}
-
-bool Field::getIsPlayerField()
-{
-    return isPlayerField;
 }
 
 void Field::reSize()
@@ -47,16 +39,9 @@ void Field::updateSquareSize()
 
 void Field::randomMoveAllShips()
 {
-    for( auto const &ship : allShips)
-        ship->randomMove();
-}
-
-void Field::spawnShips()
-{
-    if(allShips.empty()) {
-        for(std::size_t i = 0; i < 10; i ++) {
-            allShips.push_back(new Ship(this));
-        }
+    if(!parent->gameStart) {
+        for( auto const &ship : allShips)
+            ship->randomMove();
     }
 }
 
@@ -65,10 +50,17 @@ std::vector<Ship *> Field::getAllShips()
     return allShips;
 }
 
-void Field::mousePressEvent(QMouseEvent *e)
+Widget &Field::getParent() const
 {
-    missHits.push_back(findSquarePos(e->pos()));
-    update();
+    return *parent;
+}
+
+void Field::takeMissHit(const QPoint &hitPos)
+{
+    if(parent->gameStart) {
+        missHits.push_back(findSquarePos(hitPos));
+        update();
+    }
 }
 
 QPoint Field::findNearSquarePos(const QPoint &pos)
@@ -107,4 +99,39 @@ void Field::paintEvent(QPaintEvent *e)
         p.drawEllipse(mh.x(), mh.y(), squareSize, squareSize);
     }
     p.end();
+}
+
+PlayerField::PlayerField(Widget *parent)
+    : Field(parent)
+{
+
+}
+
+void PlayerField::spawnShips()
+{
+    if(allShips.empty()) {
+        for(std::size_t i = 0; i < 10; i ++) {
+            allShips.push_back(new PlayerShip(this));
+        }
+    }
+}
+
+BotField::BotField(Widget *parent)
+    : Field(parent)
+{
+
+}
+
+void BotField::spawnShips()
+{
+    if(allShips.empty()) {
+        for(std::size_t i = 0; i < 10; i ++) {
+            allShips.push_back(new BotShip(this));
+        }
+    }
+}
+
+void BotField::mousePressEvent(QMouseEvent *e)
+{
+    takeMissHit(e->pos());
 }

@@ -11,10 +11,10 @@ Widget::Widget(QWidget *parent)
 
     infoBar = new InfoBar(this);
 
-    fieldPlayer = new Field(this);
+    fieldPlayer = new PlayerField(this);
     fieldPlayer->spawnShips();
 
-    fieldBot = new Field(this);
+    fieldBot = new BotField(this);
     fieldBot->spawnShips();
 
     toolsBar = new ToolsBar(this);
@@ -45,12 +45,12 @@ InfoBar &Widget::getInfoBar() const
     return *infoBar;
 }
 
-Field &Widget::getFieldBot() const
+BotField &Widget::getFieldBot() const
 {
     return *fieldBot;
 }
 
-Field &Widget::getFieldPlayer() const
+PlayerField &Widget::getFieldPlayer() const
 {
     return *fieldPlayer;
 }

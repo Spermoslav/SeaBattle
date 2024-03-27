@@ -11,10 +11,7 @@ typedef unsigned short int uint16;
 
 class Widget;
 class Ship;
-class ShipMk4;
-class ShipMk3;
-class ShipMk2;
-class ShipMk1;
+
 
 class Field : public QGroupBox
 {
@@ -25,27 +22,28 @@ public:
     int getSquareSize() const;
     uint getSquareCount() const;
 
-    bool getIsPlayerField();
-
     void reSize();
 
     void updateSquareSize();
 
     void randomMoveAllShips();
 
-    void spawnShips();
+    virtual void spawnShips() = 0;
 
     QPoint findNearSquarePos(const QPoint &pos);
     QPoint findSquarePos(const QPoint &pos);
 
     std::vector<Ship*> getAllShips();
 
+    Widget &getParent() const;
+
+    void takeMissHit(const QPoint &hitPos);
+
 private slots:
-    void mousePressEvent(QMouseEvent *e) override;
     void resizeEvent(QResizeEvent *e) override;
     void paintEvent(QPaintEvent *e) override;
 
-private:
+protected:
     Widget *parent;
 
     std::vector<Ship*> allShips;
@@ -53,9 +51,26 @@ private:
 
     int squareSize;
     uint const squareCount = 10;
-
-    static inline uint16 fieldCount = 0;
-    bool isPlayerField;
 };
 
+class PlayerField : public Field
+{
+    Q_OBJECT
+public:
+    PlayerField(Widget *parent);
+
+    void spawnShips() override;
+private slots:
+};
+
+class BotField : public Field
+{
+    Q_OBJECT
+public:
+    BotField(Widget *parent);
+
+    void spawnShips() override;
+private slots:
+    void mousePressEvent(QMouseEvent *e) override;
+};
 #endif // FIELD_H

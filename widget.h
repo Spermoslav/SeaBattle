@@ -27,8 +27,8 @@ public:
 
     InfoBar &getInfoBar() const;
 
-    Field &getFieldBot() const;
-    Field &getFieldPlayer() const;
+    BotField &getFieldBot() const;
+    PlayerField &getFieldPlayer() const;
 
     bool gameStart;
 
@@ -41,8 +41,8 @@ private:
 
     Ui::Widget *ui;
 
-    Field *fieldPlayer;
-    Field *fieldBot;
+    PlayerField *fieldPlayer;
+    BotField *fieldBot;
 
     ToolsBar *toolsBar;
 

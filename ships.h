@@ -18,10 +18,8 @@ typedef unsigned short int uint16;
 
 class Field;
 class Damage;
-class ShipMk4;
-class ShipMk3;
-class ShipMk2;
-class ShipMk1;
+class PlayerShip;
+class BotShip;
 
 class Ship : public QGroupBox
 {
@@ -49,18 +47,11 @@ public:
 
 private slots:
     void resizeEvent(QResizeEvent *e) override;
-    void paintEvent(QPaintEvent *e) override;
-
-    void mousePressEvent(QMouseEvent *e) override;
-    void mouseReleaseEvent(QMouseEvent *e) override;
-    void mouseMoveEvent(QMouseEvent *e) override;
-private:
+protected:
 
     QPoint findPosForDamage(const QPoint &pos);
 
-private:
-
-    QWidget *parent;
+protected:
 
     Field *field;
 
@@ -79,7 +70,6 @@ private:
     static inline int shipCount = 0;
 
     bool isTarget;
-    bool isPlayerField;
     bool isDestroy;
 
     enum Orientation {
@@ -89,6 +79,34 @@ private:
     Orientation orientation;
 
 
+};
+
+class PlayerShip : public Ship
+{
+    Q_OBJECT
+public:
+
+    PlayerShip(Field *field);
+
+private slots:
+    void paintEvent(QPaintEvent *e) override;
+
+    void mousePressEvent(QMouseEvent *e) override;
+    void mouseReleaseEvent(QMouseEvent *e) override;
+    void mouseMoveEvent(QMouseEvent *e) override;
+};
+
+class BotShip : public Ship
+{
+    Q_OBJECT
+public:
+
+    BotShip(Field *field);
+
+private slots:
+    void paintEvent(QPaintEvent *e) override;
+
+    void mousePressEvent(QMouseEvent *e) override;
 };
 
 class Damage : public QWidget
