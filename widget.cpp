@@ -6,6 +6,7 @@ Widget::Widget(QWidget *parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
+    setMinimumSize(400, 400);
     gameStart = false;
 
     infoBar = new InfoBar(this);
@@ -58,6 +59,7 @@ void Widget::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
     updateWidgetsSize();
+    qDebug() << size();
 }
 
 void Widget::mousePressEvent(QMouseEvent *e)

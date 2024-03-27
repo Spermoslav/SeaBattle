@@ -134,7 +134,7 @@ void Ship::randomMove()
 void Ship::takeDamage(const QPoint &damagePos)
 {
     for(auto const &dm : damage) {
-        if(findPosForDamage(damagePos) == dm->pos()){
+        if(findPosForDamage(damagePos) == dm->pos() && dm->isHidden()){
             dm->show();
             if(++destroyItems == mk) {
                 isDestroy = true;
