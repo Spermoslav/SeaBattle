@@ -28,8 +28,19 @@ ToolsBar::ToolsBar(Widget *parent)
     mainMenu = new MainMenu(parent);
 }
 
+Widget *ToolsBar::getParent() const
+{
+    return parent;
+}
+
+void ToolsBar::reset()
+{
+    startGamePB->setDisabled(false);
+}
+
 void ToolsBar::resizeEvent(QResizeEvent *e)
 {
+    Q_UNUSED(e)
     mainMenu->setGeometry(parent->width() / 3, parent->height() / 3, parent->width() / 3, parent->height() / 3);
 }
 
@@ -41,8 +52,8 @@ void ToolsBar::mainMenuPBClicked()
 
 void ToolsBar::startGamePBClicked()
 {
-    for(auto const &targetShip : parent->getFieldPlayer().getAllShips()) {
-        for(auto const &ship : parent->getFieldPlayer().getAllShips()) {
+    for(auto const &targetShip : parent->getFieldPlayer()->getAllShips()) {
+        for(auto const &ship : parent->getFieldPlayer()->getAllShips()) {
             if(targetShip != ship){
                 if(targetShip->checkShipCollision(targetShip->pos(), ship)) {
                     return;
@@ -50,17 +61,17 @@ void ToolsBar::startGamePBClicked()
             }
         }
     }
-    parent->getFieldBot().randomMoveAllShips();
+    parent->getFieldBot()->randomMoveAllShips();
     parent->gameStart = true;
     startGamePB->setDisabled(true);
 }
 
 void ToolsBar::randomMovePlayerShipsPBClicked()
 {
-    parent->getFieldPlayer().randomMoveAllShips();
+    parent->getFieldPlayer()->randomMoveAllShips();
 }
 
-MainMenu::MainMenu(QWidget *parent)
+MainMenu::MainMenu(Widget *parent)
     : QGroupBox(parent)
 {
 
@@ -93,6 +104,7 @@ QWidget &MainMenu::getToolsBarGShadow() const
 
 void MainMenu::resizeEvent(QResizeEvent *e)
 {
+    Q_UNUSED(e)
     backgroundShadow->setGeometry(0, 0, parent->width(), parent->height());
     closePB->setGeometry(width() * 0.8, 0, width() * 0.2, height() * 0.2);
     resetGamePB->setGeometry(width() * 0.1, height() * 0.5, width() * 0.8, height() * 0.1);
@@ -107,7 +119,8 @@ void MainMenu::closePBClicked()
 
 void MainMenu::resetGamePBClicked()
 {
-
+    parent->resetGame();
+    closePBClicked();
 }
 
 void MainMenu::exitGamePBClicked()
@@ -120,11 +133,41 @@ InfoBar::InfoBar(QWidget *parent)
 {
     this->parent = parent;
     setStyleSheet("border: 1px solid black;");
+
+    playerScoreLabel        = new QLabel;
+    playerDestroyShipsLabel = new QLabel;
+    botScoreLabel           = new QLabel;
+    botDestroyShipsLabel    = new QLabel;
+
+    labelsLay = new QGridLayout(this);
+    labelsLay->addWidget(playerScoreLabel, 1, 0);
+    labelsLay->addWidget(playerDestroyShipsLabel, 1, 1);
+    labelsLay->addWidget(botScoreLabel, 0, 0);
+    labelsLay->addWidget(botDestroyShipsLabel, 0, 1);
+
+    updateLabels();
+}
+
+void InfoBar::updateLabels()
+{
+    playerScoreLabel->setText("Ваши очки: " + QString::number(playerScore));
+    playerDestroyShipsLabel->setText("Уничтожено кораблей соперника: " + QString::number(playerDestroyShips));
+    botScoreLabel->setText("Очки бота: " + QString::number(botScore));
+    botDestroyShipsLabel->setText("Уничтожено ваших кораблей: " + QString::number(botDestroyShips));
+}
+
+void InfoBar::reset()
+{
+    playerScore        = 0;
+    playerDestroyShips = 0;
+    botScore           = 0;
+    botDestroyShips    = 0;
+    updateLabels();
 }
 
 void InfoBar::resizeEvent(QResizeEvent *e)
 {
-
+    Q_UNUSED(e)
 }
 
 

@@ -6,12 +6,8 @@
 #include <QResizeEvent>
 #include <QPainter>
 
-typedef unsigned int uint;
-typedef unsigned short int uint16;
-
 class Widget;
 class Ship;
-
 
 class Field : public QGroupBox
 {
@@ -38,6 +34,8 @@ public:
     Widget &getParent() const;
 
     void takeMissHit(const QPoint &hitPos);
+
+    void reset();
 
 private slots:
     void resizeEvent(QResizeEvent *e) override;

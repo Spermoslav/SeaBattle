@@ -7,6 +7,7 @@ Ship::Ship(Field *field)
     : QGroupBox(field)
 {
     this->field = field;
+    infoBar = field->getParent().getInfoBar();
     isTarget = false;
     isDestroy = false;
     destroyItems = 0;
@@ -28,9 +29,9 @@ uint Ship::getMk()
     return mk;
 }
 
-Field &Ship::getField() const
+Field *Ship::getField() const
 {
-    return *field;
+    return field;
 }
 
 bool Ship::getIsTarget()
@@ -96,20 +97,22 @@ void Ship::randomMove()
     if(!field->getParent().gameStart) {
         QPoint newPos;
         int sqX, sqY;
-        int count = 0;
+        size_t count = 0;
+        bool b = rand() % 2;
+        bool allShipsCheck;
         while(count < 1000) {
             ++count;
-            bool allShipsCheck = false;
+            allShipsCheck = false;
             sqX = rand() % (field->getSquareCount() + 1);
             sqY = rand() % (field->getSquareCount() + 1);
             newPos = QPoint(sqX * field->getSquareSize(), sqY * field->getSquareSize());
-            if(rand() % 2) rotate();
             if(field->getAllShips().size() == 0) {
                 if(checkFieldCollision(newPos)) {
                     continue;
                 }
                 else {
                     move(newPos);
+                    if(b) rotate();
                     return;
                 }
             }
@@ -124,23 +127,9 @@ void Ship::randomMove()
             }
             if (allShipsCheck) {
                 move(newPos);
+                if(b) rotate();
                 return;
             }
-        }
-    }
-}
-
-void Ship::takeDamage(const QPoint &damagePos)
-{
-    for(auto const &dm : damage) {
-        if(findPosForDamage(damagePos) == dm->pos() && dm->isHidden()){
-            dm->show();
-            if(++destroyItems == mk) {
-                isDestroy = true;
-                update();
-            }
-        }
-        else {
         }
     }
 }
@@ -178,44 +167,24 @@ bool Ship::checkFieldCollision(const QPoint &newPos)
     else return false;
 }
 
+void Ship::reset()
+{
+    for(auto const &dm : damage) {
+        dm->hide();
+    }
+    isTarget = false;
+    isDestroy = false;
+    destroyItems = 0;
+    orientation = Orientation::vertical;
+    move(0, 0);
+    resize();
+    update();
+}
+
 QPoint Ship::findPosForDamage(const QPoint &pos)
 {
     return QPoint((pos.x() / field->getSquareSize()),
                   (pos.y() / field->getSquareSize())) * field->getSquareSize();
-}
-
-
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Damage::Damage(Ship *parent)
-    : QWidget(parent)
-{
-    this->parent = parent;
-    hide();
-    update();
-}
-
-void Damage::resize()
-{
-    static_cast<QWidget*> (this)->resize(parent->getField().getSquareSize(), parent->getField().getSquareSize());
-}
-
-void Damage::paintEvent(QPaintEvent *e)
-{
-    Q_UNUSED(e)
-    QPainter p;
-    p.begin(this);
-    p.setPen(Qt::blue);
-    p.drawLine(QPoint(0, 0), QPoint(width(), height()));
-    p.drawLine(QPoint(width(), 0), QPoint(0, height()));
-    p.end();
-}
-
-void Damage::resizeEvent(QResizeEvent *e)
-{
-    Q_UNUSED(e)
-    update();
 }
 
 PlayerShip::PlayerShip(Field *field)
@@ -223,8 +192,28 @@ PlayerShip::PlayerShip(Field *field)
 {
 }
 
+void PlayerShip::takeDamage(const QPoint &damagePos)
+{
+    for(auto const &dm : damage) {
+        if(findPosForDamage(damagePos) == dm->pos() && dm->isHidden()){
+            dm->show();
+            ++infoBar->botScore;
+            if(++destroyItems == mk) {
+                isDestroy = true;
+                ++infoBar->botDestroyShips;
+                update();
+            }
+            infoBar->updateLabels();
+            return;
+        }
+        else {
+        }
+    }
+}
+
 void PlayerShip::paintEvent(QPaintEvent *e)
 {
+    Q_UNUSED(e)
     QPainter p;
     p.begin(this);
     p.drawRect(0, 0, width() - 1, height() - 1);
@@ -280,9 +269,29 @@ BotShip::BotShip(Field *field)
 
 }
 
+void BotShip::takeDamage(const QPoint &damagePos)
+{
+    for(auto const &dm : damage) {
+        if(findPosForDamage(damagePos) == dm->pos() && dm->isHidden()){
+            dm->show();
+            ++infoBar->playerScore;
+            if(++destroyItems == mk) {
+                isDestroy = true;
+                ++infoBar->playerDestroyShips;
+                update();
+            }
+            infoBar->updateLabels();
+            return;
+        }
+        else {
+        }
+    }
+}
+
 void BotShip::paintEvent(QPaintEvent *e)
 {
-    if(isDestroy) {
+    Q_UNUSED(e)
+    if(true) {
         QPainter p;
         p.begin(this);
         p.drawRect(0, 0, width() - 1, height() - 1);
@@ -298,4 +307,37 @@ void BotShip::mousePressEvent(QMouseEvent *e)
     if(field->getParent().gameStart) {
         takeDamage(e->pos());
     }
+}
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Damage::Damage(Ship *parent)
+    : QWidget(parent)
+{
+    this->parent = parent;
+    hide();
+    update();
+}
+
+void Damage::resize()
+{
+    static_cast<QWidget*> (this)->resize(parent->getField()->getSquareSize(), parent->getField()->getSquareSize());
+}
+
+void Damage::paintEvent(QPaintEvent *e)
+{
+    Q_UNUSED(e)
+    QPainter p;
+    p.begin(this);
+    p.setPen(Qt::blue);
+    p.drawLine(QPoint(0, 0), QPoint(width(), height()));
+    p.drawLine(QPoint(width(), 0), QPoint(0, height()));
+    p.end();
+}
+
+void Damage::resizeEvent(QResizeEvent *e)
+{
+    Q_UNUSED(e)
+    update();
 }

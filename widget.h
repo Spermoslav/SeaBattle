@@ -25,10 +25,12 @@ public:
 
     void updateWidgetsSize();
 
-    InfoBar &getInfoBar() const;
+    InfoBar *getInfoBar() const;
 
-    BotField &getFieldBot() const;
-    PlayerField &getFieldPlayer() const;
+    BotField *getFieldBot() const;
+    PlayerField *getFieldPlayer() const;
+
+    void resetGame();
 
     bool gameStart;
 

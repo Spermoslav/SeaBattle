@@ -1,5 +1,5 @@
 #include "field.h"
-#include "ships.h"
+
 #include "widget.h"
 #include <algorithm>
 
@@ -7,7 +7,7 @@ Field::Field(Widget *parent)
     : QGroupBox(parent)
 {
     this->parent = parent;
-
+    allShips.reserve(10);
     reSize();
 }
 
@@ -23,7 +23,7 @@ uint Field::getSquareCount() const
 
 void Field::reSize()
 {
-    const int fieldSize = std::min(parent->width() / 2, (parent->height() - parent->getInfoBar().height()) / 2);
+    const int fieldSize = std::min(parent->width() / 2, (parent->height() - parent->getInfoBar()->height()) / 2);
     resize(fieldSize, fieldSize);
     updateSquareSize();
     for(auto &mh : missHits) {
@@ -61,6 +61,15 @@ void Field::takeMissHit(const QPoint &hitPos)
         missHits.push_back(findSquarePos(hitPos));
         update();
     }
+}
+
+void Field::reset()
+{
+    for(auto &ship : allShips) {
+        ship->reset();
+    }
+    missHits.clear();
+    update();
 }
 
 QPoint Field::findNearSquarePos(const QPoint &pos)
@@ -114,12 +123,12 @@ void PlayerField::spawnShips()
             allShips.push_back(new PlayerShip(this));
         }
     }
+
 }
 
 BotField::BotField(Widget *parent)
     : Field(parent)
 {
-
 }
 
 void BotField::spawnShips()

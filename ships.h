@@ -12,14 +12,11 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 
-
-typedef unsigned int uint;
-typedef unsigned short int uint16;
-
 class Field;
 class Damage;
 class PlayerShip;
 class BotShip;
+class InfoBar;
 
 class Ship : public QGroupBox
 {
@@ -31,7 +28,7 @@ public:
 
     uint          getMk();
 
-    inline Field &getField() const;
+    inline Field *getField() const;
 
     bool          getIsTarget();
 
@@ -39,11 +36,13 @@ public:
     void          rotate();
 
     void          randomMove();
-    void takeDamage(const QPoint &damagePos);
+    virtual void takeDamage(const QPoint &damagePos) = 0;
 
     bool checkCollision(QPoint const &newPos, auto const &ship);
     bool checkShipCollision(QPoint const &newPos, auto const &ship);
     bool checkFieldCollision(QPoint const &newPos);
+
+    void reset();
 
 private slots:
     void resizeEvent(QResizeEvent *e) override;
@@ -62,12 +61,12 @@ protected:
     QSize shipSize;
 
     std::vector<Damage*> damage;
+    InfoBar *infoBar;
 
-    uint16 mk;
-    uint16 destroyItems;
+    quint16 mk;
+    quint16 destroyItems;
     int shipCenterX;
     int shipCenterY;
-    static inline int shipCount = 0;
 
     bool isTarget;
     bool isDestroy;
@@ -88,6 +87,8 @@ public:
 
     PlayerShip(Field *field);
 
+    void takeDamage(const QPoint &damagePos) override;
+
 private slots:
     void paintEvent(QPaintEvent *e) override;
 
@@ -102,6 +103,8 @@ class BotShip : public Ship
 public:
 
     BotShip(Field *field);
+
+    void takeDamage(const QPoint &damagePos) override;
 
 private slots:
     void paintEvent(QPaintEvent *e) override;

@@ -40,19 +40,28 @@ void Widget::updateWidgetsSize()
     infoBar->resize(width() - toolsBar->width(), height() * 0.1);
 }
 
-InfoBar &Widget::getInfoBar() const
+InfoBar *Widget::getInfoBar() const
 {
-    return *infoBar;
+    return infoBar;
 }
 
-BotField &Widget::getFieldBot() const
+BotField *Widget::getFieldBot() const
 {
-    return *fieldBot;
+    return fieldBot;
 }
 
-PlayerField &Widget::getFieldPlayer() const
+PlayerField *Widget::getFieldPlayer() const
 {
-    return *fieldPlayer;
+    return fieldPlayer;
+}
+
+void Widget::resetGame()
+{
+    gameStart = false;
+    toolsBar->reset();
+    fieldPlayer->reset();
+    fieldBot->reset();
+    infoBar->reset();
 }
 
 void Widget::resizeEvent(QResizeEvent *e)
