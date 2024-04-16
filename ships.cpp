@@ -24,7 +24,7 @@ Ship::Ship(Field *field)
     }
 }
 
-uint Ship::getMk()
+uint Ship::getMk() const
 {
     return mk;
 }
@@ -34,9 +34,19 @@ Field *Ship::getField() const
     return field;
 }
 
-bool Ship::getIsTarget()
+std::vector<Damage *> &Ship::damagedSquares()
+{
+    return damage;
+}
+
+bool Ship::getIsTarget() const
 {
     return isTarget;
+}
+
+bool Ship::getIsDestroy() const
+{
+    return isDestroy;
 }
 
 void Ship::resize()
@@ -103,8 +113,8 @@ void Ship::randomMove()
         while(count < 1000) {
             ++count;
             allShipsCheck = false;
-            sqX = rand() % (field->getSquareCount() + 1);
-            sqY = rand() % (field->getSquareCount() + 1);
+            sqX = rand() % (field->squaresCount + 1);
+            sqY = rand() % (field->squaresCount + 1);
             newPos = QPoint(sqX * field->getSquareSize(), sqY * field->getSquareSize());
             if(field->getAllShips().size() == 0) {
                 if(checkFieldCollision(newPos)) {
@@ -139,12 +149,12 @@ void Ship::resizeEvent(QResizeEvent *e)
     Q_UNUSED(e)
 }
 
-bool Ship::checkCollision(QPoint const &newPos, auto const &ship)
+bool Ship::checkCollision(const QPoint &newPos, const auto &ship) const
 {
     return checkShipCollision(newPos, ship) || checkFieldCollision(newPos);
 }
 
-bool Ship::checkShipCollision(const QPoint &newPos, auto const &ship)
+bool Ship::checkShipCollision(const QPoint &newPos, auto const &ship) const
 {
     const int sqSize = field->getSquareSize();
 
@@ -160,7 +170,7 @@ bool Ship::checkShipCollision(const QPoint &newPos, auto const &ship)
     else return false;
 }
 
-bool Ship::checkFieldCollision(const QPoint &newPos)
+bool Ship::checkFieldCollision(const QPoint &newPos) const
 {
     if(newPos.x() + width() > field->width() || newPos.x() < 0) return true;
     else if(newPos.y() + height() > field->height() || newPos.y() < 0) return true;
@@ -181,7 +191,12 @@ void Ship::reset()
     update();
 }
 
-QPoint Ship::findPosForDamage(const QPoint &pos)
+Orientation Ship::getOrientation() const
+{
+    return orientation;
+}
+
+QPoint Ship::findPosForDamage(const QPoint &pos) const
 {
     return QPoint((pos.x() / field->getSquareSize()),
                   (pos.y() / field->getSquareSize())) * field->getSquareSize();
@@ -192,7 +207,7 @@ PlayerShip::PlayerShip(Field *field)
 {
 }
 
-void PlayerShip::takeDamage(const QPoint &damagePos)
+bool PlayerShip::takeDamage(const QPoint &damagePos)
 {
     for(auto const &dm : damage) {
         if(findPosForDamage(damagePos) == dm->pos() && dm->isHidden()){
@@ -201,10 +216,12 @@ void PlayerShip::takeDamage(const QPoint &damagePos)
             if(++destroyItems == mk) {
                 isDestroy = true;
                 ++infoBar->botDestroyShips;
+                field->eraseRemainedShip(this);
+                field->addMissHitsAroundDestroyShip(this);
                 update();
             }
             infoBar->updateLabels();
-            return;
+            return isDestroy;
         }
         else {
         }
@@ -269,7 +286,7 @@ BotShip::BotShip(Field *field)
 
 }
 
-void BotShip::takeDamage(const QPoint &damagePos)
+bool BotShip::takeDamage(const QPoint &damagePos)
 {
     for(auto const &dm : damage) {
         if(findPosForDamage(damagePos) == dm->pos() && dm->isHidden()){
@@ -278,10 +295,12 @@ void BotShip::takeDamage(const QPoint &damagePos)
             if(++destroyItems == mk) {
                 isDestroy = true;
                 ++infoBar->playerDestroyShips;
+                field->eraseRemainedShip(this);
+                field->addMissHitsAroundDestroyShip(this);
                 update();
             }
             infoBar->updateLabels();
-            return;
+            return isDestroy;
         }
         else {
         }
@@ -291,7 +310,7 @@ void BotShip::takeDamage(const QPoint &damagePos)
 void BotShip::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e)
-    if(true) {
+    if(isDestroy) {
         QPainter p;
         p.begin(this);
         p.drawRect(0, 0, width() - 1, height() - 1);

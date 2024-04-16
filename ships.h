@@ -18,6 +18,11 @@ class PlayerShip;
 class BotShip;
 class InfoBar;
 
+enum Orientation {
+    horizontal,
+    vertical
+};
+
 class Ship : public QGroupBox
 {
     Q_OBJECT
@@ -26,29 +31,33 @@ public:
 
     Ship(Field *field);
 
-    uint          getMk();
+    uint          getMk() const;
 
     inline Field *getField() const;
 
-    bool          getIsTarget();
+    std::vector<Damage*> &damagedSquares();
 
-    void          resize();
-    void          rotate();
+    bool getIsTarget() const;
+    bool getIsDestroy() const;
+    void resize();
+    void rotate();
 
     void          randomMove();
-    virtual void takeDamage(const QPoint &damagePos) = 0;
+    virtual bool takeDamage(const QPoint &damagePos) = 0;
 
-    bool checkCollision(QPoint const &newPos, auto const &ship);
-    bool checkShipCollision(QPoint const &newPos, auto const &ship);
-    bool checkFieldCollision(QPoint const &newPos);
+    bool checkCollision(const QPoint &newPos, const auto &ship) const;
+    bool checkShipCollision(const QPoint &newPos, const auto &ship) const;
+    bool checkFieldCollision(const QPoint &newPos) const;
 
     void reset();
+
+    Orientation getOrientation() const;
 
 private slots:
     void resizeEvent(QResizeEvent *e) override;
 protected:
 
-    QPoint findPosForDamage(const QPoint &pos);
+    QPoint findPosForDamage(const QPoint &pos) const;
 
 protected:
 
@@ -71,13 +80,7 @@ protected:
     bool isTarget;
     bool isDestroy;
 
-    enum Orientation {
-        horizontal,
-        vertical
-    };
     Orientation orientation;
-
-
 };
 
 class PlayerShip : public Ship
@@ -87,7 +90,7 @@ public:
 
     PlayerShip(Field *field);
 
-    void takeDamage(const QPoint &damagePos) override;
+    bool takeDamage(const QPoint &damagePos) override;
 
 private slots:
     void paintEvent(QPaintEvent *e) override;
@@ -104,7 +107,7 @@ public:
 
     BotShip(Field *field);
 
-    void takeDamage(const QPoint &damagePos) override;
+    bool takeDamage(const QPoint &damagePos) override;
 
 private slots:
     void paintEvent(QPaintEvent *e) override;

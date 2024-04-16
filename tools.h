@@ -9,7 +9,8 @@
 
 class MainMenu;
 class Widget;
-class Ships;
+class Ship;
+class Bot;
 
 class ToolsBar : public QGroupBox
 {
@@ -26,6 +27,7 @@ private slots:
     void mainMenuPBClicked();
     void startGamePBClicked();
     void randomMovePlayerShipsPBClicked();
+    void botMotionPBClicked();
 
 private:
     Widget *parent;
@@ -33,12 +35,37 @@ private:
     QPushButton *mainMenuPB;
     QPushButton *startGamePB;
     QPushButton *randomMovePlayerShipsPB;
+    QPushButton *botMotionPB;
+
+    Bot *bot;
 
     QVBoxLayout *toolsVBoxLayout;
 
     MainMenu *mainMenu;
 };
 
+//class Menu : public QGroupBox
+//{
+//public:
+//    Menu(Widget *parent);
+
+//    QWidget &getToolsBarGShadow() const;
+
+//private slots:
+//    void resizeEvent(QResizeEvent *e) override;
+//    void closePBClicked();
+//    void resetGamePBClicked();
+//    void exitGamePBClicked();
+
+//private:
+//    Widget *parent;
+
+//    QWidget *backgroundShadow;
+
+//    QPushButton *closePB;
+//    QPushButton *resetGamePB;
+//    QPushButton *exitGamePB;
+//};
 
 class MainMenu : public QGroupBox
 {
@@ -91,6 +118,20 @@ public:
     quint16 botDestroyShips    = 0;
 };
 
+//class WinMenu : public QGroupBox
+//{
+//public:
 
+//    WinMenu(Widget *parent);
+
+//    const static QString playerWinStr;
+//    const static QString botWinStr;
+
+//private:
+//    Widget *parent;
+
+//    QLabel *winLabel;
+//    QPushButton *
+//};
 
 #endif // TOOLS_H

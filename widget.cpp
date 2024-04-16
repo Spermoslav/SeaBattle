@@ -17,7 +17,11 @@ Widget::Widget(QWidget *parent)
     fieldBot = new BotField(this);
     fieldBot->spawnShips();
 
+    bot = new Bot(this);
+
     toolsBar = new ToolsBar(this);
+
+
 }
 
 Widget::~Widget()
@@ -55,20 +59,30 @@ PlayerField *Widget::getFieldPlayer() const
     return fieldPlayer;
 }
 
+Bot *Widget::getBot()
+{
+    return bot;
+}
+
 void Widget::resetGame()
 {
     gameStart = false;
+    bot->reset();
     toolsBar->reset();
     fieldPlayer->reset();
     fieldBot->reset();
     infoBar->reset();
 }
 
+void Widget::finishGame(Winner win)
+{
+
+}
+
 void Widget::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
     updateWidgetsSize();
-    qDebug() << size();
 }
 
 void Widget::mousePressEvent(QMouseEvent *e)

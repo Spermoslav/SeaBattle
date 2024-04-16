@@ -8,34 +8,43 @@
 
 class Widget;
 class Ship;
+class PlayerShip;
 
 class Field : public QGroupBox
 {
     Q_OBJECT
 public:
     Field(Widget *parent);
-
-    int getSquareSize() const;
-    uint getSquareCount() const;
-
+    void reset();
     void reSize();
-
     void updateSquareSize();
-
     void randomMoveAllShips();
+    void takeMissHit(const QPoint &hitPos);
+    void eraseRemainedShip(const Ship* ship);
+    void addMissHitsAroundDestroyShip(const Ship* ship);
 
     virtual void spawnShips() = 0;
 
     QPoint findNearSquarePos(const QPoint &pos);
     QPoint findSquarePos(const QPoint &pos);
 
-    std::vector<Ship*> getAllShips();
+    bool isShipOn(const QPoint &pos) noexcept;
+    bool isMissHitOn(const QPoint &pos) noexcept;
+    bool isOutField(const QPoint &pos) noexcept;
+
+    int getSquareSize() const;
+
+    std::vector<Ship*> &getAllShips();
+    std::vector<Ship*> &getRemainedShips();
+    std::list<QPoint> &getMissHits();
 
     Widget &getParent() const;
 
-    void takeMissHit(const QPoint &hitPos);
+    const static quint8 squaresCount = 100;
+    const static quint8 rowsCount = 10;
+    const static quint8 shipCount = 10;
+    const static quint8 shipsSquaresCount = 20;
 
-    void reset();
 
 private slots:
     void resizeEvent(QResizeEvent *e) override;
@@ -45,10 +54,11 @@ protected:
     Widget *parent;
 
     std::vector<Ship*> allShips;
+    std::vector<Ship*> remainedShips;
     std::list<QPoint> missHits;
 
     int squareSize;
-    uint const squareCount = 10;
+
 };
 
 class PlayerField : public Field
@@ -58,7 +68,12 @@ public:
     PlayerField(Widget *parent);
 
     void spawnShips() override;
+
 private slots:
+    void mousePressEvent(QMouseEvent *e) override;
+
+private:
+
 };
 
 class BotField : public Field

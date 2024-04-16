@@ -5,6 +5,7 @@ ToolsBar::ToolsBar(Widget *parent)
     : QGroupBox(parent)
 {
     this->parent = parent;
+    bot = parent->getBot();
 
     setStyleSheet("border: 1px solid black");
 
@@ -20,10 +21,15 @@ ToolsBar::ToolsBar(Widget *parent)
     randomMovePlayerShipsPB->setText("random move");
     connect(randomMovePlayerShipsPB, &QPushButton::clicked, this, &ToolsBar::randomMovePlayerShipsPBClicked);
 
+    botMotionPB = new QPushButton;
+    botMotionPB->setText("botMotion");
+    connect(botMotionPB, &QPushButton::clicked, this, &ToolsBar::botMotionPBClicked);
+
     toolsVBoxLayout = new QVBoxLayout(this);
     toolsVBoxLayout->addWidget(mainMenuPB);
     toolsVBoxLayout->addWidget(startGamePB);
     toolsVBoxLayout->addWidget(randomMovePlayerShipsPB);
+    toolsVBoxLayout->addWidget(botMotionPB);
 
     mainMenu = new MainMenu(parent);
 }
@@ -71,10 +77,14 @@ void ToolsBar::randomMovePlayerShipsPBClicked()
     parent->getFieldPlayer()->randomMoveAllShips();
 }
 
+void ToolsBar::botMotionPBClicked()
+{
+    if(parent->gameStart) bot->motion();
+}
+
 MainMenu::MainMenu(Widget *parent)
     : QGroupBox(parent)
 {
-
     this->parent = parent;
     setStyleSheet("border: 1px solid black;"
                   "background-color: white;");
@@ -82,8 +92,7 @@ MainMenu::MainMenu(Widget *parent)
     backgroundShadow = new QWidget(parent);
     backgroundShadow->setStyleSheet("background-color: rgba(0, 0, 0, 130);");
 
-    closePB = new QPushButton(this);
-    closePB->setText("close");
+    closePB = new QPushButton("close", this);
     connect(closePB, &QPushButton::clicked, this, &MainMenu::closePBClicked);
 
     resetGamePB = new QPushButton("reset", this);
@@ -169,5 +178,6 @@ void InfoBar::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
 }
+
 
 
