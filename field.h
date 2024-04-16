@@ -38,7 +38,7 @@ public:
     std::vector<Ship*> &getRemainedShips();
     std::list<QPoint> &getMissHits();
 
-    Widget &getParent() const;
+    Widget *getParent() const;
 
     const static quint8 squaresCount = 100;
     const static quint8 rowsCount = 10;

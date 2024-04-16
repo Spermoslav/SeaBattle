@@ -103,9 +103,9 @@ std::list<QPoint> &Field::getMissHits()
     return missHits;
 }
 
-Widget &Field::getParent() const
+Widget *Field::getParent() const
 {
-    return *parent;
+    return parent;
 }
 
 void Field::takeMissHit(const QPoint &hitPos)
@@ -233,5 +233,5 @@ void BotField::spawnShips()
 
 void BotField::mousePressEvent(QMouseEvent *e)
 {
-    takeMissHit(e->pos());
+    if(parent->gameStart) takeMissHit(e->pos());
 }

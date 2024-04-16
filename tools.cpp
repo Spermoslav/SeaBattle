@@ -154,15 +154,17 @@ InfoBar::InfoBar(QWidget *parent)
     labelsLay->addWidget(botScoreLabel, 0, 0);
     labelsLay->addWidget(botDestroyShipsLabel, 0, 1);
 
+    qDebug() << sizeof(playerScore);
+
     updateLabels();
 }
 
 void InfoBar::updateLabels()
 {
-    playerScoreLabel->setText("Ваши очки: " + QString::number(playerScore));
-    playerDestroyShipsLabel->setText("Уничтожено кораблей соперника: " + QString::number(playerDestroyShips));
-    botScoreLabel->setText("Очки бота: " + QString::number(botScore));
-    botDestroyShipsLabel->setText("Уничтожено ваших кораблей: " + QString::number(botDestroyShips));
+    playerScoreLabel->setText(playerScoreStr + QString::number(playerScore));
+    playerDestroyShipsLabel->setText(playerDestroyShipsStr + QString::number(playerDestroyShips));
+    botScoreLabel->setText(botScoreStr + QString::number(botScore));
+    botDestroyShipsLabel->setText(botDestroyShipsStr + QString::number(botDestroyShips));
 }
 
 void InfoBar::reset()
@@ -172,6 +174,26 @@ void InfoBar::reset()
     botScore           = 0;
     botDestroyShips    = 0;
     updateLabels();
+}
+
+void InfoBar::playerScoreAdd()
+{
+    playerScoreLabel->setText(playerScoreStr + QString::number(++playerScore));
+}
+
+void InfoBar::playerDestroyShipsAdd()
+{
+    playerDestroyShipsLabel->setText(playerDestroyShipsStr + QString::number(++playerDestroyShips));
+}
+
+void InfoBar::botScoreAdd()
+{
+    botScoreLabel->setText(botScoreStr + QString::number(++botScore));
+}
+
+void InfoBar::botDestroyShipsAdd()
+{
+    botDestroyShipsLabel->setText(botDestroyShipsStr + QString::number(++botDestroyShips));
 }
 
 void InfoBar::resizeEvent(QResizeEvent *e)

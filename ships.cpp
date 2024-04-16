@@ -7,7 +7,7 @@ Ship::Ship(Field *field)
     : QGroupBox(field)
 {
     this->field = field;
-    infoBar = field->getParent().getInfoBar();
+    infoBar = field->getParent()->getInfoBar();
     isTarget = false;
     isDestroy = false;
     destroyItems = 0;
@@ -102,9 +102,9 @@ void Ship::rotate()
     resize();
 }
 
-void Ship::randomMove()
+void Ship::randomMove() //
 {
-    if(!field->getParent().gameStart) {
+    if(!field->getParent()->gameStart) {
         QPoint newPos;
         int sqX, sqY;
         size_t count = 0;
@@ -182,10 +182,10 @@ void Ship::reset()
     for(auto const &dm : damage) {
         dm->hide();
     }
-    isTarget = false;
-    isDestroy = false;
+    isTarget     = false;
+    isDestroy    = false;
     destroyItems = 0;
-    orientation = Orientation::vertical;
+    orientation  = Orientation::vertical;
     move(0, 0);
     resize();
     update();
@@ -212,15 +212,14 @@ bool PlayerShip::takeDamage(const QPoint &damagePos)
     for(auto const &dm : damage) {
         if(findPosForDamage(damagePos) == dm->pos() && dm->isHidden()){
             dm->show();
-            ++infoBar->botScore;
+            infoBar->botScoreAdd();
             if(++destroyItems == mk) {
                 isDestroy = true;
-                ++infoBar->botDestroyShips;
+                infoBar->botDestroyShipsAdd();
                 field->eraseRemainedShip(this);
                 field->addMissHitsAroundDestroyShip(this);
                 update();
             }
-            infoBar->updateLabels();
             return isDestroy;
         }
         else {
@@ -242,13 +241,13 @@ void PlayerShip::paintEvent(QPaintEvent *e)
 void PlayerShip::mousePressEvent(QMouseEvent *e)
 {
     if(e->button() == Qt::MouseButton::LeftButton) {
-        if(!field->getParent().gameStart) {
+        if(!field->getParent()->gameStart) {
             isTarget = true;
             mousePosWhenPress = e->position().toPoint();
             groupBoxPosWhenPress = QPoint(x(), y());
         }
     }
-    else if(e->button() == Qt::MouseButton::RightButton && !field->getParent().gameStart){
+    else if(e->button() == Qt::MouseButton::RightButton && !field->getParent()->gameStart){
         rotate();
     }
 }
@@ -256,7 +255,7 @@ void PlayerShip::mousePressEvent(QMouseEvent *e)
 void PlayerShip::mouseReleaseEvent(QMouseEvent *e)
 {
     Q_UNUSED(e)
-    if(!field->getParent().gameStart) {
+    if(!field->getParent()->gameStart) {
         isTarget = false;
         QPoint newPos = field->findNearSquarePos(pos());
 
@@ -291,15 +290,14 @@ bool BotShip::takeDamage(const QPoint &damagePos)
     for(auto const &dm : damage) {
         if(findPosForDamage(damagePos) == dm->pos() && dm->isHidden()){
             dm->show();
-            ++infoBar->playerScore;
+            infoBar->playerScoreAdd();
             if(++destroyItems == mk) {
                 isDestroy = true;
-                ++infoBar->playerDestroyShips;
+                infoBar->playerDestroyShipsAdd();
                 field->eraseRemainedShip(this);
                 field->addMissHitsAroundDestroyShip(this);
                 update();
             }
-            infoBar->updateLabels();
             return isDestroy;
         }
         else {
@@ -323,7 +321,7 @@ void BotShip::paintEvent(QPaintEvent *e)
 void BotShip::mousePressEvent(QMouseEvent *e)
 {
     Q_UNUSED(e)
-    if(field->getParent().gameStart) {
+    if(field->getParent()->gameStart) {
         takeDamage(e->pos());
     }
 }

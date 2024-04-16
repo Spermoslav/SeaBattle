@@ -44,8 +44,7 @@ bool Bot::missHitOrShipHit() noexcept
     size_t notTouchSquaresCount = field->squaresCount - field->shipsSquaresCount - playerField->getMissHits().size() ; //кол-во не задействованных квадратов
     float hitChanse = remainedShipsSqCount / notTouchSquaresCount * 100; // шанс попадания
     qDebug() << remainedShipsSqCount / notTouchSquaresCount;
-    if(hitChanse >= rand() % 100) return true;
-    return false;
+    return hitChanse >= rand() % 100;
 }
 
 QPoint Bot::findPosForMakeMissHit() noexcept

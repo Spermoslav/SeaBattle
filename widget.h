@@ -28,7 +28,7 @@ public:
 
     void updateWidgetsSize();
 
-    InfoBar *getInfoBar() const;
+    InfoBar *getInfoBar();
 
     BotField *getFieldBot() const;
     PlayerField *getFieldPlayer() const;

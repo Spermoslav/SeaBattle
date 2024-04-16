@@ -44,7 +44,7 @@ void Widget::updateWidgetsSize()
     infoBar->resize(width() - toolsBar->width(), height() * 0.1);
 }
 
-InfoBar *Widget::getInfoBar() const
+InfoBar *Widget::getInfoBar()
 {
     return infoBar;
 }

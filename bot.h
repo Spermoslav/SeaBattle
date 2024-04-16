@@ -9,7 +9,6 @@ class Widget;
 class BotField;
 class PlayerField;
 class PlayerShip;
-class Ship;
 
 class Bot
 {

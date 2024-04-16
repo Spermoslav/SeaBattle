@@ -99,6 +99,11 @@ public:
 
     void reset();
 
+    void playerScoreAdd();
+    void playerDestroyShipsAdd();
+    void botScoreAdd();
+    void botDestroyShipsAdd();
+
 private slots:
     void resizeEvent(QResizeEvent *e) override;
 
@@ -111,11 +116,16 @@ private:
     QLabel *botDestroyShipsLabel;
 
     QGridLayout *labelsLay;
-public:
-    quint16 playerScore        = 0;
-    quint16 playerDestroyShips = 0;
-    quint16 botScore           = 0;
-    quint16 botDestroyShips    = 0;
+
+    const QString playerScoreStr        = "Ваши очки: ";
+    const QString playerDestroyShipsStr = "Уничтожено кораблей бота: ";
+    const QString botScoreStr           = "Очки бота: ";
+    const QString botDestroyShipsStr    = "Уничтожено ваших кораблей: ";
+
+    quint16 playerScore         = 0;
+    quint8 playerDestroyShips  = 0;
+    quint8 botScore            = 0;
+    quint8 botDestroyShips     = 0;
 };
 
 //class WinMenu : public QGroupBox
