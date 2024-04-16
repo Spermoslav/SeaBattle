@@ -122,7 +122,7 @@ private:
     const QString botScoreStr           = "Очки бота: ";
     const QString botDestroyShipsStr    = "Уничтожено ваших кораблей: ";
 
-    quint16 playerScore         = 0;
+    quint8 playerScore         = 0;
     quint8 playerDestroyShips  = 0;
     quint8 botScore            = 0;
     quint8 botDestroyShips     = 0;

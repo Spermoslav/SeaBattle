@@ -154,8 +154,6 @@ InfoBar::InfoBar(QWidget *parent)
     labelsLay->addWidget(botScoreLabel, 0, 0);
     labelsLay->addWidget(botDestroyShipsLabel, 0, 1);
 
-    qDebug() << sizeof(playerScore);
-
     updateLabels();
 }
 
