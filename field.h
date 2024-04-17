@@ -5,10 +5,7 @@
 #include <QGroupBox>
 #include <QResizeEvent>
 #include <QPainter>
-
-class Widget;
-class Ship;
-class PlayerShip;
+#include "widget.h"
 
 class Field : public QGroupBox
 {

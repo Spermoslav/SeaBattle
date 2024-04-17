@@ -1,4 +1,6 @@
 #include "tools.h"
+#include "field.h"
+#include "bot.h"
 
 ToolsBar::ToolsBar(Widget *parent)
     : QGroupBox(parent)

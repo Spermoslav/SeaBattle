@@ -8,10 +8,6 @@
 #include <QGridLayout>
 #include "widget.h"
 
-class MainMenu;
-class WinMenu;
-class Ship;
-class Bot;
 
 class ToolsBar : public QGroupBox
 {

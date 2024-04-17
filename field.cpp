@@ -1,5 +1,5 @@
-#include "widget.h"
 #include "field.h"
+#include "ships.h"
 #include "tools.h"
 #include <algorithm>
 

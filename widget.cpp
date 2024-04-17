@@ -1,6 +1,9 @@
 #include "widget.h"
 #include "ui_widget.h"
+#include "field.h"
+#include "ships.h"
 #include "tools.h"
+#include "bot.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)

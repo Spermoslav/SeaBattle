@@ -5,18 +5,23 @@
 #include <QResizeEvent>
 #include <QMouseEvent>
 
-#include "field.h"
-#include "ships.h"
-#include "bot.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
 
+class Field;
+class PlayerField;
+class BotField;
+class Ship;
+class PlayerShip;
+class BotShip;
+class Damage;
 class ToolsBar;
 class InfoBar;
 class MainMenu;
 class WinMenu;
+class Bot;
 
 enum class Winner {
     bot,
