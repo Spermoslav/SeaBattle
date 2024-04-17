@@ -6,9 +6,10 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QGridLayout>
+#include "widget.h"
 
 class MainMenu;
-class Widget;
+class WinMenu;
 class Ship;
 class Bot;
 
@@ -41,53 +42,67 @@ private:
 
     QVBoxLayout *toolsVBoxLayout;
 
-    MainMenu *mainMenu;
+
 };
 
-//class Menu : public QGroupBox
-//{
-//public:
-//    Menu(Widget *parent);
-
-//    QWidget &getToolsBarGShadow() const;
-
-//private slots:
-//    void resizeEvent(QResizeEvent *e) override;
-//    void closePBClicked();
-//    void resetGamePBClicked();
-//    void exitGamePBClicked();
-
-//private:
-//    Widget *parent;
-
-//    QWidget *backgroundShadow;
-
-//    QPushButton *closePB;
-//    QPushButton *resetGamePB;
-//    QPushButton *exitGamePB;
-//};
-
-class MainMenu : public QGroupBox
+class Menu : public QGroupBox
 {
 public:
-    MainMenu(Widget *parent);
+    Menu(Widget *parent);
 
     QWidget &getToolsBarGShadow() const;
+
+    void hide();
+    void resize();
+
 
 private slots:
     void resizeEvent(QResizeEvent *e) override;
     void closePBClicked();
     void resetGamePBClicked();
-    void exitGamePBClicked();
 
-private:
+protected:
+    virtual void placeObjects() = 0;
+
     Widget *parent;
 
     QWidget *backgroundShadow;
 
     QPushButton *closePB;
     QPushButton *resetGamePB;
-    QPushButton *exitGamePB;
+};
+
+class MainMenu : public Menu
+{
+public:
+    MainMenu(Widget *parent);
+
+    void show();
+
+
+private slots:
+
+private:
+    void placeObjects() override;
+
+};
+
+class WinMenu : public Menu
+{
+public:
+
+    WinMenu(Widget *parent);
+
+    void show(Winner wr);
+
+private:
+    void setWinLabel(Winner wr);
+    void placeObjects() override;
+
+    QLabel *winLabel;
+
+    const QString playerWinStr = "Ты выйграл";
+    const QString botWinStr    = "Бот выйграл";
 };
 
 class InfoBar : public QGroupBox
@@ -128,20 +143,6 @@ private:
     quint8 botDestroyShips     = 0;
 };
 
-//class WinMenu : public QGroupBox
-//{
-//public:
 
-//    WinMenu(Widget *parent);
-
-//    const static QString playerWinStr;
-//    const static QString botWinStr;
-
-//private:
-//    Widget *parent;
-
-//    QLabel *winLabel;
-//    QPushButton *
-//};
 
 #endif // TOOLS_H

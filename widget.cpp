@@ -1,5 +1,6 @@
 #include "widget.h"
 #include "ui_widget.h"
+#include "tools.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -21,7 +22,8 @@ Widget::Widget(QWidget *parent)
 
     toolsBar = new ToolsBar(this);
 
-
+    mainMenu = new MainMenu(this);
+    winMenu = new WinMenu(this);
 }
 
 Widget::~Widget()
@@ -42,6 +44,9 @@ void Widget::updateWidgetsSize()
     fieldPlayer->move(0, infoBar->y() + infoBar->height());
     toolsBar->setGeometry(fieldBot->width(), 0, width() - fieldBot->width(), height());
     infoBar->resize(width() - toolsBar->width(), height() * 0.1);
+
+    mainMenu->resize();
+    winMenu->resize();
 }
 
 InfoBar *Widget::getInfoBar()
@@ -64,6 +69,11 @@ Bot *Widget::getBot()
     return bot;
 }
 
+void Widget::showMainMenu()
+{
+    mainMenu->show();
+}
+
 void Widget::resetGame()
 {
     gameStart = false;
@@ -72,11 +82,13 @@ void Widget::resetGame()
     fieldPlayer->reset();
     fieldBot->reset();
     infoBar->reset();
+
 }
 
 void Widget::finishGame(Winner win)
 {
-
+    winMenu->show(win);
+    gameStart = false;
 }
 
 void Widget::resizeEvent(QResizeEvent *e)

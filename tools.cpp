@@ -1,5 +1,4 @@
 #include "tools.h"
-#include "widget.h"
 
 ToolsBar::ToolsBar(Widget *parent)
     : QGroupBox(parent)
@@ -31,7 +30,7 @@ ToolsBar::ToolsBar(Widget *parent)
     toolsVBoxLayout->addWidget(randomMovePlayerShipsPB);
     toolsVBoxLayout->addWidget(botMotionPB);
 
-    mainMenu = new MainMenu(parent);
+
 }
 
 Widget *ToolsBar::getParent() const
@@ -47,13 +46,12 @@ void ToolsBar::reset()
 void ToolsBar::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
-    mainMenu->setGeometry(parent->width() / 3, parent->height() / 3, parent->width() / 3, parent->height() / 3);
+
 }
 
 void ToolsBar::mainMenuPBClicked()
 {
-    mainMenu->show();
-    mainMenu->getToolsBarGShadow().show();
+    parent->showMainMenu();
 }
 
 void ToolsBar::startGamePBClicked()
@@ -74,7 +72,7 @@ void ToolsBar::startGamePBClicked()
 
 void ToolsBar::randomMovePlayerShipsPBClicked()
 {
-    parent->getFieldPlayer()->randomMoveAllShips();
+    if(!parent->gameStart) parent->getFieldPlayer()->randomMoveAllShips();
 }
 
 void ToolsBar::botMotionPBClicked()
@@ -82,60 +80,8 @@ void ToolsBar::botMotionPBClicked()
     if(parent->gameStart) bot->motion();
 }
 
-MainMenu::MainMenu(Widget *parent)
-    : QGroupBox(parent)
-{
-    this->parent = parent;
-    setStyleSheet("border: 1px solid black;"
-                  "background-color: white;");
 
-    backgroundShadow = new QWidget(parent);
-    backgroundShadow->setStyleSheet("background-color: rgba(0, 0, 0, 130);");
 
-    closePB = new QPushButton("close", this);
-    connect(closePB, &QPushButton::clicked, this, &MainMenu::closePBClicked);
-
-    resetGamePB = new QPushButton("reset", this);
-    connect(resetGamePB, &QPushButton::clicked, this, &MainMenu::resetGamePBClicked);
-
-    exitGamePB = new QPushButton("exit", this);
-    connect(exitGamePB, &QPushButton::clicked, this, &MainMenu::exitGamePBClicked);
-
-    raise();
-    hide();
-    backgroundShadow->hide();
-}
-
-QWidget &MainMenu::getToolsBarGShadow() const
-{
-    return *backgroundShadow;
-}
-
-void MainMenu::resizeEvent(QResizeEvent *e)
-{
-    Q_UNUSED(e)
-    backgroundShadow->setGeometry(0, 0, parent->width(), parent->height());
-    closePB->setGeometry(width() * 0.8, 0, width() * 0.2, height() * 0.2);
-    resetGamePB->setGeometry(width() * 0.1, height() * 0.5, width() * 0.8, height() * 0.1);
-    exitGamePB->setGeometry(width() * 0.1, height() * 0.7, width() * 0.8, height() * 0.1);
-}
-
-void MainMenu::closePBClicked()
-{
-    hide();
-    backgroundShadow->hide();
-}
-
-void MainMenu::resetGamePBClicked()
-{
-    parent->resetGame();
-    closePBClicked();
-}
-
-void MainMenu::exitGamePBClicked()
-{
-
-}
 
 InfoBar::InfoBar(QWidget *parent)
     : QGroupBox(parent)
@@ -199,5 +145,100 @@ void InfoBar::resizeEvent(QResizeEvent *e)
     Q_UNUSED(e)
 }
 
+Menu::Menu(Widget *parent)
+    : QGroupBox(parent)
+{
+    this->parent = parent;
+    setStyleSheet("border: 1px solid black;"
+                  "background-color: white;");
+
+    backgroundShadow = new QWidget(parent);
+    backgroundShadow->setStyleSheet("background-color: rgba(0, 0, 0, 130);");
+
+    closePB = new QPushButton("close", this);
+    connect(closePB, &QPushButton::clicked, this, &MainMenu::closePBClicked);
+
+    resetGamePB = new QPushButton("reset", this);
+    connect(resetGamePB, &QPushButton::clicked, this, &MainMenu::resetGamePBClicked);
+
+    raise();
+    hide();
+}
+
+void Menu::hide()
+{
+    static_cast<QGroupBox*> (this)->hide();
+    backgroundShadow->hide();
+}
+
+void Menu::resize()
+{
+    setGeometry(parent->width() / 3, parent->height() / 3, parent->width() / 3, parent->height() / 3);
+}
+
+void Menu::resizeEvent(QResizeEvent *e)
+{
+    Q_UNUSED(e)
+    placeObjects();
+}
+
+void Menu::closePBClicked()
+{
+    hide();
+}
+
+void Menu::resetGamePBClicked()
+{
+    parent->resetGame();
+    hide();
+}
 
 
+MainMenu::MainMenu(Widget *parent)
+    : Menu(parent)
+{
+
+}
+
+void MainMenu::show()
+{
+    static_cast<QGroupBox*> (this)->show();
+    backgroundShadow->show();
+}
+
+void MainMenu::placeObjects()
+{
+    backgroundShadow->setGeometry(0, 0, parent->width(), parent->height());
+    closePB->setGeometry(width() * 0.8, 0, width() * 0.2, height() * 0.2);
+    resetGamePB->setGeometry(width() * 0.1, height() * 0.5, width() * 0.8, height() * 0.1);
+}
+
+WinMenu::WinMenu(Widget *parent)
+    : Menu(parent)
+{
+    winLabel = new QLabel(this);
+    winLabel->setAlignment(Qt::AlignCenter);
+    winLabel->setFont(QFont(winLabel->font().family(), 15));
+    winLabel->setStyleSheet("border: 0px;");
+}
+
+void WinMenu::show(Winner wr)
+{
+    setWinLabel(wr);
+    static_cast<QGroupBox*> (this)->show();
+    backgroundShadow->show();
+}
+
+void WinMenu::setWinLabel(Winner wr)
+{
+    if (wr == Winner::player) winLabel->setText(playerWinStr);
+    else                      winLabel->setText(botWinStr);
+}
+
+void WinMenu::placeObjects()
+{
+    backgroundShadow->setGeometry(0, 0, parent->width(), parent->height());
+    closePB->setGeometry(width() * 0.8, 0, width() * 0.2, height() * 0.2);
+    winLabel->setGeometry(width() * 0.1, height() * 0.25, width() * 0.8, height() * 0.2);
+    resetGamePB->setGeometry(width() * 0.1, height() * 0.5, width() * 0.8, height() * 0.1);
+}

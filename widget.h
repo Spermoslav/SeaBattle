@@ -6,13 +6,17 @@
 #include <QMouseEvent>
 
 #include "field.h"
-#include "tools.h"
 #include "ships.h"
 #include "bot.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
+
+class ToolsBar;
+class InfoBar;
+class MainMenu;
+class WinMenu;
 
 enum class Winner {
     bot,
@@ -35,6 +39,7 @@ public:
 
     Bot *getBot();
 
+    void showMainMenu();
     void resetGame();
     void finishGame(Winner win);
 
@@ -46,8 +51,6 @@ private slots:
     void mouseMoveEvent(QMouseEvent *e) override;
 
 private:
-
-
     Ui::Widget *ui;
 
     PlayerField *fieldPlayer;
@@ -58,5 +61,8 @@ private:
     InfoBar *infoBar;
 
     Bot *bot;
+
+    MainMenu *mainMenu;
+    WinMenu *winMenu;
 };
 #endif // WIDGET_H

@@ -1,7 +1,7 @@
+#include "widget.h"
 #include "ships.h"
 #include "field.h"
-#include "widget.h"
-class Field;
+#include "tools.h"
 
 Ship::Ship(Field *field)
     : QGroupBox(field)
@@ -219,6 +219,7 @@ bool PlayerShip::takeDamage(const QPoint &damagePos)
                 field->eraseRemainedShip(this);
                 field->addMissHitsAroundDestroyShip(this);
                 update();
+                if(field->getRemainedShips().empty()) field->getParent()->finishGame(Winner::bot);
             }
             return isDestroy;
         }
@@ -282,7 +283,6 @@ void PlayerShip::mouseMoveEvent(QMouseEvent *e)
 BotShip::BotShip(Field *field)
     : Ship(field)
 {
-
 }
 
 bool BotShip::takeDamage(const QPoint &damagePos)
@@ -297,6 +297,7 @@ bool BotShip::takeDamage(const QPoint &damagePos)
                 field->eraseRemainedShip(this);
                 field->addMissHitsAroundDestroyShip(this);
                 update();
+                if(field->getRemainedShips().empty()) field->getParent()->finishGame(Winner::player);
             }
             return isDestroy;
         }

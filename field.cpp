@@ -1,6 +1,6 @@
-#include "field.h"
-
 #include "widget.h"
+#include "field.h"
+#include "tools.h"
 #include <algorithm>
 
 Field::Field(Widget *parent)
