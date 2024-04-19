@@ -12,14 +12,9 @@ Field::Field(Widget *parent)
     reSize();
 }
 
-int Field::getSquareSize() const
+void Field::reSize() noexcept
 {
-    return squareSize;
-}
-
-void Field::reSize()
-{
-    const int fieldSize = std::min(parent->width() / 2, (parent->height() - parent->getInfoBar()->height()) / 2);
+    const int fieldSize = std::min(parent->width() / 2, (parent->height() - parent->infoBar->height()) / 2);
     resize(fieldSize, fieldSize);
     updateSquareSize();
     for(auto &mh : missHits) {
@@ -28,27 +23,24 @@ void Field::reSize()
     repaint();
 }
 
-void Field::updateSquareSize()
+void Field::updateSquareSize() noexcept
 {
     squareSize = width() / rowsCount;
 }
 
-void Field::randomMoveAllShips()
+void Field::randomMoveAllShips() noexcept
 {
-    if(!parent->gameStart) {
-        for( auto const &ship : allShips)
-            ship->randomMove();
-    }
+    for(const auto &ship : allShips) ship->randomMove();
 }
 
-void Field::eraseRemainedShip(const Ship* ship)
+void Field::eraseRemainedShip(const Ship* ship) noexcept
 {
     if(!remainedShips.empty()) {
         remainedShips.erase(std::find(remainedShips.begin(), remainedShips.end(), ship));
     }
 }
 
-void Field::addMissHitsAroundDestroyShip(const Ship *ship)
+void Field::addMissHitsAroundDestroyShip(const Ship *ship) noexcept
 {
     QPoint missHitPos = ship->pos() - QPoint(squareSize, squareSize);
     takeMissHit(missHitPos);
@@ -88,27 +80,7 @@ void Field::addMissHitsAroundDestroyShip(const Ship *ship)
     }
 }
 
-std::vector<Ship *> &Field::getAllShips()
-{
-    return allShips;
-}
-
-std::vector<Ship *> &Field::getRemainedShips()
-{
-    return remainedShips;
-}
-
-std::list<QPoint> &Field::getMissHits()
-{
-    return missHits;
-}
-
-Widget *Field::getParent() const
-{
-    return parent;
-}
-
-void Field::takeMissHit(const QPoint &hitPos)
+void Field::takeMissHit(const QPoint &hitPos) noexcept
 {
     if(!isMissHitOn(hitPos) && !isOutField(hitPos) && !isShipOn(hitPos)) {
         missHits.push_back(findSquarePos(hitPos));
@@ -116,7 +88,7 @@ void Field::takeMissHit(const QPoint &hitPos)
     }
 }
 
-void Field::reset()
+void Field::reset() noexcept
 {
     remainedShips.clear();
     for(auto &ship : allShips) {
@@ -127,19 +99,19 @@ void Field::reset()
     update();
 }
 
-QPoint Field::findNearSquarePos(const QPoint &pos)
+QPoint Field::findNearSquarePos(const QPoint &pos) const noexcept
 {
     return QPoint((pos.x() + squareSize / 2) / squareSize,
                   (pos.y() + squareSize / 2) / squareSize) * squareSize;
 }
 
-QPoint Field::findSquarePos(const QPoint &pos)
+QPoint Field::findSquarePos(const QPoint &pos) const noexcept
 {
     return QPoint((pos.x() / squareSize),
                   (pos.y() / squareSize)) * squareSize;
 }
 
-bool Field::isShipOn(const QPoint &pos) noexcept
+bool Field::isShipOn(const QPoint &pos) const noexcept
 {
     for(auto const &ship : allShips) {
         if(pos == ship->pos()) return true;
@@ -151,7 +123,7 @@ bool Field::isShipOn(const QPoint &pos) noexcept
     return false;
 }
 
-bool Field::isMissHitOn(const QPoint &pos) noexcept
+bool Field::isMissHitOn(const QPoint &pos) const noexcept
 {
     for(auto const &mh : missHits) {
         if(mh == findSquarePos(pos)) {
@@ -161,7 +133,7 @@ bool Field::isMissHitOn(const QPoint &pos) noexcept
     return false;
 }
 
-bool Field::isOutField(const QPoint &pos) noexcept
+bool Field::isOutField(const QPoint &pos) const noexcept
 {
     return pos.x() < 0 || pos.y() < 0 || pos.x() > width() || pos.y() > height();
 }
@@ -192,13 +164,15 @@ void Field::paintEvent(QPaintEvent *e)
     p.end();
 }
 
-PlayerField::PlayerField(Widget *parent)
-    : Field(parent)
-{
 
+void PlayerField::shipDestroyed(const Ship *ship) noexcept
+{
+    eraseRemainedShip(ship);
+    addMissHitsAroundDestroyShip(ship);
+    if(remainedShips.empty()) parent->finishGame(Winner::bot);
 }
 
-void PlayerField::spawnShips()
+void PlayerField::spawnShips() noexcept
 {
     if(allShips.empty()) {
         for(std::size_t i = 0; i < shipCount; i ++) {
@@ -216,12 +190,15 @@ void PlayerField::mousePressEvent(QMouseEvent *e)
     qDebug() << isMissHitOn(e->pos());
 }
 
-BotField::BotField(Widget *parent)
-    : Field(parent)
+
+void BotField::shipDestroyed(const Ship *ship) noexcept
 {
+    eraseRemainedShip(ship);
+    addMissHitsAroundDestroyShip(ship);
+    if(remainedShips.empty()) parent->finishGame(Winner::player);
 }
 
-void BotField::spawnShips()
+void BotField::spawnShips() noexcept
 {
     if(allShips.empty()) {
         for(std::size_t i = 0; i < 10; i ++) {
@@ -233,5 +210,5 @@ void BotField::spawnShips()
 
 void BotField::mousePressEvent(QMouseEvent *e)
 {
-    if(parent->gameStart) takeMissHit(e->pos());
+    if(parent->getGameIsStart()) takeMissHit(e->pos());
 }

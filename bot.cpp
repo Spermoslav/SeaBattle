@@ -1,19 +1,18 @@
 #include "bot.h"
-#include "widget.h"
 #include "field.h"
+#include "ships.h"
 #include "tools.h"
 
 Bot::Bot(Widget *game) noexcept
 {
-    field = game->getFieldBot();
-    playerField = game->getFieldPlayer();
+    field = game->fieldBot;
+    playerField = game->fieldPlayer;
 }
 
 void Bot::motion() noexcept
 {
     if(targetShip) {
         makeHit_whenFoundShip();
-
     }
     else {
         if(missHitOrShipHit()){
@@ -37,17 +36,17 @@ void Bot::motion() noexcept
 bool Bot::missHitOrShipHit() noexcept
 {
     float remainedShipsSqCount = 0; // кол-во оставшихся квадратов живых кораблей
-    for(auto const &rs : playerField->getRemainedShips()) {
+    for(const auto &rs : playerField->getRemainedShips()) {
         remainedShipsSqCount += rs->getMk();
         rs->getMk();
     }
-    size_t notTouchSquaresCount = field->squaresCount - field->shipsSquaresCount - playerField->getMissHits().size() ; //кол-во не задействованных квадратов
+    size_t notTouchSquaresCount = Field::squaresCount - Field::shipsSquaresCount - playerField->getMissHits().size(); //кол-во не задействованных квадратов
     float hitChanse = remainedShipsSqCount / notTouchSquaresCount * 100; // шанс попадания
     qDebug() << remainedShipsSqCount / notTouchSquaresCount;
     return hitChanse >= rand() % 100;
 }
 
-QPoint Bot::findPosForMakeMissHit() noexcept
+QPoint Bot::findPosForMakeMissHit() noexcept //
 {
     QPoint hitPos;
     for(size_t i = 0; i < 100; ++i) {
@@ -56,14 +55,14 @@ QPoint Bot::findPosForMakeMissHit() noexcept
     }
 }
 
-QPoint Bot::findPosForMakeShipHit() noexcept // peredelat
+QPoint Bot::findPosForMakeShipHit() noexcept //
 {
     if(targetShip && !targetShip->getIsDestroy()) {
         QPoint hitPos;
         if(targetShip->getOrientation() == vertical){
             for(size_t i = 0; i < 100; ++i) {
                 hitPos = QPoint(rand() % targetShip->width(), rand() % targetShip->height());
-                for(auto const &dm : targetShip->damagedSquares()) {
+                for(const auto &dm : targetShip->damagedSquares()) {
                     if(hitPos.y() < dm->y() || hitPos.y() > dm->y() + dm->height()) {
                        return hitPos;
                     }
@@ -73,7 +72,7 @@ QPoint Bot::findPosForMakeShipHit() noexcept // peredelat
         else {
             for(size_t i = 0; i < 100; ++i) {
                 hitPos = QPoint(rand() % targetShip->width(), rand() % targetShip->height());
-                for(auto const &dm : targetShip->damagedSquares()) {
+                for(const auto &dm : targetShip->damagedSquares()) {
                     if(hitPos.x() < dm->x() || hitPos.x() > dm->x() + dm->width()) {
                        return hitPos;
                     }
@@ -94,18 +93,17 @@ void Bot::makeHit_whenFoundShip() noexcept
             makeHorizontalHits();
         }
     }
-
     else {
         if(hitDirection) {
             if(makeRightHit()) return;
-            if(makeDownHit()) return;
+            if(makeDownHit())  return;
             hitDirection = false;
-            if(makeLeftHit()) return;
+            if(makeLeftHit())  return;
             makeUpHit();
         }
         else {
-            if(makeLeftHit()) return;
-            if(makeUpHit()) return;
+            if(makeLeftHit())  return;
+            if(makeUpHit())    return;
             hitDirection = true;
             if(makeRightHit()) return;
             makeDownHit();
@@ -133,7 +131,6 @@ void Bot::reset() noexcept
 
 void Bot::makeVerticalHits() noexcept
 {
-    QPoint hitPos = targetShip->pos() + lastShipHit;
     if(hitDirection) {
         if(makeDownHit()) return;
         lastShipHit = firstShipHit;
@@ -206,4 +203,5 @@ bool Bot::tryMakeHit(QPoint &hitPos) noexcept
             return true;
         }
     }
+    return false;
 }

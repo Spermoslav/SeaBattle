@@ -1,13 +1,12 @@
-#include "widget.h"
 #include "ships.h"
 #include "field.h"
 #include "tools.h"
 
-Ship::Ship(Field *field)
+Ship::Ship(Field *field) noexcept
     : QGroupBox(field)
 {
     this->field = field;
-    infoBar = field->getParent()->getInfoBar();
+    infoBar = field->getParent()->infoBar;
     isTarget = false;
     isDestroy = false;
     destroyItems = 0;
@@ -24,32 +23,32 @@ Ship::Ship(Field *field)
     }
 }
 
-uint Ship::getMk() const
+quint8 Ship::getMk() const noexcept
 {
     return mk;
 }
 
-Field *Ship::getField() const
+const Field *Ship::getField() const noexcept
 {
     return field;
 }
 
-std::vector<Damage *> &Ship::damagedSquares()
+const std::vector<Damage *> &Ship::damagedSquares() const noexcept
 {
     return damage;
 }
 
-bool Ship::getIsTarget() const
+bool Ship::getIsTarget() const noexcept
 {
     return isTarget;
 }
 
-bool Ship::getIsDestroy() const
+bool Ship::getIsDestroy() const noexcept
 {
     return isDestroy;
 }
 
-void Ship::resize()
+void Ship::resize() noexcept
 {
     QPoint newPos = field->findNearSquarePos(pos());
     if(orientation == Orientation::vertical) {
@@ -76,7 +75,7 @@ void Ship::resize()
     repaint();
 }
 
-void Ship::rotate()
+void Ship::rotate() noexcept
 {
     QSize oldSize = size();
     Orientation oldOr = orientation;
@@ -102,9 +101,9 @@ void Ship::rotate()
     resize();
 }
 
-void Ship::randomMove() //
+void Ship::randomMove() noexcept //
 {
-    if(!field->getParent()->gameStart) {
+    if(!field->getParent()->getGameIsStart()) {
         QPoint newPos;
         int sqX, sqY;
         size_t count = 0;
@@ -144,17 +143,17 @@ void Ship::randomMove() //
     }
 }
 
-void Ship::resizeEvent(QResizeEvent *e)
+void Ship::resizeEvent(QResizeEvent *e) noexcept
 {
     Q_UNUSED(e)
 }
 
-bool Ship::checkCollision(const QPoint &newPos, const auto &ship) const
+bool Ship::checkCollision(const QPoint &newPos, const Ship *ship) const noexcept
 {
     return checkShipCollision(newPos, ship) || checkFieldCollision(newPos);
 }
 
-bool Ship::checkShipCollision(const QPoint &newPos, auto const &ship) const
+bool Ship::checkShipCollision(const QPoint &newPos, const Ship *ship) const noexcept
 {
     const int sqSize = field->getSquareSize();
 
@@ -170,14 +169,14 @@ bool Ship::checkShipCollision(const QPoint &newPos, auto const &ship) const
     else return false;
 }
 
-bool Ship::checkFieldCollision(const QPoint &newPos) const
+bool Ship::checkFieldCollision(const QPoint &newPos) const noexcept
 {
     if(newPos.x() + width() > field->width() || newPos.x() < 0) return true;
     else if(newPos.y() + height() > field->height() || newPos.y() < 0) return true;
     else return false;
 }
 
-void Ship::reset()
+void Ship::reset() noexcept
 {
     for(auto const &dm : damage) {
         dm->hide();
@@ -191,23 +190,23 @@ void Ship::reset()
     update();
 }
 
-Orientation Ship::getOrientation() const
+Orientation Ship::getOrientation() const noexcept
 {
     return orientation;
 }
 
-QPoint Ship::findPosForDamage(const QPoint &pos) const
+QPoint Ship::findPosForDamage(const QPoint &pos) const noexcept
 {
     return QPoint((pos.x() / field->getSquareSize()),
                   (pos.y() / field->getSquareSize())) * field->getSquareSize();
 }
 
-PlayerShip::PlayerShip(Field *field)
+PlayerShip::PlayerShip(Field *field) noexcept
     : Ship(field)
 {
 }
 
-bool PlayerShip::takeDamage(const QPoint &damagePos)
+bool PlayerShip::takeDamage(const QPoint &damagePos) noexcept //
 {
     for(auto const &dm : damage) {
         if(findPosForDamage(damagePos) == dm->pos() && dm->isHidden()){
@@ -216,19 +215,16 @@ bool PlayerShip::takeDamage(const QPoint &damagePos)
             if(++destroyItems == mk) {
                 isDestroy = true;
                 infoBar->botDestroyShipsAdd();
-                field->eraseRemainedShip(this);
-                field->addMissHitsAroundDestroyShip(this);
+                field->shipDestroyed(this);
                 update();
-                if(field->getRemainedShips().empty()) field->getParent()->finishGame(Winner::bot);
             }
             return isDestroy;
         }
-        else {
-        }
     }
+    return false;
 }
 
-void PlayerShip::paintEvent(QPaintEvent *e)
+void PlayerShip::paintEvent(QPaintEvent *e) noexcept
 {
     Q_UNUSED(e)
     QPainter p;
@@ -239,24 +235,24 @@ void PlayerShip::paintEvent(QPaintEvent *e)
     p.end();
 }
 
-void PlayerShip::mousePressEvent(QMouseEvent *e)
+void PlayerShip::mousePressEvent(QMouseEvent *e) noexcept
 {
     if(e->button() == Qt::MouseButton::LeftButton) {
-        if(!field->getParent()->gameStart) {
+        if(!field->getParent()->getGameIsStart()) {
             isTarget = true;
             mousePosWhenPress = e->position().toPoint();
             groupBoxPosWhenPress = QPoint(x(), y());
         }
     }
-    else if(e->button() == Qt::MouseButton::RightButton && !field->getParent()->gameStart){
+    else if(e->button() == Qt::MouseButton::RightButton && !field->getParent()->getGameIsStart()){
         rotate();
     }
 }
 
-void PlayerShip::mouseReleaseEvent(QMouseEvent *e)
+void PlayerShip::mouseReleaseEvent(QMouseEvent *e) noexcept
 {
     Q_UNUSED(e)
-    if(!field->getParent()->gameStart) {
+    if(!field->getParent()->getGameIsStart()) {
         isTarget = false;
         QPoint newPos = field->findNearSquarePos(pos());
 
@@ -272,7 +268,7 @@ void PlayerShip::mouseReleaseEvent(QMouseEvent *e)
     }
 }
 
-void PlayerShip::mouseMoveEvent(QMouseEvent *e)
+void PlayerShip::mouseMoveEvent(QMouseEvent *e) noexcept
 {
     Q_UNUSED(e)
     if(isTarget){
@@ -280,12 +276,12 @@ void PlayerShip::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
-BotShip::BotShip(Field *field)
+BotShip::BotShip(Field *field) noexcept
     : Ship(field)
 {
 }
 
-bool BotShip::takeDamage(const QPoint &damagePos)
+bool BotShip::takeDamage(const QPoint &damagePos) noexcept //
 {
     for(auto const &dm : damage) {
         if(findPosForDamage(damagePos) == dm->pos() && dm->isHidden()){
@@ -294,19 +290,16 @@ bool BotShip::takeDamage(const QPoint &damagePos)
             if(++destroyItems == mk) {
                 isDestroy = true;
                 infoBar->playerDestroyShipsAdd();
-                field->eraseRemainedShip(this);
-                field->addMissHitsAroundDestroyShip(this);
+                field->shipDestroyed(this);
                 update();
-                if(field->getRemainedShips().empty()) field->getParent()->finishGame(Winner::player);
             }
             return isDestroy;
         }
-        else {
-        }
     }
+    return false;
 }
 
-void BotShip::paintEvent(QPaintEvent *e)
+void BotShip::paintEvent(QPaintEvent *e) noexcept
 {
     Q_UNUSED(e)
     if(isDestroy) {
@@ -319,10 +312,10 @@ void BotShip::paintEvent(QPaintEvent *e)
     }
 }
 
-void BotShip::mousePressEvent(QMouseEvent *e)
+void BotShip::mousePressEvent(QMouseEvent *e) noexcept
 {
     Q_UNUSED(e)
-    if(field->getParent()->gameStart) {
+    if(field->getParent()->getGameIsStart()) {
         takeDamage(e->pos());
     }
 }
@@ -330,7 +323,7 @@ void BotShip::mousePressEvent(QMouseEvent *e)
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Damage::Damage(Ship *parent)
+Damage::Damage(Ship *parent) noexcept
     : QWidget(parent)
 {
     this->parent = parent;
@@ -338,12 +331,12 @@ Damage::Damage(Ship *parent)
     update();
 }
 
-void Damage::resize()
+void Damage::resize() noexcept
 {
     static_cast<QWidget*> (this)->resize(parent->getField()->getSquareSize(), parent->getField()->getSquareSize());
 }
 
-void Damage::paintEvent(QPaintEvent *e)
+void Damage::paintEvent(QPaintEvent *e) noexcept
 {
     Q_UNUSED(e)
     QPainter p;
@@ -354,7 +347,7 @@ void Damage::paintEvent(QPaintEvent *e)
     p.end();
 }
 
-void Damage::resizeEvent(QResizeEvent *e)
+void Damage::resizeEvent(QResizeEvent *e) noexcept
 {
     Q_UNUSED(e)
     update();

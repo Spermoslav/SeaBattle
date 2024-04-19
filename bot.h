@@ -3,12 +3,7 @@
 
 #include <QPoint>
 #include <QObject>
-#include "ships.h"
-
-class Widget;
-class BotField;
-class PlayerField;
-class PlayerShip;
+#include "widget.h"
 
 class Bot
 {
@@ -37,6 +32,7 @@ private:
     bool tryMakeHit(QPoint &hitPos) noexcept;
 
     bool missHitOrShipHit()      noexcept;
+
 
     BotField *field;
     PlayerField *playerField;

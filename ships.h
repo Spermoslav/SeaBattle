@@ -11,12 +11,7 @@
 #include <QSize>
 #include <QMouseEvent>
 #include <QKeyEvent>
-
-class Field;
-class Damage;
-class PlayerShip;
-class BotShip;
-class InfoBar;
+#include "widget.h"
 
 enum Orientation {
     horizontal,
@@ -27,40 +22,34 @@ class Ship : public QGroupBox
 {
     Q_OBJECT
 public:
-    Ship() = default;
+    Ship(Field *field) noexcept;
 
-    Ship(Field *field);
+    void resize() noexcept;
+    void rotate() noexcept;
+    void reset()  noexcept;
+    void randomMove() noexcept;
 
-    uint          getMk() const;
+    virtual bool takeDamage(const QPoint &damagePos) noexcept = 0;
 
-    inline Field *getField() const;
+    bool checkCollision(const QPoint &newPos, const Ship *ship) const noexcept;
+    bool checkShipCollision(const QPoint &newPos, const Ship *ship) const noexcept;
+    bool checkFieldCollision(const QPoint &newPos) const noexcept;
 
-    std::vector<Damage*> &damagedSquares();
+    quint8 getMk() const noexcept;
+    bool getIsTarget()  const noexcept;
+    bool getIsDestroy() const noexcept;
+    const Field *getField() const noexcept;
+    Orientation getOrientation() const noexcept;
+    const std::vector<Damage*> &damagedSquares() const noexcept;
 
-    bool getIsTarget() const;
-    bool getIsDestroy() const;
-    void resize();
-    void rotate();
-
-    void          randomMove();
-    virtual bool takeDamage(const QPoint &damagePos) = 0;
-
-    bool checkCollision(const QPoint &newPos, const auto &ship) const;
-    bool checkShipCollision(const QPoint &newPos, const auto &ship) const;
-    bool checkFieldCollision(const QPoint &newPos) const;
-
-    void reset();
-
-    Orientation getOrientation() const;
 
 private slots:
-    void resizeEvent(QResizeEvent *e) override;
+    void resizeEvent(QResizeEvent *e) noexcept override;
 protected:
 
-    QPoint findPosForDamage(const QPoint &pos) const;
+    QPoint findPosForDamage(const QPoint &pos) const noexcept;
 
 protected:
-
     Field *field;
 
     QPoint shipPos;
@@ -72,8 +61,8 @@ protected:
     std::vector<Damage*> damage;
     InfoBar *infoBar;
 
-    quint16 mk;
-    quint16 destroyItems;
+    quint8 mk;
+    quint8 destroyItems;
     int shipCenterX;
     int shipCenterY;
 
@@ -87,46 +76,42 @@ class PlayerShip : public Ship
 {
     Q_OBJECT
 public:
+    PlayerShip(Field *field) noexcept;
 
-    PlayerShip(Field *field);
-
-    bool takeDamage(const QPoint &damagePos) override;
+    bool takeDamage(const QPoint &damagePos) noexcept override;
 
 private slots:
-    void paintEvent(QPaintEvent *e) override;
+    void paintEvent(QPaintEvent *e) noexcept override;
 
-    void mousePressEvent(QMouseEvent *e) override;
-    void mouseReleaseEvent(QMouseEvent *e) override;
-    void mouseMoveEvent(QMouseEvent *e) override;
+    void mousePressEvent(QMouseEvent *e) noexcept override;
+    void mouseReleaseEvent(QMouseEvent *e) noexcept override;
+    void mouseMoveEvent(QMouseEvent *e) noexcept override;
 };
 
 class BotShip : public Ship
 {
     Q_OBJECT
 public:
+    BotShip(Field *field) noexcept;
 
-    BotShip(Field *field);
-
-    bool takeDamage(const QPoint &damagePos) override;
+    bool takeDamage(const QPoint &damagePos) noexcept override;
 
 private slots:
-    void paintEvent(QPaintEvent *e) override;
+    void paintEvent(QPaintEvent *e) noexcept override;
 
-    void mousePressEvent(QMouseEvent *e) override;
+    void mousePressEvent(QMouseEvent *e) noexcept override;
 };
 
 class Damage : public QWidget
 {
     Q_OBJECT
 public:
-    Damage() = default;
+    Damage(Ship* parent) noexcept;
 
-    Damage(Ship* parent);
-
-    void resize();
+    void resize() noexcept;
 public slots:
-    void paintEvent(QPaintEvent *e) override;
-    void resizeEvent(QResizeEvent *e) override;
+    void paintEvent(QPaintEvent *e) noexcept override;
+    void resizeEvent(QResizeEvent *e) noexcept override;
 private:
     Ship* parent;
 };

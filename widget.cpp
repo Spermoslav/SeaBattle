@@ -5,13 +5,13 @@
 #include "tools.h"
 #include "bot.h"
 
-Widget::Widget(QWidget *parent)
+Widget::Widget(QWidget *parent) noexcept
     : QWidget(parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
     setMinimumSize(400, 400);
-    gameStart = false;
+    gameIsStart = false;
 
     infoBar = new InfoBar(this);
 
@@ -34,7 +34,12 @@ Widget::~Widget()
     delete ui;
 }
 
-void Widget::updateWidgetsSize()
+void Widget::randomMovePlayerShips() noexcept
+{
+    if(!gameIsStart) fieldPlayer->randomMoveAllShips();
+}
+
+void Widget::updateWidgetsSize() noexcept
 {
 
     infoBar->resize(width() , height() * 0.1);
@@ -52,34 +57,29 @@ void Widget::updateWidgetsSize()
     winMenu->resize();
 }
 
-InfoBar *Widget::getInfoBar()
-{
-    return infoBar;
-}
-
-BotField *Widget::getFieldBot() const
+const BotField *Widget::getFieldBot() const noexcept
 {
     return fieldBot;
 }
 
-PlayerField *Widget::getFieldPlayer() const
+const PlayerField *Widget::getFieldPlayer() const noexcept
 {
     return fieldPlayer;
 }
 
-Bot *Widget::getBot()
+Bot *Widget::getBot() noexcept
 {
     return bot;
 }
 
-void Widget::showMainMenu()
+void Widget::showMainMenu() noexcept
 {
     mainMenu->show();
 }
 
-void Widget::resetGame()
+void Widget::resetGame() noexcept
 {
-    gameStart = false;
+    gameIsStart = false;
     bot->reset();
     toolsBar->reset();
     fieldPlayer->reset();
@@ -88,24 +88,48 @@ void Widget::resetGame()
 
 }
 
-void Widget::finishGame(Winner win)
+bool Widget::startGame() noexcept
 {
-    winMenu->show(win);
-    gameStart = false;
+    if(!gameIsStart) {
+        for(auto const &targetShip : fieldPlayer->getAllShips()) {
+            for(auto const &ship : fieldPlayer->getAllShips()) {
+                if(targetShip != ship){
+                    if(targetShip->checkShipCollision(targetShip->pos(), ship)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        fieldBot->randomMoveAllShips();
+        gameIsStart = true;
+        return true;
+    }
+    return false;
 }
 
-void Widget::resizeEvent(QResizeEvent *e)
+void Widget::finishGame(Winner win) noexcept
+{
+    winMenu->show(win);
+    resetGame();
+}
+
+bool Widget::getGameIsStart() const noexcept
+{
+    return gameIsStart;
+}
+
+void Widget::resizeEvent(QResizeEvent *e) noexcept
 {
     Q_UNUSED(e)
     updateWidgetsSize();
 }
 
-void Widget::mousePressEvent(QMouseEvent *e)
+void Widget::mousePressEvent(QMouseEvent *e) noexcept
 {
     Q_UNUSED(e)
 }
 
-void Widget::mouseMoveEvent(QMouseEvent *e)
+void Widget::mouseMoveEvent(QMouseEvent *e) noexcept
 {
     Q_UNUSED(e)
 }

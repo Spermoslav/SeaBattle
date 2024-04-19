@@ -31,29 +31,31 @@ enum class Winner {
 class Widget : public QWidget
 {
     Q_OBJECT
+    friend Bot;
 public:
-    Widget(QWidget *parent = nullptr);
+    Widget(QWidget *parent = nullptr) noexcept;
     ~Widget();
 
-    void updateWidgetsSize();
+    void randomMovePlayerShips() noexcept;
+    void updateWidgetsSize() noexcept;
+    void showMainMenu() noexcept;
+    void resetGame() noexcept;
+    bool startGame() noexcept;
+    void finishGame(Winner win) noexcept;
 
-    InfoBar *getInfoBar();
+    bool getGameIsStart() const noexcept;
+    const BotField *getFieldBot() const noexcept;
+    const PlayerField *getFieldPlayer() const noexcept;
 
-    BotField *getFieldBot() const;
-    PlayerField *getFieldPlayer() const;
+    Bot *getBot() noexcept;
 
-    Bot *getBot();
 
-    void showMainMenu();
-    void resetGame();
-    void finishGame(Winner win);
-
-    bool gameStart;
+    InfoBar *infoBar;
 
 private slots:
-    void resizeEvent(QResizeEvent *e) override;
-    void mousePressEvent(QMouseEvent *e) override;
-    void mouseMoveEvent(QMouseEvent *e) override;
+    void resizeEvent(QResizeEvent *e)    noexcept override;
+    void mousePressEvent(QMouseEvent *e) noexcept override;
+    void mouseMoveEvent(QMouseEvent *e)  noexcept override;
 
 private:
     Ui::Widget *ui;
@@ -63,11 +65,11 @@ private:
 
     ToolsBar *toolsBar;
 
-    InfoBar *infoBar;
-
     Bot *bot;
 
     MainMenu *mainMenu;
     WinMenu *winMenu;
+
+    bool gameIsStart;
 };
 #endif // WIDGET_H
