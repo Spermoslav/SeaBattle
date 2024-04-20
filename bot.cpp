@@ -40,9 +40,9 @@ bool Bot::missHitOrShipHit() noexcept
         remainedShipsSqCount += rs->getMk();
         rs->getMk();
     }
-    size_t notTouchSquaresCount = Field::squaresCount - Field::shipsSquaresCount - playerField->getMissHits().size(); //кол-во не задействованных квадратов
-    float hitChanse = remainedShipsSqCount / notTouchSquaresCount * 100; // шанс попадания
-    qDebug() << remainedShipsSqCount / notTouchSquaresCount;
+    size_t notTouchSQUARES_COUNT = Field::SQUARES_COUNT - Field::SHIPS_SQUARES_COUNT - playerField->getMissHits().size(); //кол-во не задействованных квадратов
+    float hitChanse = remainedShipsSqCount / notTouchSQUARES_COUNT * 100; // шанс попадания
+    qDebug() << remainedShipsSqCount / notTouchSQUARES_COUNT;
     return hitChanse >= rand() % 100;
 }
 

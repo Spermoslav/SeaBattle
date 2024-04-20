@@ -8,7 +8,6 @@ Field::Field(Widget *parent)
 {
     this->parent = parent;
     allShips.reserve(10);
-    remainedShips.reserve(10);
     reSize();
 }
 
@@ -25,7 +24,7 @@ void Field::reSize() noexcept
 
 void Field::updateSquareSize() noexcept
 {
-    squareSize = width() / rowsCount;
+    squareSize = width() / ROWS_COUNT;
 }
 
 void Field::randomMoveAllShips() noexcept
@@ -152,8 +151,8 @@ void Field::paintEvent(QPaintEvent *e)
     QPainter p;
     p.begin(this);
     p.drawRect(0, 0, width() - 2, height() - 2);
-    for(uint i = 0; i < rowsCount; i++) {
-        for(uint j = 0; j < rowsCount; j++) {
+    for(uint i = 0; i < ROWS_COUNT; i++) {
+        for(uint j = 0; j < ROWS_COUNT; j++) {
             p.drawRect(i * squareSize, j * squareSize, squareSize, squareSize);
         }
     }
@@ -175,7 +174,7 @@ void PlayerField::shipDestroyed(const Ship *ship) noexcept
 void PlayerField::spawnShips() noexcept
 {
     if(allShips.empty()) {
-        for(std::size_t i = 0; i < shipCount; i ++) {
+        for(std::size_t i = 0; i < SHIP_COUNT; i ++) {
             allShips.push_back(new PlayerShip(this));
             remainedShips.push_back(allShips[i]);
         }

@@ -35,12 +35,12 @@ public:
     bool checkShipCollision(const QPoint &newPos, const Ship *ship) const noexcept;
     bool checkFieldCollision(const QPoint &newPos) const noexcept;
 
-    quint8 getMk() const noexcept;
-    bool getIsTarget()  const noexcept;
-    bool getIsDestroy() const noexcept;
-    const Field *getField() const noexcept;
-    Orientation getOrientation() const noexcept;
-    const std::vector<Damage*> &damagedSquares() const noexcept;
+    quint8 getMk() const noexcept { return mk; }
+    bool getIsTarget()  const noexcept {return isTarget; }
+    bool getIsDestroy() const noexcept { return isDestroy; }
+    const Field *getField() const noexcept { return field; }
+    Orientation getOrientation() const noexcept { return orientation; }
+    const std::vector<Damage*> &damagedSquares() const noexcept { return damage; }
 
 
 private slots:

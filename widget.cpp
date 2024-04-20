@@ -57,21 +57,6 @@ void Widget::updateWidgetsSize() noexcept
     winMenu->resize();
 }
 
-const BotField *Widget::getFieldBot() const noexcept
-{
-    return fieldBot;
-}
-
-const PlayerField *Widget::getFieldPlayer() const noexcept
-{
-    return fieldPlayer;
-}
-
-Bot *Widget::getBot() noexcept
-{
-    return bot;
-}
-
 void Widget::showMainMenu() noexcept
 {
     mainMenu->show();
@@ -85,7 +70,6 @@ void Widget::resetGame() noexcept
     fieldPlayer->reset();
     fieldBot->reset();
     infoBar->reset();
-
 }
 
 bool Widget::startGame() noexcept
@@ -110,12 +94,7 @@ bool Widget::startGame() noexcept
 void Widget::finishGame(Winner win) noexcept
 {
     winMenu->show(win);
-    resetGame();
-}
-
-bool Widget::getGameIsStart() const noexcept
-{
-    return gameIsStart;
+    gameIsStart = false;
 }
 
 void Widget::resizeEvent(QResizeEvent *e) noexcept

@@ -36,10 +36,10 @@ public:
     const std::list<QPoint>  &getMissHits()      const { return missHits; }
     const Widget *getParent() const { return parent; }
 
-    const static quint8 squaresCount      = 100;
-    const static quint8 rowsCount         = 10;
-    const static quint8 shipCount         = 10;
-    const static quint8 shipsSquaresCount = 20;
+    const static quint8 SQUARES_COUNT       = 100;
+    const static quint8 ROWS_COUNT          = 10;
+    const static quint8 SHIP_COUNT          = 10;
+    const static quint8 SHIPS_SQUARES_COUNT = 20;
 
 
 private slots:

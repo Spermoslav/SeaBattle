@@ -70,11 +70,8 @@ public:
 
     void show() noexcept;
 
-private slots:
-
 private:
     void placeObjects() noexcept override;
-
 };
 
 class WinMenu : public Menu

@@ -23,31 +23,6 @@ Ship::Ship(Field *field) noexcept
     }
 }
 
-quint8 Ship::getMk() const noexcept
-{
-    return mk;
-}
-
-const Field *Ship::getField() const noexcept
-{
-    return field;
-}
-
-const std::vector<Damage *> &Ship::damagedSquares() const noexcept
-{
-    return damage;
-}
-
-bool Ship::getIsTarget() const noexcept
-{
-    return isTarget;
-}
-
-bool Ship::getIsDestroy() const noexcept
-{
-    return isDestroy;
-}
-
 void Ship::resize() noexcept
 {
     QPoint newPos = field->findNearSquarePos(pos());
@@ -71,7 +46,7 @@ void Ship::resize() noexcept
     shipCenterX = width() / 2;
     shipCenterY = height() / 2;
     groupBoxPosWhenPress = QPoint(x(), y());
-
+    qDebug() << shipSize << field->getSquareSize();
     repaint();
 }
 
@@ -103,7 +78,6 @@ void Ship::rotate() noexcept
 
 void Ship::randomMove() noexcept //
 {
-    if(!field->getParent()->getGameIsStart()) {
         QPoint newPos;
         int sqX, sqY;
         size_t count = 0;
@@ -112,8 +86,8 @@ void Ship::randomMove() noexcept //
         while(count < 1000) {
             ++count;
             allShipsCheck = false;
-            sqX = rand() % (field->squaresCount + 1);
-            sqY = rand() % (field->squaresCount + 1);
+            sqX = rand() % (field->SQUARES_COUNT + 1);
+            sqY = rand() % (field->SQUARES_COUNT + 1);
             newPos = QPoint(sqX * field->getSquareSize(), sqY * field->getSquareSize());
             if(field->getAllShips().size() == 0) {
                 if(checkFieldCollision(newPos)) {
@@ -140,7 +114,6 @@ void Ship::randomMove() noexcept //
                 return;
             }
         }
-    }
 }
 
 void Ship::resizeEvent(QResizeEvent *e) noexcept
@@ -190,11 +163,6 @@ void Ship::reset() noexcept
     update();
 }
 
-Orientation Ship::getOrientation() const noexcept
-{
-    return orientation;
-}
-
 QPoint Ship::findPosForDamage(const QPoint &pos) const noexcept
 {
     return QPoint((pos.x() / field->getSquareSize()),
@@ -233,6 +201,7 @@ void PlayerShip::paintEvent(QPaintEvent *e) noexcept
     p.setBrush(Qt::blue);
     p.drawRect(shipPos.x(), shipPos.y(), shipSize.width(), shipSize.height());
     p.end();
+
 }
 
 void PlayerShip::mousePressEvent(QMouseEvent *e) noexcept

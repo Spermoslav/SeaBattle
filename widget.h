@@ -43,11 +43,11 @@ public:
     bool startGame() noexcept;
     void finishGame(Winner win) noexcept;
 
-    bool getGameIsStart() const noexcept;
-    const BotField *getFieldBot() const noexcept;
-    const PlayerField *getFieldPlayer() const noexcept;
+    bool getGameIsStart() const noexcept { return gameIsStart; }
+    const BotField *getFieldBot() const noexcept { return fieldBot; }
+    const PlayerField *getFieldPlayer() const noexcept { return fieldPlayer;}
 
-    Bot *getBot() noexcept;
+    Bot *getBot() noexcept { return bot; }
 
 
     InfoBar *infoBar;
