@@ -1,6 +1,7 @@
 #include "field.h"
 #include "ships.h"
 #include "tools.h"
+#include "bot.h"
 #include <algorithm>
 
 Field::Field(Widget *parent)
@@ -168,7 +169,7 @@ void PlayerField::shipDestroyed(const Ship *ship) noexcept
 {
     eraseRemainedShip(ship);
     addMissHitsAroundDestroyShip(ship);
-    if(remainedShips.empty()) parent->finishGame(Winner::bot);
+    if(remainedShips.empty()) parent->finishGame(Gamer::bot);
 }
 
 void PlayerField::spawnShips() noexcept
@@ -194,7 +195,7 @@ void BotField::shipDestroyed(const Ship *ship) noexcept
 {
     eraseRemainedShip(ship);
     addMissHitsAroundDestroyShip(ship);
-    if(remainedShips.empty()) parent->finishGame(Winner::player);
+    if(remainedShips.empty()) parent->finishGame(Gamer::player);
 }
 
 void BotField::spawnShips() noexcept
@@ -209,5 +210,9 @@ void BotField::spawnShips() noexcept
 
 void BotField::mousePressEvent(QMouseEvent *e)
 {
-    if(parent->getGameIsStart()) takeMissHit(e->pos());
+    if(parent->getGameIsStart() && parent->getWhoMove() == Gamer::player) {
+        takeMissHit(e->pos());
+        parent->changeWhoMove();
+        parent->getBot()->activate();
+    }
 }

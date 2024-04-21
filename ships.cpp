@@ -157,7 +157,7 @@ void Ship::reset() noexcept
     isTarget     = false;
     isDestroy    = false;
     destroyItems = 0;
-    orientation  = Orientation::vertical;
+    orientation  = vertical;
     move(0, 0);
     resize();
     update();
@@ -271,6 +271,14 @@ bool BotShip::takeDamage(const QPoint &damagePos) noexcept //
 void BotShip::paintEvent(QPaintEvent *e) noexcept
 {
     Q_UNUSED(e)
+#ifdef DEBUG
+    QPainter p;
+    p.begin(this);
+    p.drawRect(0, 0, width() - 1, height() - 1);
+    p.setBrush(Qt::blue);
+    p.drawRect(shipPos.x(), shipPos.y(), shipSize.width(), shipSize.height());
+    p.end();
+#else
     if(isDestroy) {
         QPainter p;
         p.begin(this);
@@ -279,12 +287,13 @@ void BotShip::paintEvent(QPaintEvent *e) noexcept
         p.drawRect(shipPos.x(), shipPos.y(), shipSize.width(), shipSize.height());
         p.end();
     }
+#endif // DEBUG
 }
 
 void BotShip::mousePressEvent(QMouseEvent *e) noexcept
 {
     Q_UNUSED(e)
-    if(field->getParent()->getGameIsStart()) {
+    if(field->getParent()->getGameIsStart() && field->getParent()->getWhoMove() == Gamer::player) {
         takeDamage(e->pos());
     }
 }

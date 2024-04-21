@@ -1,6 +1,12 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
+#define DEBUG
+
+#ifdef DEBUG
+    #define BOT_UNMISS_FIRSTHIT
+#endif // DEBUG
+
 #include <QWidget>
 #include <QResizeEvent>
 #include <QMouseEvent>
@@ -23,7 +29,7 @@ class MainMenu;
 class WinMenu;
 class Bot;
 
-enum class Winner {
+enum class Gamer {
     bot,
     player
 };
@@ -39,9 +45,10 @@ public:
     void randomMovePlayerShips() noexcept;
     void updateWidgetsSize() noexcept;
     void showMainMenu() noexcept;
+    void changeWhoMove();
     void resetGame() noexcept;
     bool startGame() noexcept;
-    void finishGame(Winner win) noexcept;
+    void finishGame(Gamer winner) noexcept;
 
     bool getGameIsStart() const noexcept { return gameIsStart; }
     const BotField *getFieldBot() const noexcept { return fieldBot; }
@@ -49,6 +56,7 @@ public:
 
     Bot *getBot() noexcept { return bot; }
 
+    Gamer getWhoMove() const;
 
     InfoBar *infoBar;
 
@@ -70,6 +78,8 @@ private:
     MainMenu *mainMenu;
     WinMenu *winMenu;
 
-    bool gameIsStart;
+    Gamer whoMove;
+
+    bool gameIsStart = false;
 };
 #endif // WIDGET_H

@@ -2,11 +2,20 @@
 #include "field.h"
 #include "ships.h"
 #include "tools.h"
+#include <thread>
 
 Bot::Bot(Widget *game) noexcept
 {
-    field = game->fieldBot;
+
+    this->game = game;
     playerField = game->fieldPlayer;
+
+    mTimer = new MotionTimer(this, 500);
+}
+
+void Bot::activate()
+{
+    if(game->getWhoMove() == Gamer::bot) mTimer->start();
 }
 
 void Bot::motion() noexcept
@@ -15,20 +24,20 @@ void Bot::motion() noexcept
         makeHit_whenFoundShip();
     }
     else {
+
+#ifdef BOT_UNMISS_FIRSTHIT
+        makeFirstShipHit();
+#else
         if(missHitOrShipHit()){
-               findTargetShip();
-               if(targetShip) {
-                   firstShipHit = findPosForMakeShipHit();
-                   lastShipHit = firstShipHit;
-                   if(targetShip->takeDamage(lastShipHit)) {
-                       targetShip = nullptr;
-                   }
-               }
-               else qDebug() << "targetShip == nullptr";
+               makeFirstShipHit();
         }
         else {
             playerField->takeMissHit(findPosForMakeMissHit());
+            mTimer->stop();
+            game->changeWhoMove();
+
         }
+#endif
     }
 
 }
@@ -42,8 +51,9 @@ bool Bot::missHitOrShipHit() noexcept
     }
     size_t notTouchSQUARES_COUNT = Field::SQUARES_COUNT - Field::SHIPS_SQUARES_COUNT - playerField->getMissHits().size(); //кол-во не задействованных квадратов
     float hitChanse = remainedShipsSqCount / notTouchSQUARES_COUNT * 100; // шанс попадания
-    qDebug() << remainedShipsSqCount / notTouchSQUARES_COUNT;
-    return hitChanse >= rand() % 100;
+    int er = rand() % 100;
+    qDebug() << hitChanse << er << bool(hitChanse >= er);
+    return hitChanse >= er;
 }
 
 QPoint Bot::findPosForMakeMissHit() noexcept //
@@ -83,37 +93,54 @@ QPoint Bot::findPosForMakeShipHit() noexcept //
     return QPoint();
 }
 
-void Bot::makeHit_whenFoundShip() noexcept
+bool Bot::makeHit_whenFoundShip() noexcept
 {
     if(foundOrientation) {
         if(targetShip->getOrientation() == vertical) {
             makeVerticalHits();
         }
         else {
-            makeHorizontalHits();
+            return makeHorizontalHits();
         }
     }
     else {
         if(hitDirection) {
-            if(makeRightHit()) return;
-            if(makeDownHit())  return;
+            if(makeRightHit()) return true;
+            if(makeDownHit())  return true;
             hitDirection = false;
-            if(makeLeftHit())  return;
-            makeUpHit();
+            if(makeLeftHit())  return true;
+            return makeUpHit();
         }
         else {
-            if(makeLeftHit())  return;
-            if(makeUpHit())    return;
+            if(makeLeftHit())  return true;
+            if(makeUpHit())    return true;
             hitDirection = true;
-            if(makeRightHit()) return;
-            makeDownHit();
+            if(makeRightHit()) return true;
+            return makeDownHit();
         }
     }
+    return false;
 }
 
 void Bot::findTargetShip() noexcept
 {
     targetShip = playerField->getRemainedShips()[rand() % playerField->getRemainedShips().size()];
+}
+
+void Bot::makeFirstShipHit()
+{
+    if(targetShip) return;
+    findTargetShip();
+    if(targetShip) {
+        firstShipHit = findPosForMakeShipHit();
+        lastShipHit = firstShipHit;
+        if(targetShip->takeDamage(lastShipHit)) {
+            targetShip = nullptr;
+            return;
+        }
+        mTimer->start();
+    }
+    else qDebug() << "targetShip == nullptr";
 }
 
 QPoint Bot::convertFieldPos_to_ShipPos(const QPoint &pos) noexcept
@@ -124,40 +151,41 @@ QPoint Bot::convertFieldPos_to_ShipPos(const QPoint &pos) noexcept
 
 void Bot::reset() noexcept
 {
+    mTimer->stop();
     targetShip = nullptr;
     hitDirection = rand() % 2;
     foundOrientation = false;
 }
 
-void Bot::makeVerticalHits() noexcept
+bool Bot::makeVerticalHits() noexcept
 {
     if(hitDirection) {
-        if(makeDownHit()) return;
+        if(makeDownHit()) return true;
         lastShipHit = firstShipHit;
         hitDirection = false;
-        makeUpHit();
+        return makeUpHit();
     }
     else {
-        if(makeUpHit()) return;
+        if(makeUpHit()) return true;
         lastShipHit = firstShipHit;
         hitDirection = true;
-        makeDownHit();
+        return makeDownHit();
     }
 }
 
-void Bot::makeHorizontalHits() noexcept
+bool Bot::makeHorizontalHits() noexcept
 {
     if(hitDirection) {
-        if(makeRightHit()) return;
+        if(makeRightHit()) return true;
         lastShipHit = firstShipHit;
         hitDirection = false;
-        makeLeftHit();
+        return makeLeftHit();
     }
     else {
-        if(makeLeftHit()) return;
+        if(makeLeftHit()) return true;
         lastShipHit = firstShipHit;
         hitDirection = true;
-        makeRightHit();
+        return makeRightHit();
     }
 }
 
@@ -196,12 +224,41 @@ bool Bot::tryMakeHit(QPoint &hitPos) noexcept
                 targetShip = nullptr;
                 foundOrientation = false;
             }
+            mTimer->start();
             return true;
         }
         else if(!playerField->isMissHitOn(hitPos) && !playerField->isOutField(hitPos)){
             playerField->takeMissHit(hitPos);
+            mTimer->stop();
+            game->changeWhoMove();
             return true;
         }
     }
     return false;
+}
+
+
+Bot::MotionTimer::MotionTimer(Bot *bot, uint rd)
+{
+    this->bot = bot;
+    run_delay = rd;
+}
+
+void Bot::MotionTimer::start()
+{
+    if(isStart) return;
+    isStart = true;
+    std::thread th(&MotionTimer::run, this);
+    th.detach();
+}
+
+void Bot::MotionTimer::run()
+{
+    qDebug() << " run ";
+    std::srand(std::time(nullptr));
+    while(isStart) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(run_delay));
+        if(isStart) bot->motion();
+        else break;
+    }
 }

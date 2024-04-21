@@ -203,16 +203,16 @@ WinMenu::WinMenu(Widget *parent) noexcept
     winLabel->setStyleSheet("border: 0px;");
 }
 
-void WinMenu::show(Winner wr) noexcept
+void WinMenu::show(Gamer winner) noexcept
 {
-    setWinLabel(wr);
+    setWinLabel(winner);
     static_cast<QGroupBox*> (this)->show();
     backgroundShadow->show();
 }
 
-void WinMenu::setWinLabel(Winner wr) noexcept
+void WinMenu::setWinLabel(Gamer wr) noexcept
 {
-    if (wr == Winner::player) winLabel->setText(playerWinStr);
+    if (wr == Gamer::player) winLabel->setText(playerWinStr);
     else                      winLabel->setText(botWinStr);
 }
 

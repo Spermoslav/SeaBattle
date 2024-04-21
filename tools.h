@@ -80,10 +80,10 @@ public:
 
     WinMenu(Widget *parent) noexcept;
 
-    void show(Winner wr) noexcept;
+    void show(Gamer winner) noexcept;
 
 private:
-    void setWinLabel(Winner wr) noexcept;
+    void setWinLabel(Gamer wr) noexcept;
     void placeObjects() noexcept override;
 
     QLabel *winLabel;

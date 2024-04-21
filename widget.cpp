@@ -11,7 +11,8 @@ Widget::Widget(QWidget *parent) noexcept
 {
     ui->setupUi(this);
     setMinimumSize(400, 400);
-    gameIsStart = false;
+
+    whoMove = Gamer::player;
 
     infoBar = new InfoBar(this);
 
@@ -62,6 +63,12 @@ void Widget::showMainMenu() noexcept
     mainMenu->show();
 }
 
+void Widget::changeWhoMove()
+{
+    if(whoMove == Gamer::bot) whoMove = Gamer::player;
+    else whoMove = Gamer::bot;
+}
+
 void Widget::resetGame() noexcept
 {
     gameIsStart = false;
@@ -70,6 +77,7 @@ void Widget::resetGame() noexcept
     fieldPlayer->reset();
     fieldBot->reset();
     infoBar->reset();
+    whoMove = Gamer::player;
 }
 
 bool Widget::startGame() noexcept
@@ -86,15 +94,21 @@ bool Widget::startGame() noexcept
         }
         fieldBot->randomMoveAllShips();
         gameIsStart = true;
+        bot->activate();
         return true;
     }
     return false;
 }
 
-void Widget::finishGame(Winner win) noexcept
+void Widget::finishGame(Gamer winner) noexcept
 {
-    winMenu->show(win);
+    winMenu->show(winner);
     gameIsStart = false;
+}
+
+Gamer Widget::getWhoMove() const
+{
+    return whoMove;
 }
 
 void Widget::resizeEvent(QResizeEvent *e) noexcept
