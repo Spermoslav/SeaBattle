@@ -4,7 +4,9 @@
 #define DEBUG
 
 #ifdef DEBUG
-    #define BOT_UNMISS_FIRSTHIT
+    #define GAME_QUEUEMOVE_LOCK
+//    #define BOT_UNMISS_FIRSTHIT
+    #define BOT_TIMER_LOCK
 #endif // DEBUG
 
 #include <QWidget>

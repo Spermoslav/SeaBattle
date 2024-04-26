@@ -51,46 +51,19 @@ bool Bot::missHitOrShipHit() noexcept
     }
     size_t notTouchSQUARES_COUNT = Field::SQUARES_COUNT - Field::SHIPS_SQUARES_COUNT - playerField->getMissHits().size(); //кол-во не задействованных квадратов
     float hitChanse = remainedShipsSqCount / notTouchSQUARES_COUNT * 100; // шанс попадания
-    int er = rand() % 100;
-    qDebug() << hitChanse << er << bool(hitChanse >= er);
-    return hitChanse >= er;
+    return hitChanse >= rand() % 100;
 }
 
 QPoint Bot::findPosForMakeMissHit() noexcept //
 {
-    QPoint hitPos;
-    for(size_t i = 0; i < 100; ++i) {
-        hitPos = QPoint(rand() % playerField->width(), rand() % playerField->height());
-        if(!playerField->isShipOn(hitPos) && !playerField->isMissHitOn(hitPos)) return hitPos;
-    }
+    return playerField->getFreeSquares()[rand() % playerField->getFreeSquares().size()];
 }
 
-QPoint Bot::findPosForMakeShipHit() noexcept //
+QPoint Bot::findPosForMakeShipHit() noexcept
 {
     if(targetShip && !targetShip->getIsDestroy()) {
-        QPoint hitPos;
-        if(targetShip->getOrientation() == vertical){
-            for(size_t i = 0; i < 100; ++i) {
-                hitPos = QPoint(rand() % targetShip->width(), rand() % targetShip->height());
-                for(const auto &dm : targetShip->damagedSquares()) {
-                    if(hitPos.y() < dm->y() || hitPos.y() > dm->y() + dm->height()) {
-                       return hitPos;
-                    }
-                }
-            }
-        }
-        else {
-            for(size_t i = 0; i < 100; ++i) {
-                hitPos = QPoint(rand() % targetShip->width(), rand() % targetShip->height());
-                for(const auto &dm : targetShip->damagedSquares()) {
-                    if(hitPos.x() < dm->x() || hitPos.x() > dm->x() + dm->width()) {
-                       return hitPos;
-                    }
-                }
-            }
-        }
+        return QPoint(rand() % targetShip->width(), rand() % targetShip->height());
     }
-    return QPoint();
 }
 
 bool Bot::makeHit_whenFoundShip() noexcept
@@ -246,15 +219,16 @@ Bot::MotionTimer::MotionTimer(Bot *bot, uint rd)
 
 void Bot::MotionTimer::start()
 {
+#ifndef BOT_TIMER_LOCK
     if(isStart) return;
     isStart = true;
     std::thread th(&MotionTimer::run, this);
     th.detach();
+#endif
 }
 
 void Bot::MotionTimer::run()
 {
-    qDebug() << " run ";
     std::srand(std::time(nullptr));
     while(isStart) {
         std::this_thread::sleep_for(std::chrono::milliseconds(run_delay));

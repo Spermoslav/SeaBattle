@@ -20,6 +20,7 @@ void Field::reSize() noexcept
     for(auto &mh : missHits) {
         mh = findNearSquarePos(mh);
     }
+    resetFreeSquares();
     repaint();
 }
 
@@ -31,7 +32,6 @@ void Field::updateSquareSize() noexcept
 void Field::randomMoveAllShips() noexcept
 {
     for(const auto &ship : allShips) ship->randomMove();
-
 }
 
 void Field::eraseRemainedShip(const Ship* ship) noexcept
@@ -85,6 +85,7 @@ void Field::takeMissHit(const QPoint &hitPos) noexcept
 {
     if(!isMissHitOn(hitPos) && !isOutField(hitPos) && !isShipOn(hitPos)) {
         missHits.push_back(findSquarePos(hitPos));
+        std::remove(freeSquares.begin(), freeSquares.end(), findSquarePos(hitPos));
         update();
     }
 }
@@ -97,7 +98,20 @@ void Field::reset() noexcept
         remainedShips.push_back(ship);
     }
     missHits.clear();
+    resetFreeSquares();
     update();
+}
+
+void Field::resetFreeSquares()
+{
+    freeSquares.clear();
+    QPoint pos;
+    for(size_t i = 0; i < ROWS_COUNT; ++i) {
+        for(size_t j = 0; j < ROWS_COUNT; ++j) {
+            pos = QPoint(i * squareSize, j * squareSize);
+            if(!isShipOn(pos) && !isMissHitOn(pos) && !isOutField(pos)) freeSquares.push_back(pos);
+        }
+    }
 }
 
 QPoint Field::findNearSquarePos(const QPoint &pos) const noexcept
@@ -145,6 +159,7 @@ void Field::resizeEvent(QResizeEvent *e)
     for(auto const &ship : allShips) {
         ship->resize();
     }
+    resetFreeSquares();
 }
 
 void Field::paintEvent(QPaintEvent *e)
@@ -211,9 +226,17 @@ void BotField::spawnShips() noexcept
 
 void BotField::mousePressEvent(QMouseEvent *e)
 {
+#ifndef GAME_QUEUEMOVE_LOCK
     if(parent->getGameIsStart() && parent->getWhoMove() == Gamer::player) {
         takeMissHit(e->pos());
         parent->changeWhoMove();
         parent->getBot()->activate();
     }
+#else
+    if(parent->getGameIsStart()) {
+        takeMissHit(e->pos());
+        parent->changeWhoMove();
+        parent->getBot()->activate();
+    }
+#endif
 }

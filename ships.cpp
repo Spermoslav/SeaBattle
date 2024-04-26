@@ -77,13 +77,13 @@ void Ship::randomMove() noexcept
     bool allShipsSuit = false;
     if(rand() % 2) turn();
 
-    for(int i = 0; i < field->ROWS_COUNT; ++i) {
-        for(int j = 0; j < field->ROWS_COUNT; ++j) {
+    for(int i = 0; i < Field::ROWS_COUNT; ++i) {
+        for(int j = 0; j < Field::ROWS_COUNT; ++j) {
             correctPlaces.push_back(QPoint(i * field->getSquareSize(), j * field->getSquareSize()));
         }
     }
 
-    for(size_t count = 0; count < field->SQUARES_COUNT; ++count) {
+    for(size_t count = 0; count < Field::SQUARES_COUNT; ++count) {
         index = rand() % correctPlaces.size();
         for (const auto &s : field->getAllShips()) {
             if(s != this) {
@@ -175,7 +175,7 @@ PlayerShip::PlayerShip(Field *field) noexcept
 {
 }
 
-bool PlayerShip::takeDamage(const QPoint &damagePos) noexcept //
+bool PlayerShip::takeDamage(const QPoint &damagePos) noexcept
 {
     for(auto const &dm : damage) {
         if(findPosForDamage(damagePos) == dm->pos() && dm->isHidden()){
@@ -251,7 +251,7 @@ BotShip::BotShip(Field *field) noexcept
 {
 }
 
-bool BotShip::takeDamage(const QPoint &damagePos) noexcept //
+bool BotShip::takeDamage(const QPoint &damagePos) noexcept
 {
     for(auto const &dm : damage) {
         if(findPosForDamage(damagePos) == dm->pos() && dm->isHidden()){
@@ -294,9 +294,15 @@ void BotShip::paintEvent(QPaintEvent *e) noexcept
 void BotShip::mousePressEvent(QMouseEvent *e) noexcept
 {
     Q_UNUSED(e)
+#ifndef GAME_QUEUEMOVE_LOCK
     if(field->getParent()->getGameIsStart() && field->getParent()->getWhoMove() == Gamer::player) {
         takeDamage(e->pos());
     }
+#else
+    if(field->getParent()->getGameIsStart()) {
+        takeDamage(e->pos());
+    }
+#endif
 }
 
 

@@ -13,6 +13,7 @@ class Field : public QGroupBox
 public:
     Field(Widget *parent);
     void reset()  noexcept;
+    void resetFreeSquares();
     void reSize() noexcept;
 
     void updateSquareSize()   noexcept;
@@ -31,9 +32,11 @@ public:
 
     int getSquareSize() const { return squareSize; }
 
-    const std::vector<Ship*> &getAllShips()      const { return allShips; }
+    const std::vector<Ship*> &getAllShips()      const { return allShips;      }
     const std::vector<Ship*> &getRemainedShips() const { return remainedShips; }
-    const std::list<QPoint>  &getMissHits()      const { return missHits; }
+    const std::list<QPoint>  &getMissHits()      const { return missHits;      }
+    const QList<QPoint>      &getFreeSquares()   const { return freeSquares;   }
+
     const Widget *getParent() const { return parent; }
 
     const static quint8 SQUARES_COUNT       = 100;
@@ -55,6 +58,7 @@ protected:
     std::vector<Ship*> allShips;
     std::vector<Ship*> remainedShips;
     std::list<QPoint> missHits;
+    QList<QPoint> freeSquares;
 
     int squareSize;
 };
