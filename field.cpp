@@ -31,6 +31,7 @@ void Field::updateSquareSize() noexcept
 void Field::randomMoveAllShips() noexcept
 {
     for(const auto &ship : allShips) ship->randomMove();
+
 }
 
 void Field::eraseRemainedShip(const Ship* ship) noexcept

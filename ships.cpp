@@ -54,14 +54,8 @@ void Ship::rotate() noexcept
 {
     QSize oldSize = size();
     Orientation oldOr = orientation;
-    if(orientation == vertical) {
-        orientation = horizontal;
-        setGeometry(x(), y(),field->getSquareSize() * mk, field->getSquareSize());
-    }
-    else {
-        orientation = vertical;
-        setGeometry(x(), y(), field->getSquareSize(), field->getSquareSize() * mk);
-    }
+
+    turn();
 
     for(auto const &ship : field->getAllShips()){
         if(ship != this) {
@@ -76,44 +70,38 @@ void Ship::rotate() noexcept
     resize();
 }
 
-void Ship::randomMove() noexcept //
+void Ship::randomMove() noexcept
 {
-        QPoint newPos;
-        int sqX, sqY;
-        size_t count = 0;
-        bool b = rand() % 2;
-        bool allShipsCheck;
-        while(count < 1000) {
-            ++count;
-            allShipsCheck = false;
-            sqX = rand() % (field->SQUARES_COUNT + 1);
-            sqY = rand() % (field->SQUARES_COUNT + 1);
-            newPos = QPoint(sqX * field->getSquareSize(), sqY * field->getSquareSize());
-            if(field->getAllShips().size() == 0) {
-                if(checkFieldCollision(newPos)) {
-                    continue;
+    QList<QPoint> correctPlaces;
+    quint8 index;
+    bool allShipsSuit = false;
+    if(rand() % 2) turn();
+
+    for(int i = 0; i < field->ROWS_COUNT; ++i) {
+        for(int j = 0; j < field->ROWS_COUNT; ++j) {
+            correctPlaces.push_back(QPoint(i * field->getSquareSize(), j * field->getSquareSize()));
+        }
+    }
+
+    for(size_t count = 0; count < field->SQUARES_COUNT; ++count) {
+        index = rand() % correctPlaces.size();
+        for (const auto &s : field->getAllShips()) {
+            if(s != this) {
+                if(checkCollision(correctPlaces[index], s)) {
+                    correctPlaces.removeAt(index);
+                    allShipsSuit = false;
+                    break;
                 }
                 else {
-                    move(newPos);
-                    if(b) rotate();
-                    return;
+                    allShipsSuit = true;
                 }
-            }
-            for(auto const &ship : field->getAllShips()){
-                if(ship != this){
-                    if(checkCollision(newPos, ship)){
-                        allShipsCheck = false;
-                        break;
-                    }
-                    else allShipsCheck = true;
-                }
-            }
-            if (allShipsCheck) {
-                move(newPos);
-                if(b) rotate();
-                return;
             }
         }
+        if(allShipsSuit) {
+            move(correctPlaces[index]);
+            return;
+        }
+    }
 }
 
 void Ship::resizeEvent(QResizeEvent *e) noexcept
@@ -167,6 +155,19 @@ QPoint Ship::findPosForDamage(const QPoint &pos) const noexcept
 {
     return QPoint((pos.x() / field->getSquareSize()),
                   (pos.y() / field->getSquareSize())) * field->getSquareSize();
+}
+
+void Ship::turn()
+{
+    if(orientation == vertical) {
+        orientation = horizontal;
+        setGeometry(x(), y(),field->getSquareSize() * mk, field->getSquareSize());
+    }
+    else {
+        orientation = vertical;
+        setGeometry(x(), y(), field->getSquareSize(), field->getSquareSize() * mk);
+    }
+    resize();
 }
 
 PlayerShip::PlayerShip(Field *field) noexcept

@@ -49,6 +49,8 @@ protected:
 
     QPoint findPosForDamage(const QPoint &pos) const noexcept;
 
+    void turn(); // поворот без проверки на коллизию
+
 protected:
     Field *field;
 
