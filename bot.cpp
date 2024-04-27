@@ -46,17 +46,19 @@ bool Bot::missHitOrShipHit() noexcept
 {
     float remainedShipsSqCount = 0; // кол-во оставшихся квадратов живых кораблей
     for(const auto &rs : playerField->getRemainedShips()) {
-        remainedShipsSqCount += rs->getMk();
-        rs->getMk();
+        if(!rs->getIsDestroy()) remainedShipsSqCount += rs->getMk();
     }
     size_t notTouchSQUARES_COUNT = Field::SQUARES_COUNT - Field::SHIPS_SQUARES_COUNT - playerField->getMissHits().size(); //кол-во не задействованных квадратов
     float hitChanse = remainedShipsSqCount / notTouchSQUARES_COUNT * 100; // шанс попадания
+    qDebug() << hitChanse;
     return hitChanse >= rand() % 100;
 }
 
-QPoint Bot::findPosForMakeMissHit() noexcept //
+QPoint Bot::findPosForMakeMissHit() noexcept
 {
-    return playerField->getFreeSquares()[rand() % playerField->getFreeSquares().size()];
+    std::list<QPoint>::const_iterator it = playerField->getFreeSquares().begin();
+    std::advance(it, rand() % playerField->getFreeSquares().size());
+    return *it;
 }
 
 QPoint Bot::findPosForMakeShipHit() noexcept
@@ -64,6 +66,7 @@ QPoint Bot::findPosForMakeShipHit() noexcept
     if(targetShip && !targetShip->getIsDestroy()) {
         return QPoint(rand() % targetShip->width(), rand() % targetShip->height());
     }
+    return QPoint(-1, -1);
 }
 
 bool Bot::makeHit_whenFoundShip() noexcept
@@ -104,16 +107,14 @@ void Bot::makeFirstShipHit()
 {
     if(targetShip) return;
     findTargetShip();
-    if(targetShip) {
-        firstShipHit = findPosForMakeShipHit();
-        lastShipHit = firstShipHit;
-        if(targetShip->takeDamage(lastShipHit)) {
-            targetShip = nullptr;
-            return;
-        }
-        mTimer->start();
+
+    firstShipHit = findPosForMakeShipHit();
+    lastShipHit = firstShipHit;
+    if(targetShip->takeDamage(lastShipHit)) {
+        targetShip = nullptr;
+        return;
     }
-    else qDebug() << "targetShip == nullptr";
+    mTimer->start();
 }
 
 QPoint Bot::convertFieldPos_to_ShipPos(const QPoint &pos) noexcept

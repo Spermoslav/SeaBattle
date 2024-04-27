@@ -35,7 +35,7 @@ public:
     const std::vector<Ship*> &getAllShips()      const { return allShips;      }
     const std::vector<Ship*> &getRemainedShips() const { return remainedShips; }
     const std::list<QPoint>  &getMissHits()      const { return missHits;      }
-    const QList<QPoint>      &getFreeSquares()   const { return freeSquares;   }
+    const std::list<QPoint>      &getFreeSquares()   const { return freeSquares;   }
 
     const Widget *getParent() const { return parent; }
 
@@ -58,7 +58,7 @@ protected:
     std::vector<Ship*> allShips;
     std::vector<Ship*> remainedShips;
     std::list<QPoint> missHits;
-    QList<QPoint> freeSquares;
+    std::list<QPoint> freeSquares;
 
     int squareSize;
 };

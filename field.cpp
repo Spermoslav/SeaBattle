@@ -31,7 +31,10 @@ void Field::updateSquareSize() noexcept
 
 void Field::randomMoveAllShips() noexcept
 {
-    for(const auto &ship : allShips) ship->randomMove();
+    for(const auto &ship : allShips) {
+        ship->randomMove();
+    }
+    resetFreeSquares();
 }
 
 void Field::eraseRemainedShip(const Ship* ship) noexcept
@@ -85,7 +88,7 @@ void Field::takeMissHit(const QPoint &hitPos) noexcept
 {
     if(!isMissHitOn(hitPos) && !isOutField(hitPos) && !isShipOn(hitPos)) {
         missHits.push_back(findSquarePos(hitPos));
-        std::remove(freeSquares.begin(), freeSquares.end(), findSquarePos(hitPos));
+        freeSquares.erase(std::find(freeSquares.begin(), freeSquares.end(), findSquarePos(hitPos)));
         update();
     }
 }
@@ -150,7 +153,7 @@ bool Field::isMissHitOn(const QPoint &pos) const noexcept
 
 bool Field::isOutField(const QPoint &pos) const noexcept
 {
-    return pos.x() < 0 || pos.y() < 0 || pos.x() > width() || pos.y() > height();
+    return pos.x() < 0 || pos.y() < 0 || pos.x() >= width() || pos.y() >= height();
 }
 
 void Field::resizeEvent(QResizeEvent *e)
