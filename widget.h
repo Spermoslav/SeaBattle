@@ -4,9 +4,10 @@
 #define DEBUG
 
 #ifdef DEBUG
-    #define GAME_QUEUEMOVE_LOCK
-//    #define BOT_UNMISS_FIRSTHIT
-    #define BOT_TIMER_LOCK
+//    #define GAME_QUEUEMOVE_LOCK
+//    #define BOT_SHIPS_SHOW
+    #define BOT_UNMISS_FIRSTHIT
+//    #define BOT_TIMER_LOCK
 #endif // DEBUG
 
 #include <QWidget>
@@ -36,6 +37,12 @@ enum class Gamer {
     player
 };
 
+enum GameStatus {
+    finished,
+    started,
+    over
+};
+
 class Widget : public QWidget
 {
     Q_OBJECT
@@ -52,7 +59,7 @@ public:
     bool startGame() noexcept;
     void finishGame(Gamer winner) noexcept;
 
-    bool getGameIsStart() const noexcept { return gameIsStart; }
+    GameStatus getGameStatus() const noexcept { return gameStatus; }
     const BotField *getFieldBot() const noexcept { return fieldBot; }
     const PlayerField *getFieldPlayer() const noexcept { return fieldPlayer;}
 
@@ -82,6 +89,6 @@ private:
 
     Gamer whoMove;
 
-    bool gameIsStart = false;
+    GameStatus gameStatus = finished;
 };
 #endif // WIDGET_H

@@ -60,12 +60,12 @@ void ToolsBar::startGamePBClicked() noexcept
 
 void ToolsBar::randomMovePlayerShipsPBClicked() noexcept
 {
-    if(!parent->getGameIsStart()) parent->randomMovePlayerShips();
+    if(parent->getGameStatus() == finished) parent->randomMovePlayerShips();
 }
 
 void ToolsBar::botMotionPBClicked() noexcept
 {
-    if(parent->getGameIsStart()) bot->motion();
+    if(parent->getGameStatus() == started) bot->motion();
 }
 
 
@@ -213,7 +213,7 @@ void WinMenu::show(Gamer winner) noexcept
 void WinMenu::setWinLabel(Gamer wr) noexcept
 {
     if (wr == Gamer::player) winLabel->setText(playerWinStr);
-    else                      winLabel->setText(botWinStr);
+    else winLabel->setText(botWinStr);
 }
 
 void WinMenu::placeObjects() noexcept

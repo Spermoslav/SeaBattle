@@ -39,7 +39,6 @@ void Bot::motion() noexcept
         }
 #endif
     }
-
 }
 
 bool Bot::missHitOrShipHit() noexcept
@@ -198,7 +197,6 @@ bool Bot::tryMakeHit(QPoint &hitPos) noexcept
                 targetShip = nullptr;
                 foundOrientation = false;
             }
-            mTimer->start();
             return true;
         }
         else if(!playerField->isMissHitOn(hitPos) && !playerField->isOutField(hitPos)){

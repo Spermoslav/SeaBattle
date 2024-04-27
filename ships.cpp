@@ -208,13 +208,13 @@ void PlayerShip::paintEvent(QPaintEvent *e) noexcept
 void PlayerShip::mousePressEvent(QMouseEvent *e) noexcept
 {
     if(e->button() == Qt::MouseButton::LeftButton) {
-        if(!field->getParent()->getGameIsStart()) {
+        if(field->getParent()->getGameStatus() == finished) {
             isTarget = true;
             mousePosWhenPress = e->position().toPoint();
             groupBoxPosWhenPress = QPoint(x(), y());
         }
     }
-    else if(e->button() == Qt::MouseButton::RightButton && !field->getParent()->getGameIsStart()){
+    else if(e->button() == Qt::MouseButton::RightButton && field->getParent()->getGameStatus() == finished){
         rotate();
     }
 }
@@ -222,7 +222,7 @@ void PlayerShip::mousePressEvent(QMouseEvent *e) noexcept
 void PlayerShip::mouseReleaseEvent(QMouseEvent *e) noexcept
 {
     Q_UNUSED(e)
-    if(!field->getParent()->getGameIsStart()) {
+    if(isTarget) {
         isTarget = false;
         QPoint newPos = field->findNearSquarePos(pos());
 
@@ -272,7 +272,7 @@ bool BotShip::takeDamage(const QPoint &damagePos) noexcept
 void BotShip::paintEvent(QPaintEvent *e) noexcept
 {
     Q_UNUSED(e)
-#ifdef DEBUG
+#ifdef BOT_SHIPS_SHOW
     QPainter p;
     p.begin(this);
     p.drawRect(0, 0, width() - 1, height() - 1);
@@ -280,7 +280,7 @@ void BotShip::paintEvent(QPaintEvent *e) noexcept
     p.drawRect(shipPos.x(), shipPos.y(), shipSize.width(), shipSize.height());
     p.end();
 #else
-    if(isDestroy) {
+    if(isDestroy || field->getParent()->getGameStatus() == over) {
         QPainter p;
         p.begin(this);
         p.drawRect(0, 0, width() - 1, height() - 1);
@@ -295,11 +295,11 @@ void BotShip::mousePressEvent(QMouseEvent *e) noexcept
 {
     Q_UNUSED(e)
 #ifndef GAME_QUEUEMOVE_LOCK
-    if(field->getParent()->getGameIsStart() && field->getParent()->getWhoMove() == Gamer::player) {
+    if(field->getParent()->getGameStatus() == started && field->getParent()->getWhoMove() == Gamer::player) {
         takeDamage(e->pos());
     }
 #else
-    if(field->getParent()->getGameIsStart()) {
+    if(field->getParent()->getGameStatus() == started) {
         takeDamage(e->pos());
     }
 #endif

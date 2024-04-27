@@ -199,14 +199,10 @@ void PlayerField::spawnShips() noexcept
             remainedShips.push_back(allShips[i]);
         }
     }
-
 }
 
 void PlayerField::mousePressEvent(QMouseEvent *e)
 {
-
-    qDebug() << isShipOn(e->pos());
-    qDebug() << isMissHitOn(e->pos());
 }
 
 
@@ -230,13 +226,13 @@ void BotField::spawnShips() noexcept
 void BotField::mousePressEvent(QMouseEvent *e)
 {
 #ifndef GAME_QUEUEMOVE_LOCK
-    if(parent->getGameIsStart() && parent->getWhoMove() == Gamer::player) {
+    if(parent->getGameStatus() == started && parent->getWhoMove() == Gamer::player) {
         takeMissHit(e->pos());
         parent->changeWhoMove();
         parent->getBot()->activate();
     }
 #else
-    if(parent->getGameIsStart()) {
+    if(parent->getGameStatus() == started) {
         takeMissHit(e->pos());
         parent->changeWhoMove();
         parent->getBot()->activate();

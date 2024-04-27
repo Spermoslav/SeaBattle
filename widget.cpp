@@ -37,7 +37,7 @@ Widget::~Widget()
 
 void Widget::randomMovePlayerShips() noexcept
 {
-    if(!gameIsStart) fieldPlayer->randomMoveAllShips();
+    if(gameStatus == finished) fieldPlayer->randomMoveAllShips();
 }
 
 void Widget::updateWidgetsSize() noexcept
@@ -71,7 +71,7 @@ void Widget::changeWhoMove()
 
 void Widget::resetGame() noexcept
 {
-    gameIsStart = false;
+    gameStatus = finished;
     bot->reset();
     toolsBar->reset();
     fieldPlayer->reset();
@@ -82,7 +82,7 @@ void Widget::resetGame() noexcept
 
 bool Widget::startGame() noexcept
 {
-    if(!gameIsStart) {
+    if(gameStatus == finished) {
         for(auto const &targetShip : fieldPlayer->getAllShips()) {
             for(auto const &ship : fieldPlayer->getAllShips()) {
                 if(targetShip != ship){
@@ -93,7 +93,7 @@ bool Widget::startGame() noexcept
             }
         }
         fieldBot->randomMoveAllShips();
-        gameIsStart = true;
+        gameStatus = started;
         bot->activate();
         return true;
     }
@@ -103,7 +103,8 @@ bool Widget::startGame() noexcept
 void Widget::finishGame(Gamer winner) noexcept
 {
     winMenu->show(winner);
-    gameIsStart = false;
+    bot->reset();
+    gameStatus = over;
 }
 
 Gamer Widget::getWhoMove() const
