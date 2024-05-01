@@ -2,11 +2,11 @@
 #include "field.h"
 #include "bot.h"
 
-ToolsBar::ToolsBar(Widget *parent) noexcept
+ToolsBar::ToolsBar(Widget *parent, Bot *bot) noexcept
     : QGroupBox(parent)
 {
     this->parent = parent;
-    bot = parent->getBot();
+    this->bot = bot;
 
     setStyleSheet("border: 1px solid black");
 
@@ -31,39 +31,38 @@ ToolsBar::ToolsBar(Widget *parent) noexcept
     toolsVBoxLayout->addWidget(startGamePB);
     toolsVBoxLayout->addWidget(randomMovePlayerShipsPB);
     toolsVBoxLayout->addWidget(botMotionPB);
+
+#ifndef TOOLS_PB_BOTMOTION_SHOW
+    botMotionPB->hide();
+#endif
 }
 
-const Widget *ToolsBar::getParent() const noexcept
-{
-    return parent;
-}
-
-void ToolsBar::reset() noexcept
+void ToolsBar::reset()
 {
     startGamePB->setDisabled(false);
 }
 
-void ToolsBar::resizeEvent(QResizeEvent *e) noexcept
+void ToolsBar::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
 }
 
-void ToolsBar::mainMenuPBClicked() noexcept
+void ToolsBar::mainMenuPBClicked()
 {
     parent->showMainMenu();
 }
 
-void ToolsBar::startGamePBClicked() noexcept
+void ToolsBar::startGamePBClicked()
 {
     startGamePB->setDisabled(parent->startGame());
 }
 
-void ToolsBar::randomMovePlayerShipsPBClicked() noexcept
+void ToolsBar::randomMovePlayerShipsPBClicked()
 {
     if(parent->getGameStatus() == finished) parent->randomMovePlayerShips();
 }
 
-void ToolsBar::botMotionPBClicked() noexcept
+void ToolsBar::botMotionPBClicked()
 {
     if(parent->getGameStatus() == started) bot->motion();
 }
@@ -89,7 +88,7 @@ InfoBar::InfoBar(QWidget *parent) noexcept
     updateLabels();
 }
 
-void InfoBar::updateLabels() noexcept
+void InfoBar::updateLabels()
 {
     playerScoreLabel->setText(playerScoreStr + QString::number(playerScore));
     playerDestroyShipsLabel->setText(playerDestroyShipsStr + QString::number(playerDestroyShips));
@@ -97,7 +96,7 @@ void InfoBar::updateLabels() noexcept
     botDestroyShipsLabel->setText(botDestroyShipsStr + QString::number(botDestroyShips));
 }
 
-void InfoBar::reset() noexcept
+void InfoBar::reset()
 {
     playerScore        = 0;
     playerDestroyShips = 0;
@@ -106,32 +105,32 @@ void InfoBar::reset() noexcept
     updateLabels();
 }
 
-void InfoBar::playerScoreAdd() noexcept
+void InfoBar::playerScoreAdd()
 {
     playerScoreLabel->setText(playerScoreStr + QString::number(++playerScore));
 }
 
-void InfoBar::playerDestroyShipsAdd() noexcept
+void InfoBar::playerDestroyShipsAdd()
 {
     playerDestroyShipsLabel->setText(playerDestroyShipsStr + QString::number(++playerDestroyShips));
 }
 
-void InfoBar::botScoreAdd() noexcept
+void InfoBar::botScoreAdd()
 {
     botScoreLabel->setText(botScoreStr + QString::number(++botScore));
 }
 
-void InfoBar::botDestroyShipsAdd() noexcept
+void InfoBar::botDestroyShipsAdd()
 {
     botDestroyShipsLabel->setText(botDestroyShipsStr + QString::number(++botDestroyShips));
 }
 
-void InfoBar::resizeEvent(QResizeEvent *e) noexcept
+void InfoBar::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
 }
 
-Menu::Menu(Widget *parent) noexcept
+Menu::Menu(Widget *parent)
     : QGroupBox(parent)
 {
     this->parent = parent;
@@ -151,42 +150,42 @@ Menu::Menu(Widget *parent) noexcept
     hide();
 }
 
-void Menu::hide() noexcept
+void Menu::hide()
 {
     static_cast<QGroupBox*> (this)->hide();
     backgroundShadow->hide();
 }
 
-void Menu::resize() noexcept
+void Menu::resize()
 {
     setGeometry(parent->width() / 3, parent->height() / 3, parent->width() / 3, parent->height() / 3);
 }
 
-void Menu::resizeEvent(QResizeEvent *e) noexcept
+void Menu::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
     placeObjects();
 }
 
-void Menu::closePBClicked() noexcept
+void Menu::closePBClicked()
 {
     hide();
 }
 
-void Menu::resetGamePBClicked() noexcept
+void Menu::resetGamePBClicked()
 {
     parent->resetGame();
     hide();
 }
 
 
-void MainMenu::show() noexcept
+void MainMenu::show()
 {
     static_cast<QGroupBox*> (this)->show();
     backgroundShadow->show();
 }
 
-void MainMenu::placeObjects() noexcept
+void MainMenu::placeObjects()
 {
     backgroundShadow->setGeometry(0, 0, parent->width(), parent->height());
     closePB->setGeometry(width() * 0.8, 0, width() * 0.2, height() * 0.2);
@@ -194,7 +193,7 @@ void MainMenu::placeObjects() noexcept
 }
 
 
-WinMenu::WinMenu(Widget *parent) noexcept
+WinMenu::WinMenu(Widget *parent)
     : Menu(parent)
 {
     winLabel = new QLabel(this);
@@ -203,20 +202,20 @@ WinMenu::WinMenu(Widget *parent) noexcept
     winLabel->setStyleSheet("border: 0px;");
 }
 
-void WinMenu::show(Gamer winner) noexcept
+void WinMenu::show(Gamer winner)
 {
     setWinLabel(winner);
     static_cast<QGroupBox*> (this)->show();
     backgroundShadow->show();
 }
 
-void WinMenu::setWinLabel(Gamer wr) noexcept
+void WinMenu::setWinLabel(Gamer wr)
 {
     if (wr == Gamer::player) winLabel->setText(playerWinStr);
     else winLabel->setText(botWinStr);
 }
 
-void WinMenu::placeObjects() noexcept
+void WinMenu::placeObjects()
 {
     backgroundShadow->setGeometry(0, 0, parent->width(), parent->height());
     closePB->setGeometry(width() * 0.8, 0, width() * 0.2, height() * 0.2);

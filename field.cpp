@@ -12,7 +12,7 @@ Field::Field(Widget *parent)
     reSize();
 }
 
-void Field::reSize() noexcept
+void Field::reSize()
 {
     const int fieldSize = std::min(parent->width() / 2, (parent->height() - parent->infoBar->height()) / 2);
     resize(fieldSize, fieldSize);
@@ -24,12 +24,12 @@ void Field::reSize() noexcept
     repaint();
 }
 
-void Field::updateSquareSize() noexcept
+void Field::updateSquareSize()
 {
     squareSize = width() / ROWS_COUNT;
 }
 
-void Field::randomMoveAllShips() noexcept
+void Field::randomMoveAllShips()
 {
     for(const auto &ship : allShips) {
         ship->randomMove();
@@ -37,14 +37,14 @@ void Field::randomMoveAllShips() noexcept
     resetFreeSquares();
 }
 
-void Field::eraseRemainedShip(const Ship* ship) noexcept
+void Field::eraseRemainedShip(const Ship* ship)
 {
     if(!remainedShips.empty()) {
         remainedShips.erase(std::find(remainedShips.begin(), remainedShips.end(), ship));
     }
 }
 
-void Field::addMissHitsAroundDestroyShip(const Ship *ship) noexcept
+void Field::addMissHitsAroundDestroyShip(const Ship *ship)
 {
     QPoint missHitPos = ship->pos() - QPoint(squareSize, squareSize);
     takeMissHit(missHitPos);
@@ -84,7 +84,7 @@ void Field::addMissHitsAroundDestroyShip(const Ship *ship) noexcept
     }
 }
 
-void Field::takeMissHit(const QPoint &hitPos) noexcept
+void Field::takeMissHit(const QPoint &hitPos)
 {
     if(!isMissHitOn(hitPos) && !isOutField(hitPos) && !isShipOn(hitPos)) {
         missHits.push_back(findSquarePos(hitPos));
@@ -93,7 +93,7 @@ void Field::takeMissHit(const QPoint &hitPos) noexcept
     }
 }
 
-void Field::reset() noexcept
+void Field::reset()
 {
     remainedShips.clear();
     for(auto &ship : allShips) {
@@ -117,19 +117,19 @@ void Field::resetFreeSquares()
     }
 }
 
-QPoint Field::findNearSquarePos(const QPoint &pos) const noexcept
+QPoint Field::findNearSquarePos(const QPoint &pos) const
 {
     return QPoint((pos.x() + squareSize / 2) / squareSize,
                   (pos.y() + squareSize / 2) / squareSize) * squareSize;
 }
 
-QPoint Field::findSquarePos(const QPoint &pos) const noexcept
+QPoint Field::findSquarePos(const QPoint &pos) const
 {
     return QPoint((pos.x() / squareSize),
                   (pos.y() / squareSize)) * squareSize;
 }
 
-bool Field::isShipOn(const QPoint &pos) const noexcept
+bool Field::isShipOn(const QPoint &pos) const
 {
     for(auto const &ship : allShips) {
         if(pos == ship->pos()) return true;
@@ -141,7 +141,7 @@ bool Field::isShipOn(const QPoint &pos) const noexcept
     return false;
 }
 
-bool Field::isMissHitOn(const QPoint &pos) const noexcept
+bool Field::isMissHitOn(const QPoint &pos) const
 {
     for(auto const &mh : missHits) {
         if(mh == findSquarePos(pos)) {
@@ -151,7 +151,7 @@ bool Field::isMissHitOn(const QPoint &pos) const noexcept
     return false;
 }
 
-bool Field::isOutField(const QPoint &pos) const noexcept
+bool Field::isOutField(const QPoint &pos) const
 {
     return pos.x() < 0 || pos.y() < 0 || pos.x() >= width() || pos.y() >= height();
 }
@@ -184,14 +184,14 @@ void Field::paintEvent(QPaintEvent *e)
 }
 
 
-void PlayerField::shipDestroyed(const Ship *ship) noexcept
+void PlayerField::shipDestroyed(const Ship *ship)
 {
     eraseRemainedShip(ship);
     addMissHitsAroundDestroyShip(ship);
     if(remainedShips.empty()) parent->finishGame(Gamer::bot);
 }
 
-void PlayerField::spawnShips() noexcept
+void PlayerField::spawnShips()
 {
     if(allShips.empty()) {
         for(std::size_t i = 0; i < SHIP_COUNT; i ++) {
@@ -203,17 +203,18 @@ void PlayerField::spawnShips() noexcept
 
 void PlayerField::mousePressEvent(QMouseEvent *e)
 {
+    Q_UNUSED(e)
 }
 
 
-void BotField::shipDestroyed(const Ship *ship) noexcept
+void BotField::shipDestroyed(const Ship *ship)
 {
     eraseRemainedShip(ship);
     addMissHitsAroundDestroyShip(ship);
     if(remainedShips.empty()) parent->finishGame(Gamer::player);
 }
 
-void BotField::spawnShips() noexcept
+void BotField::spawnShips()
 {
     if(allShips.empty()) {
         for(std::size_t i = 0; i < 10; i ++) {
@@ -229,13 +230,13 @@ void BotField::mousePressEvent(QMouseEvent *e)
     if(parent->getGameStatus() == started && parent->getWhoMove() == Gamer::player) {
         takeMissHit(e->pos());
         parent->changeWhoMove();
-        parent->getBot()->activate();
+        parent->activateBot();
     }
 #else
     if(parent->getGameStatus() == started) {
         takeMissHit(e->pos());
         parent->changeWhoMove();
-        parent->getBot()->activate();
+        parent->activateBot();
     }
 #endif
 }

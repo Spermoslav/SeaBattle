@@ -8,30 +8,29 @@
 #include <QGridLayout>
 #include "widget.h"
 
-
 class ToolsBar : public QGroupBox
 {
 public:
-    ToolsBar(Widget *parent) noexcept;
+    ToolsBar(Widget *parent, Bot *bot) noexcept;
 
-    void reset() noexcept;
+    void reset();
 
-    const Widget *getParent() const noexcept;
+    const Widget *getParent() const { return parent; }
 
 private slots:
 
-    void resizeEvent(QResizeEvent *e) noexcept override;
-    void mainMenuPBClicked()  noexcept;
-    void startGamePBClicked() noexcept;
-    void randomMovePlayerShipsPBClicked() noexcept;
-    void botMotionPBClicked() noexcept;
+    void resizeEvent(QResizeEvent *e) override;
+    void mainMenuPBClicked();
+    void startGamePBClicked();
+    void randomMovePlayerShipsPBClicked();
+    void botMotionPBClicked();
 
 private:
     Widget *parent;
 
     QPushButton *mainMenuPB;
     QPushButton *startGamePB;
-    QPushButton *randomMovePlayerShipsPB;
+    QPushButton *randomMovePlayerShipsPB;   
     QPushButton *botMotionPB;
 
     Bot *bot;
@@ -42,18 +41,18 @@ private:
 class Menu : public QGroupBox
 {
 public:
-    Menu(Widget *parent) noexcept;
+    Menu(Widget *parent) ;
 
-    void hide()   noexcept;
-    void resize() noexcept;
+    void hide();
+    void resize();
 
 private slots:
-    void resizeEvent(QResizeEvent *e) noexcept override;
-    void closePBClicked()     noexcept;
-    void resetGamePBClicked() noexcept;
+    void resizeEvent(QResizeEvent *e) override;
+    void closePBClicked();
+    void resetGamePBClicked();
 
 protected:
-    virtual void placeObjects() noexcept = 0;
+    virtual void placeObjects() = 0;
 
     Widget *parent;
 
@@ -68,23 +67,23 @@ class MainMenu : public Menu
 public:
     MainMenu(Widget *parent) : Menu(parent) {}
 
-    void show() noexcept;
+    void show();
 
 private:
-    void placeObjects() noexcept override;
+    void placeObjects() override;
 };
 
 class WinMenu : public Menu
 {
 public:
 
-    WinMenu(Widget *parent) noexcept;
+    WinMenu(Widget *parent);
 
-    void show(Gamer winner) noexcept;
+    void show(Gamer winner);
 
 private:
-    void setWinLabel(Gamer wr) noexcept;
-    void placeObjects() noexcept override;
+    void setWinLabel(Gamer wr);
+    void placeObjects() override;
 
     QLabel *winLabel;
 
@@ -97,17 +96,17 @@ class InfoBar : public QGroupBox
 public:
     InfoBar(QWidget *parent) noexcept;
 
-    void updateLabels() noexcept;
+    void updateLabels();
 
-    void reset() noexcept;
+    void reset();
 
-    void playerScoreAdd()        noexcept;
-    void playerDestroyShipsAdd() noexcept;
-    void botScoreAdd()        noexcept;
-    void botDestroyShipsAdd() noexcept;
+    void playerScoreAdd();
+    void playerDestroyShipsAdd();
+    void botScoreAdd();
+    void botDestroyShipsAdd();
 
 private slots:
-    void resizeEvent(QResizeEvent *e) noexcept override;
+    void resizeEvent(QResizeEvent *e) override;
 
 private:
     QWidget *parent;

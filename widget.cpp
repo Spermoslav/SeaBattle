@@ -24,7 +24,7 @@ Widget::Widget(QWidget *parent) noexcept
 
     bot = new Bot(this);
 
-    toolsBar = new ToolsBar(this);
+    toolsBar = new ToolsBar(this, bot);
 
     mainMenu = new MainMenu(this);
     winMenu = new WinMenu(this);
@@ -35,12 +35,12 @@ Widget::~Widget()
     delete ui;
 }
 
-void Widget::randomMovePlayerShips() noexcept
+void Widget::randomMovePlayerShips()
 {
     if(gameStatus == finished) fieldPlayer->randomMoveAllShips();
 }
 
-void Widget::updateWidgetsSize() noexcept
+void Widget::updateWidgetsSize()
 {
 
     infoBar->resize(width() , height() * 0.1);
@@ -58,7 +58,7 @@ void Widget::updateWidgetsSize() noexcept
     winMenu->resize();
 }
 
-void Widget::showMainMenu() noexcept
+void Widget::showMainMenu()
 {
     mainMenu->show();
 }
@@ -69,7 +69,7 @@ void Widget::changeWhoMove()
     else whoMove = Gamer::bot;
 }
 
-void Widget::resetGame() noexcept
+void Widget::resetGame()
 {
     gameStatus = finished;
     bot->reset();
@@ -80,7 +80,7 @@ void Widget::resetGame() noexcept
     whoMove = Gamer::player;
 }
 
-bool Widget::startGame() noexcept
+bool Widget::startGame()
 {
     if(gameStatus == finished) {
         for(auto const &targetShip : fieldPlayer->getAllShips()) {
@@ -100,30 +100,30 @@ bool Widget::startGame() noexcept
     return false;
 }
 
-void Widget::finishGame(Gamer winner) noexcept
+void Widget::finishGame(Gamer winner)
 {
     winMenu->show(winner);
     bot->reset();
     gameStatus = over;
 }
 
-Gamer Widget::getWhoMove() const
+void Widget::activateBot()
 {
-    return whoMove;
+    bot->activate();
 }
 
-void Widget::resizeEvent(QResizeEvent *e) noexcept
+void Widget::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
     updateWidgetsSize();
 }
 
-void Widget::mousePressEvent(QMouseEvent *e) noexcept
+void Widget::mousePressEvent(QMouseEvent *e)
 {
     Q_UNUSED(e)
 }
 
-void Widget::mouseMoveEvent(QMouseEvent *e) noexcept
+void Widget::mouseMoveEvent(QMouseEvent *e)
 {
     Q_UNUSED(e)
 }

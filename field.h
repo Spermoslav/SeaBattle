@@ -12,30 +12,30 @@ class Field : public QGroupBox
     Q_OBJECT
 public:
     Field(Widget *parent);
-    void reset()  noexcept;
+    void reset();
     void resetFreeSquares();
-    void reSize() noexcept;
+    void reSize();
 
-    void updateSquareSize()   noexcept;
-    void randomMoveAllShips() noexcept;
-    void takeMissHit(const QPoint &hitPos)   noexcept;
+    void updateSquareSize();
+    void randomMoveAllShips();
+    void takeMissHit(const QPoint &hitPos);
 
     virtual void shipDestroyed(const Ship *ship) = 0;
     virtual void spawnShips() = 0;
 
-    QPoint findNearSquarePos(const QPoint &pos) const noexcept;
-    QPoint findSquarePos(const QPoint &pos)     const noexcept;
+    QPoint findNearSquarePos(const QPoint &pos) const;
+    QPoint findSquarePos(const QPoint &pos)     const;
 
-    bool isShipOn(const QPoint &pos)    const noexcept;
-    bool isMissHitOn(const QPoint &pos) const noexcept;
-    bool isOutField(const QPoint &pos)  const noexcept;
+    bool isShipOn(const QPoint &pos)    const;
+    bool isMissHitOn(const QPoint &pos) const;
+    bool isOutField(const QPoint &pos)  const;
 
     int getSquareSize() const { return squareSize; }
 
     const std::vector<Ship*> &getAllShips()      const { return allShips;      }
     const std::vector<Ship*> &getRemainedShips() const { return remainedShips; }
     const std::list<QPoint>  &getMissHits()      const { return missHits;      }
-    const std::list<QPoint>      &getFreeSquares()   const { return freeSquares;   }
+    const std::list<QPoint>  &getFreeSquares()   const { return freeSquares;   }
 
     const Widget *getParent() const { return parent; }
 
@@ -50,8 +50,8 @@ private slots:
     void paintEvent(QPaintEvent *e)   override;
 
 protected:
-    void eraseRemainedShip(const Ship* ship) noexcept;
-    void addMissHitsAroundDestroyShip(const Ship* ship) noexcept;
+    void eraseRemainedShip(const Ship* ship);
+    void addMissHitsAroundDestroyShip(const Ship* ship);
 
     Widget *parent;
 
@@ -69,8 +69,8 @@ class PlayerField : public Field
 public:
     PlayerField(Widget *parent) : Field(parent) {}
 
-    void shipDestroyed(const Ship *ship) noexcept override;
-    void spawnShips()    noexcept override;
+    void shipDestroyed(const Ship *ship) override;
+    void spawnShips() override;
 
 private slots:
     void mousePressEvent(QMouseEvent *e) override;
@@ -82,8 +82,8 @@ class BotField : public Field
 public:
     BotField(Widget *parent) : Field(parent) {}
 
-    void shipDestroyed(const Ship *ship) noexcept override;
-    void spawnShips() noexcept override;
+    void shipDestroyed(const Ship *ship) override;
+    void spawnShips() override;
 
 private slots:
     void mousePressEvent(QMouseEvent *e) override;

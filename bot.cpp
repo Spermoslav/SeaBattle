@@ -4,7 +4,7 @@
 #include "tools.h"
 #include <thread>
 
-Bot::Bot(Widget *game) noexcept
+Bot::Bot(Widget *game)
 {
 
     this->game = game;
@@ -18,7 +18,7 @@ void Bot::activate()
     if(game->getWhoMove() == Gamer::bot) mTimer->start();
 }
 
-void Bot::motion() noexcept
+void Bot::motion()
 {
     if(targetShip) {
         makeHit_whenFoundShip();
@@ -41,7 +41,7 @@ void Bot::motion() noexcept
     }
 }
 
-bool Bot::missHitOrShipHit() noexcept
+bool Bot::missHitOrShipHit()
 {
     float remainedShipsSqCount = 0; // кол-во оставшихся квадратов живых кораблей
     for(const auto &rs : playerField->getRemainedShips()) {
@@ -53,14 +53,14 @@ bool Bot::missHitOrShipHit() noexcept
     return hitChanse >= rand() % 100;
 }
 
-QPoint Bot::findPosForMakeMissHit() noexcept
+QPoint Bot::findPosForMakeMissHit()
 {
     std::list<QPoint>::const_iterator it = playerField->getFreeSquares().begin();
     std::advance(it, rand() % playerField->getFreeSquares().size());
     return *it;
 }
 
-QPoint Bot::findPosForMakeShipHit() noexcept
+QPoint Bot::findPosForMakeShipHit()
 {
     if(targetShip && !targetShip->getIsDestroy()) {
         return QPoint(rand() % targetShip->width(), rand() % targetShip->height());
@@ -68,7 +68,7 @@ QPoint Bot::findPosForMakeShipHit() noexcept
     return QPoint(-1, -1);
 }
 
-bool Bot::makeHit_whenFoundShip() noexcept
+bool Bot::makeHit_whenFoundShip()
 {
     if(foundOrientation) {
         if(targetShip->getOrientation() == vertical) {
@@ -97,7 +97,7 @@ bool Bot::makeHit_whenFoundShip() noexcept
     return false;
 }
 
-void Bot::findTargetShip() noexcept
+void Bot::findTargetShip()
 {
     targetShip = playerField->getRemainedShips()[rand() % playerField->getRemainedShips().size()];
 }
@@ -116,13 +116,13 @@ void Bot::makeFirstShipHit()
     mTimer->start();
 }
 
-QPoint Bot::convertFieldPos_to_ShipPos(const QPoint &pos) noexcept
+QPoint Bot::convertFieldPos_to_ShipPos(const QPoint &pos)
 {
     if(targetShip) return pos - targetShip->pos();
     return pos;
 }
 
-void Bot::reset() noexcept
+void Bot::reset()
 {
     mTimer->stop();
     targetShip = nullptr;
@@ -130,7 +130,7 @@ void Bot::reset() noexcept
     foundOrientation = false;
 }
 
-bool Bot::makeVerticalHits() noexcept
+bool Bot::makeVerticalHits()
 {
     if(hitDirection) {
         if(makeDownHit()) return true;
@@ -146,7 +146,7 @@ bool Bot::makeVerticalHits() noexcept
     }
 }
 
-bool Bot::makeHorizontalHits() noexcept
+bool Bot::makeHorizontalHits()
 {
     if(hitDirection) {
         if(makeRightHit()) return true;
@@ -162,31 +162,31 @@ bool Bot::makeHorizontalHits() noexcept
     }
 }
 
-bool Bot::makeLeftHit() noexcept
+bool Bot::makeLeftHit()
 {
     QPoint hitPos = targetShip->pos() + lastShipHit - QPoint(playerField->getSquareSize(), 0);
     return tryMakeHit(hitPos);
 }
 
-bool Bot::makeUpHit() noexcept
+bool Bot::makeUpHit()
 {
     QPoint hitPos = targetShip->pos() + lastShipHit - QPoint(0, playerField->getSquareSize());
     return tryMakeHit(hitPos);
 }
 
-bool Bot::makeRightHit() noexcept
+bool Bot::makeRightHit()
 {
     QPoint hitPos = targetShip->pos() + lastShipHit + QPoint(playerField->getSquareSize(), 0);
     return tryMakeHit(hitPos);
 }
 
-bool Bot::makeDownHit() noexcept
+bool Bot::makeDownHit()
 {
     QPoint hitPos = targetShip->pos() + lastShipHit + QPoint(0, playerField->getSquareSize());
     return tryMakeHit(hitPos);
 }
 
-bool Bot::tryMakeHit(QPoint &hitPos) noexcept
+bool Bot::tryMakeHit(QPoint &hitPos)
 {
     if(targetShip) {
         if(playerField->isShipOn(hitPos)) {

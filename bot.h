@@ -9,31 +9,31 @@ class Bot
 {
 
 public:
-    Bot(Widget *game) noexcept;
+    Bot(Widget *game);
 
     void activate();
-    void motion() noexcept;
-    void reset()  noexcept;
+    void motion();
+    void reset();
 
 private:
 
-    QPoint findPosForMakeMissHit() noexcept;
-    QPoint findPosForMakeShipHit() noexcept;
-    QPoint convertFieldPos_to_ShipPos(const QPoint &pos) noexcept;
+    QPoint findPosForMakeMissHit();
+    QPoint findPosForMakeShipHit();
+    QPoint convertFieldPos_to_ShipPos(const QPoint &pos);
 
-    void findTargetShip()        noexcept;
+    void findTargetShip();
 
     void makeFirstShipHit();
-    bool makeHit_whenFoundShip() noexcept;
-    bool makeVerticalHits()      noexcept;
-    bool makeHorizontalHits()    noexcept;
-    bool makeLeftHit()           noexcept;
-    bool makeUpHit()             noexcept;
-    bool makeRightHit()          noexcept;
-    bool makeDownHit()           noexcept;
-    bool tryMakeHit(QPoint &hitPos) noexcept;
+    bool makeHit_whenFoundShip();
+    bool makeVerticalHits();
+    bool makeHorizontalHits();
+    bool makeLeftHit();
+    bool makeUpHit();
+    bool makeRightHit();
+    bool makeDownHit();
+    bool tryMakeHit(QPoint &hitPos);
 
-    bool missHitOrShipHit()      noexcept; // false - miss hit, true - ship hit
+    bool missHitOrShipHit(); // false - miss hit, true - ship hit
 
 
     struct MotionTimer {

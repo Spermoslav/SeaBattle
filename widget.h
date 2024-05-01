@@ -1,13 +1,14 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
-//    #define GAME_QUEUEMOVE_LOCK
-//    #define BOT_SHIPS_SHOW
+    #define GAME_QUEUEMOVE_LOCK
+    #define BOT_SHIPS_SHOW
     #define BOT_UNMISS_FIRSTHIT
-//    #define BOT_TIMER_LOCK
+    #define BOT_TIMER_LOCK
+    #define TOOLS_PB_BOTMOTION_SHOW
 #endif // DEBUG
 
 #include <QWidget>
@@ -51,28 +52,28 @@ public:
     Widget(QWidget *parent = nullptr) noexcept;
     ~Widget();
 
-    void randomMovePlayerShips() noexcept;
-    void updateWidgetsSize() noexcept;
-    void showMainMenu() noexcept;
+    void randomMovePlayerShips();
+    void updateWidgetsSize();
+    void showMainMenu();
     void changeWhoMove();
-    void resetGame() noexcept;
-    bool startGame() noexcept;
-    void finishGame(Gamer winner) noexcept;
+    void resetGame();
+    bool startGame();
+    void finishGame(Gamer winner);
+    void activateBot();
 
-    GameStatus getGameStatus() const noexcept { return gameStatus; }
-    const BotField *getFieldBot() const noexcept { return fieldBot; }
-    const PlayerField *getFieldPlayer() const noexcept { return fieldPlayer;}
+    Gamer      getWhoMove()    const { return whoMove;    }
+    GameStatus getGameStatus() const { return gameStatus; }
 
-    Bot *getBot() noexcept { return bot; }
-
-    Gamer getWhoMove() const;
+    const Bot *getBot() const { return bot; }
+    const BotField *getFieldBot() const { return fieldBot; }
+    const PlayerField *getFieldPlayer() const { return fieldPlayer; }
 
     InfoBar *infoBar;
 
 private slots:
-    void resizeEvent(QResizeEvent *e)    noexcept override;
-    void mousePressEvent(QMouseEvent *e) noexcept override;
-    void mouseMoveEvent(QMouseEvent *e)  noexcept override;
+    void resizeEvent(QResizeEvent *e)     override;
+    void mousePressEvent(QMouseEvent *e)  override;
+    void mouseMoveEvent(QMouseEvent *e)   override;
 
 private:
     Ui::Widget *ui;
