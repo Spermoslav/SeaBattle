@@ -81,20 +81,20 @@ public:
 
     void show(Gamer winner);
 
+    const static QString playerWinStr;
+    const static QString botWinStr;
+
 private:
     void setWinLabel(Gamer wr);
     void placeObjects() override;
 
     QLabel *winLabel;
-
-    const QString playerWinStr = "Ты выйграл";
-    const QString botWinStr    = "Бот выйграл";
 };
 
 class InfoBar : public QGroupBox
 {
 public:
-    InfoBar(QWidget *parent) noexcept;
+    InfoBar(Widget *parent) noexcept;
 
     void updateLabels();
 
@@ -105,18 +105,46 @@ public:
     void botScoreAdd();
     void botDestroyShipsAdd();
 
+    const Widget *getParent() const { return parent; }
+
+    struct Hint : private QLabel
+    {
+        friend InfoBar;
+        Hint(InfoBar *ib);
+
+        void gameStartFault();
+        void gameStarted();
+        void gameOver(Gamer win);
+        void updateWhoMove();
+        void updateFontSize();
+        void reset();
+
+        const QString playerMoveStr = "Твой ход";
+        const QString botMoveStr    = "Ход бота";
+        const QString gameStartFaultStr = "Корабли неверно размещены";
+
+        const QString redBG   = "background-color: rgb(255, 0, 0);";
+        const QString greenBG = "background-color: rgb(0, 255, 0);";
+        const QString hideBG  = "background-color: rgb(0, 0, 0);";
+    private slots:
+        void resizeEvent(QResizeEvent *e) override;
+    private:
+        InfoBar *parent;
+    };
+    Hint *hint;
 private slots:
     void resizeEvent(QResizeEvent *e) override;
 
 private:
-    QWidget *parent;
+    Widget *parent;
 
     QLabel *playerScoreLabel;
     QLabel *playerDestroyShipsLabel;
     QLabel *botScoreLabel;
     QLabel *botDestroyShipsLabel;
 
-    QGridLayout *labelsLay;
+    QGridLayout *scoreLabelsLay;
+    QVBoxLayout *labelsLay;
 
     const QString playerScoreStr        = "Ваши очки: ";
     const QString playerDestroyShipsStr = "Уничтожено кораблей бота: ";

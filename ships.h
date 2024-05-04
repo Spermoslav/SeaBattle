@@ -29,7 +29,7 @@ public:
     void reset();
     void randomMove();
 
-    virtual bool takeDamage(const QPoint &damagePos) = 0;
+    virtual bool takeDamage(const QPoint &damagePos) = 0; // true == destroy
 
     bool checkCollision(const QPoint &newPos, const Ship *ship) const;
     bool checkShipCollision(const QPoint &newPos, const Ship *ship) const;
@@ -65,12 +65,12 @@ protected:
     InfoBar *infoBar;
 
     quint8 mk;
-    quint8 destroyItems;
+    quint8 destroyItems = 0;
     int shipCenterX;
     int shipCenterY;
 
-    bool isTarget;
-    bool isDestroy;
+    bool isTarget  = false;
+    bool isDestroy = false;
 
     Orientation orientation;
 };

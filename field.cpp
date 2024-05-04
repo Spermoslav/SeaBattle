@@ -14,8 +14,12 @@ Field::Field(Widget *parent)
 
 void Field::reSize()
 {
-    const int fieldSize = std::min(parent->width() / 2, (parent->height() - parent->infoBar->height()) / 2);
+    int fieldSize = std::min(parent->width() / 2, (parent->height() - parent->infoBar->height()) / 2);
+    if(fieldSize % ROWS_COUNT != 0) {
+        fieldSize -= fieldSize % ROWS_COUNT; // необходимо, чтобы размер поля был кратен ROWS_COUNT
+    }
     resize(fieldSize, fieldSize);
+
     updateSquareSize();
     for(auto &mh : missHits) {
         mh = findNearSquarePos(mh);

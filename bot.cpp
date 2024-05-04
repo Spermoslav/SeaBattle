@@ -4,11 +4,10 @@
 #include "tools.h"
 #include <thread>
 
-Bot::Bot(Widget *game)
+Bot::Bot(Widget *game, PlayerField *pf)
 {
-
     this->game = game;
-    playerField = game->fieldPlayer;
+    playerField = pf;
 
     mTimer = new MotionTimer(this, 500);
 }

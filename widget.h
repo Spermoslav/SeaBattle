@@ -47,7 +47,6 @@ enum GameStatus {
 class Widget : public QWidget
 {
     Q_OBJECT
-    friend Bot;
 public:
     Widget(QWidget *parent = nullptr) noexcept;
     ~Widget();

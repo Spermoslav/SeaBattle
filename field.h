@@ -30,7 +30,7 @@ public:
     bool isMissHitOn(const QPoint &pos) const;
     bool isOutField(const QPoint &pos)  const;
 
-    int getSquareSize() const { return squareSize; }
+    float getSquareSize() const { return squareSize; }
 
     const std::vector<Ship*> &getAllShips()      const { return allShips;      }
     const std::vector<Ship*> &getRemainedShips() const { return remainedShips; }
@@ -39,10 +39,10 @@ public:
 
     const Widget *getParent() const { return parent; }
 
-    const static quint8 SQUARES_COUNT       = 100;
-    const static quint8 ROWS_COUNT          = 10;
-    const static quint8 SHIP_COUNT          = 10;
-    const static quint8 SHIPS_SQUARES_COUNT = 20;
+    const static quint8 SQUARES_COUNT       = 100; // Всего квадратов
+    const static quint8 ROWS_COUNT          = 10;  // Кол-во квадратов в ряду
+    const static quint8 SHIP_COUNT          = 10;  // Кол-во кораблей
+    const static quint8 SHIPS_SQUARES_COUNT = 20;  // Количество квадратов, занимаемых кораблями
 
 
 private slots:
@@ -60,7 +60,7 @@ protected:
     std::list<QPoint> missHits;
     std::list<QPoint> freeSquares;
 
-    int squareSize;
+    float squareSize;
 };
 
 class PlayerField : public Field

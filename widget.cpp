@@ -22,7 +22,7 @@ Widget::Widget(QWidget *parent) noexcept
     fieldBot = new BotField(this);
     fieldBot->spawnShips();
 
-    bot = new Bot(this);
+    bot = new Bot(this, fieldPlayer);
 
     toolsBar = new ToolsBar(this, bot);
 
@@ -43,7 +43,7 @@ void Widget::randomMovePlayerShips()
 void Widget::updateWidgetsSize()
 {
 
-    infoBar->resize(width() , height() * 0.1);
+    infoBar->resize(width() , height() * 0.15);
 
     const int fieldSize = std::min(width() / 2, (height() - infoBar->height()) / 2);
 
@@ -52,7 +52,7 @@ void Widget::updateWidgetsSize()
     infoBar->move(0, fieldSize);
     fieldPlayer->move(0, infoBar->y() + infoBar->height());
     toolsBar->setGeometry(fieldBot->width(), 0, width() - fieldBot->width(), height());
-    infoBar->resize(width() - toolsBar->width(), height() * 0.1);
+    infoBar->resize(width() - toolsBar->width(), height() * 0.15);
 
     mainMenu->resize();
     winMenu->resize();
@@ -67,6 +67,7 @@ void Widget::changeWhoMove()
 {
     if(whoMove == Gamer::bot) whoMove = Gamer::player;
     else whoMove = Gamer::bot;
+    infoBar->hint->updateWhoMove();
 }
 
 void Widget::resetGame()
@@ -86,7 +87,8 @@ bool Widget::startGame()
         for(auto const &targetShip : fieldPlayer->getAllShips()) {
             for(auto const &ship : fieldPlayer->getAllShips()) {
                 if(targetShip != ship){
-                    if(targetShip->checkShipCollision(targetShip->pos(), ship)) {
+                    if(targetShip->checkCollision(targetShip->pos(), ship)) {
+                        infoBar->hint->gameStartFault();
                         return false;
                     }
                 }
@@ -95,8 +97,10 @@ bool Widget::startGame()
         fieldBot->randomMoveAllShips();
         gameStatus = started;
         bot->activate();
+        infoBar->hint->gameStarted();
         return true;
     }
+    infoBar->hint->gameStartFault();
     return false;
 }
 
@@ -105,6 +109,7 @@ void Widget::finishGame(Gamer winner)
     winMenu->show(winner);
     bot->reset();
     gameStatus = over;
+    infoBar->hint->gameOver(winner);
 }
 
 void Widget::activateBot()

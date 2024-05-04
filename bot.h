@@ -9,7 +9,7 @@ class Bot
 {
 
 public:
-    Bot(Widget *game);
+    Bot(Widget *game, PlayerField *pf);
 
     void activate();
     void motion();
@@ -40,10 +40,11 @@ private:
         MotionTimer(Bot *bot, uint delay);
         void stop() { isStart = false; }
         void start();
-        void run();
         Bot *bot;
         bool isStart = false;
         uint run_delay;
+    private:
+        void run();
     };
 
     PlayerField *playerField;
@@ -52,6 +53,7 @@ private:
     MotionTimer *mTimer;
     QPoint lastShipHit;
     QPoint firstShipHit;
+
     bool hitDirection = rand() % 2; // true - down or right, false - up or left
     bool foundOrientation = false;
 

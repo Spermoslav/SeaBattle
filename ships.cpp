@@ -7,9 +7,6 @@ Ship::Ship(Field *field)
 {
     this->field = field;
     infoBar = field->getParent()->infoBar;
-    isTarget = false;
-    isDestroy = false;
-    destroyItems = 0;
     orientation = Orientation::vertical;
 
     if(field->getAllShips().size() >= 6) mk = 1;
@@ -46,7 +43,6 @@ void Ship::resize()
     shipCenterX = width() / 2;
     shipCenterY = height() / 2;
     groupBoxPosWhenPress = QPoint(x(), y());
-    qDebug() << shipSize << field->getSquareSize();
     repaint();
 }
 
@@ -106,6 +102,7 @@ void Ship::randomMove()
 void Ship::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
+
 }
 
 bool Ship::checkCollision(const QPoint &newPos, const Ship *ship) const

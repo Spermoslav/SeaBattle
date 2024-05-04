@@ -2,6 +2,9 @@
 #include "field.h"
 #include "bot.h"
 
+const QString WinMenu::playerWinStr  = "Ты выйграл";
+const QString WinMenu::botWinStr     = "Бот выйграл";
+
 ToolsBar::ToolsBar(Widget *parent, Bot *bot) noexcept
     : QGroupBox(parent)
 {
@@ -68,7 +71,7 @@ void ToolsBar::botMotionPBClicked()
 }
 
 
-InfoBar::InfoBar(QWidget *parent) noexcept
+InfoBar::InfoBar(Widget *parent) noexcept
     : QGroupBox(parent)
 {
     this->parent = parent;
@@ -79,11 +82,18 @@ InfoBar::InfoBar(QWidget *parent) noexcept
     botScoreLabel           = new QLabel;
     botDestroyShipsLabel    = new QLabel;
 
-    labelsLay = new QGridLayout(this);
-    labelsLay->addWidget(playerScoreLabel, 1, 0);
-    labelsLay->addWidget(playerDestroyShipsLabel, 1, 1);
-    labelsLay->addWidget(botScoreLabel, 0, 0);
-    labelsLay->addWidget(botDestroyShipsLabel, 0, 1);
+    hint = new Hint(this);
+
+
+    scoreLabelsLay = new QGridLayout;
+    scoreLabelsLay->addWidget(playerScoreLabel, 1, 0);
+    scoreLabelsLay->addWidget(playerDestroyShipsLabel, 1, 1);
+    scoreLabelsLay->addWidget(botScoreLabel, 0, 0);
+    scoreLabelsLay->addWidget(botDestroyShipsLabel, 0, 1);
+
+    labelsLay = new QVBoxLayout(this);
+    labelsLay->addLayout(scoreLabelsLay);
+    labelsLay->addWidget(hint);
 
     updateLabels();
 }
@@ -102,7 +112,7 @@ void InfoBar::reset()
     playerDestroyShips = 0;
     botScore           = 0;
     botDestroyShips    = 0;
-    updateLabels();
+    hint->reset();
 }
 
 void InfoBar::playerScoreAdd()
@@ -128,6 +138,70 @@ void InfoBar::botDestroyShipsAdd()
 void InfoBar::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
+}
+
+InfoBar::Hint::Hint(InfoBar *ib)
+    : QLabel(ib)
+{
+    parent = ib;
+    setAlignment(Qt::AlignCenter);
+    setMaximumHeight(40);
+}
+
+void InfoBar::Hint::gameStartFault()
+{
+    setText(gameStartFaultStr);
+    setStyleSheet(redBG);
+    updateFontSize();
+}
+
+void InfoBar::Hint::gameStarted()
+{
+    updateWhoMove();
+    updateFontSize();
+}
+
+void InfoBar::Hint::gameOver(Gamer win)
+{
+    if(win == Gamer::player) {
+        setText(WinMenu::playerWinStr);
+        setStyleSheet(greenBG);
+    }
+    else {
+        setText(WinMenu::botWinStr);
+        setStyleSheet(redBG);
+    }
+}
+
+void InfoBar::Hint::updateWhoMove()
+{
+    if(parent->getParent()->getWhoMove() == Gamer::player) {
+        setText(playerMoveStr);
+        setStyleSheet(greenBG);
+    }
+    else {
+        setText(botMoveStr);
+        setStyleSheet(redBG);
+    }
+}
+
+void InfoBar::Hint::updateFontSize()
+{
+    if(text().size() > 20) setFont(QFont(font().family(), width() / text().size()));
+    else if (text().size() > 0) setFont(QFont(font().family(), height() / 2));
+    else setFont(QFont(font().family(), 20));
+}
+
+void InfoBar::Hint::reset()
+{
+    setStyleSheet(hideBG);
+    setText("");
+}
+
+void InfoBar::Hint::resizeEvent(QResizeEvent *e)
+{
+    Q_UNUSED(e)
+    updateFontSize();
 }
 
 Menu::Menu(Widget *parent)
