@@ -125,7 +125,7 @@ public:
 
         const QString redBG   = "background-color: rgb(255, 0, 0);";
         const QString greenBG = "background-color: rgb(0, 255, 0);";
-        const QString hideBG  = "background-color: rgb(0, 0, 0);";
+        const QString hideBG  = "background-color: rgba(0, 0, 0, 0);";
     private slots:
         void resizeEvent(QResizeEvent *e) override;
     private:

@@ -43,7 +43,7 @@ public:
     const static quint8 ROWS_COUNT          = 10;  // Кол-во квадратов в ряду
     const static quint8 SHIP_COUNT          = 10;  // Кол-во кораблей
     const static quint8 SHIPS_SQUARES_COUNT = 20;  // Количество квадратов, занимаемых кораблями
-
+    const static QColor MISSHIT_COLOR;
 
 private slots:
     void resizeEvent(QResizeEvent *e) override;

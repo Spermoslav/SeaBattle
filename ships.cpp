@@ -2,6 +2,9 @@
 #include "field.h"
 #include "tools.h"
 
+const QColor Ship::PLAYER_COLOR = QColor(0, 150, 255);
+const QColor Ship::BOT_COLOR    = QColor(255, 70, 70);
+
 Ship::Ship(Field *field)
     : QGroupBox(field)
 {
@@ -43,6 +46,7 @@ void Ship::resize()
     shipCenterX = width() / 2;
     shipCenterY = height() / 2;
     groupBoxPosWhenPress = QPoint(x(), y());
+    qDebug() << field->getSquareSize() << size() << mk;
     repaint();
 }
 
@@ -189,11 +193,13 @@ void PlayerShip::paintEvent(QPaintEvent *e)
     Q_UNUSED(e)
     QPainter p;
     p.begin(this);
-    p.drawRect(0, 0, width() - 1, height() - 1);
-    p.setBrush(Qt::blue);
+    if(isDestroy) {
+        p.setBrush(Field::MISSHIT_COLOR);
+        p.drawRect(0, 0, width(), height());
+    }
+    p.setBrush(Ship::PLAYER_COLOR);
     p.drawRect(shipPos.x(), shipPos.y(), shipSize.width(), shipSize.height());
     p.end();
-
 }
 
 void PlayerShip::mousePressEvent(QMouseEvent *e)
@@ -238,7 +244,6 @@ void PlayerShip::mouseMoveEvent(QMouseEvent *e)
 }
 
 
-
 bool BotShip::takeDamage(const QPoint &damagePos)
 {
     for(auto const &dm : damage) {
@@ -260,19 +265,26 @@ bool BotShip::takeDamage(const QPoint &damagePos)
 void BotShip::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e)
+
 #ifdef BOT_SHIPS_SHOW
     QPainter p;
     p.begin(this);
-    p.drawRect(0, 0, width() - 1, height() - 1);
-    p.setBrush(Qt::blue);
+    if(isDestroy) {
+        p.setBrush(Field::MISSHIT_COLOR);
+        p.drawRect(0, 0, width(), height());
+    }
+    p.setBrush(Ship::BOT_COLOR);
     p.drawRect(shipPos.x(), shipPos.y(), shipSize.width(), shipSize.height());
     p.end();
 #else
     if(isDestroy || field->getParent()->getGameStatus() == over) {
         QPainter p;
         p.begin(this);
-        p.drawRect(0, 0, width() - 1, height() - 1);
-        p.setBrush(Qt::blue);
+        if(isDestroy) {
+            p.setBrush(Field::MISSHIT_COLOR);
+            p.drawRect(0, 0, width(), height());
+        }
+        p.setBrush(Qt::red);
         p.drawRect(shipPos.x(), shipPos.y(), shipSize.width(), shipSize.height());
         p.end();
     }
@@ -313,8 +325,10 @@ void Damage::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e)
     QPainter p;
+    QPen pen;
+    pen.setWidthF(1.5);
     p.begin(this);
-    p.setPen(Qt::blue);
+    p.setPen(pen);
     p.drawLine(QPoint(0, 0), QPoint(width(), height()));
     p.drawLine(QPoint(width(), 0), QPoint(0, height()));
     p.end();

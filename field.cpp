@@ -4,6 +4,8 @@
 #include "bot.h"
 #include <algorithm>
 
+const QColor Field::MISSHIT_COLOR = QColor(0, 20, 255);
+
 Field::Field(Widget *parent)
     : QGroupBox(parent)
 {
@@ -163,6 +165,7 @@ bool Field::isOutField(const QPoint &pos) const
 void Field::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
+    updateSquareSize();
     for(auto const &ship : allShips) {
         ship->resize();
     }
@@ -180,9 +183,9 @@ void Field::paintEvent(QPaintEvent *e)
             p.drawRect(i * squareSize, j * squareSize, squareSize, squareSize);
         }
     }
-    p.setBrush(Qt::cyan);
+    p.setBrush(MISSHIT_COLOR);
     for(auto const &mh : missHits) {
-        p.drawEllipse(mh.x(), mh.y(), squareSize, squareSize);
+        p.drawRect(mh.x(), mh.y(), squareSize, squareSize);
     }
     p.end();
 }

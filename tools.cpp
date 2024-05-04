@@ -113,6 +113,7 @@ void InfoBar::reset()
     botScore           = 0;
     botDestroyShips    = 0;
     hint->reset();
+    updateLabels();
 }
 
 void InfoBar::playerScoreAdd()

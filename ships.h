@@ -44,6 +44,9 @@ public:
 
     const Field *getField() const { return field; }
 
+    const static QColor PLAYER_COLOR;
+    const static QColor BOT_COLOR;
+
 private slots:
     void resizeEvent(QResizeEvent *e) override;
 protected:

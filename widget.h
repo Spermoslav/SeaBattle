@@ -1,7 +1,7 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
     #define GAME_QUEUEMOVE_LOCK
