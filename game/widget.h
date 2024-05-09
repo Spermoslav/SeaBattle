@@ -33,6 +33,13 @@ class MainMenu;
 class WinMenu;
 class Bot;
 
+enum class Difficult
+{
+    easy,
+    medium,
+    hard
+};
+
 enum class Gamer {
     bot,
     player
@@ -59,6 +66,7 @@ public:
     bool startGame();
     void finishGame(Gamer winner);
     void activateBot();
+    void changeDifficult(Difficult diff);
 
     Gamer      getWhoMove()    const { return whoMove;    }
     GameStatus getGameStatus() const { return gameStatus; }

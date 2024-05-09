@@ -234,13 +234,13 @@ void BotField::spawnShips()
 void BotField::mousePressEvent(QMouseEvent *e)
 {
 #ifndef GAME_QUEUEMOVE_LOCK
-    if(parent->getGameStatus() == started && parent->getWhoMove() == Gamer::player) {
+    if(parent->getGameStatus() == started && parent->getWhoMove() == Gamer::player && !isMissHitOn(e->pos())) {
         takeMissHit(e->pos());
         parent->changeWhoMove();
         parent->activateBot();
     }
 #else
-    if(parent->getGameStatus() == started) {
+    if(parent->getGameStatus() == started && !isMissHitOn(e->pos()) {
         takeMissHit(e->pos());
         parent->changeWhoMove();
         parent->activateBot();

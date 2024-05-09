@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QGridLayout>
+#include <QRadioButton>
 #include "widget.h"
 
 class ToolsBar : public QGroupBox
@@ -65,12 +66,23 @@ protected:
 class MainMenu : public Menu
 {
 public:
-    MainMenu(Widget *parent) : Menu(parent) {}
+    MainMenu(Widget *parent);
 
     void show();
 
+private slots:
+    void easyRBClicked();
+    void mediumRBClicked();
+    void hardRBClicked();
+
 private:
     void placeObjects() override;
+
+    QRadioButton *easyRB;
+    QRadioButton *mediumRB;
+    QRadioButton *hardRB;
+    QLabel *diffLabel;
+    QGridLayout *diffLay;
 };
 
 class WinMenu : public Menu

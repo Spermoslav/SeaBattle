@@ -10,9 +10,9 @@ Widget::Widget(QWidget *parent) noexcept
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
-    setMinimumSize(400, 400);
 
-    whoMove = Gamer::player;
+    if(rand() % 2) whoMove = Gamer::player;
+    else whoMove = Gamer::bot;
 
     infoBar = new InfoBar(this);
 
@@ -78,7 +78,8 @@ void Widget::resetGame()
     fieldPlayer->reset();
     fieldBot->reset();
     infoBar->reset();
-    whoMove = Gamer::player;
+    if(rand() % 2) whoMove = Gamer::player;
+    else whoMove = Gamer::bot;
 }
 
 bool Widget::startGame()
@@ -115,6 +116,11 @@ void Widget::finishGame(Gamer winner)
 void Widget::activateBot()
 {
     bot->activate();
+}
+
+void Widget::changeDifficult(Difficult diff)
+{
+    bot->changeDifficult(diff);
 }
 
 void Widget::resizeEvent(QResizeEvent *e)

@@ -43,13 +43,23 @@ void Bot::motion()
 bool Bot::missHitOrShipHit()
 {
     float remainedShipsSqCount = 0; // кол-во оставшихся квадратов живых кораблей
+
     for(const auto &rs : playerField->getRemainedShips()) {
         if(!rs->getIsDestroy()) remainedShipsSqCount += rs->getMk();
     }
+
     size_t notTouchSQUARES_COUNT = Field::SQUARES_COUNT - Field::SHIPS_SQUARES_COUNT - playerField->getMissHits().size(); //кол-во не задействованных квадратов
     float hitChanse = remainedShipsSqCount / notTouchSQUARES_COUNT * 100; // шанс попадания
-    qDebug() << hitChanse;
+
+    if(diff == Difficult::medium)    hitChanse *= 1.2;
+    else if(diff == Difficult::hard) hitChanse *= 1.3;
+
     return hitChanse >= rand() % 100;
+}
+
+void Bot::changeDifficult(Difficult diff)
+{
+    this->diff = diff;
 }
 
 QPoint Bot::findPosForMakeMissHit()

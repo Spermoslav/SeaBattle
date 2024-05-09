@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 9.0.2, 2024-05-07T19:11:00. -->
+<!-- Written by QtCreator 9.0.2, 2024-05-08T21:03:50. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -137,7 +137,7 @@
     <value type="int" key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration">2</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.1">
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">E:\progi\Qt projects\SeaBattle\..\build-SeaBattle-Desktop_Qt_6_5_0_MinGW_64_bit-Release</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">E:\progi\Qt projects\build-SeaBattle-Desktop_Qt_6_5_0_MinGW_64_bit-Release</value>
     <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">E:/progi/Qt projects/build-SeaBattle-Desktop_Qt_6_5_0_MinGW_64_bit-Release</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">

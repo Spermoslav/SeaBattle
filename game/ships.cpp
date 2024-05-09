@@ -46,7 +46,6 @@ void Ship::resize()
     shipCenterX = width() / 2;
     shipCenterY = height() / 2;
     groupBoxPosWhenPress = QPoint(x(), y());
-    qDebug() << field->getSquareSize() << size() << mk;
     repaint();
 }
 
@@ -106,7 +105,6 @@ void Ship::randomMove()
 void Ship::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
-
 }
 
 bool Ship::checkCollision(const QPoint &newPos, const Ship *ship) const

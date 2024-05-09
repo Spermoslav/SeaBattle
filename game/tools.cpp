@@ -254,10 +254,55 @@ void Menu::resetGamePBClicked()
 }
 
 
+MainMenu::MainMenu(Widget *parent)
+    : Menu(parent)
+{
+    easyRB = new QRadioButton;easyRBClicked();
+    easyRB->setText("Легко");
+    easyRB->click();
+    connect(easyRB, &QRadioButton::clicked, this, &MainMenu::easyRBClicked);
+
+    mediumRB = new QRadioButton;
+    mediumRB->setText("Средне");
+    connect(mediumRB, &QRadioButton::clicked, this, &MainMenu::mediumRBClicked);
+
+    hardRB = new QRadioButton;
+    hardRB->setText("Тяжело");
+    connect(hardRB, &QRadioButton::clicked, this, &MainMenu::hardRBClicked);
+
+    diffLabel = new QLabel;
+    diffLabel->setText("Сложность");
+    diffLabel->setAlignment(Qt::AlignCenter);
+    diffLabel->setStyleSheet("border: 0px");
+    diffLabel->setMinimumWidth(62);
+
+    diffLay = new QGridLayout(this);
+    diffLay->addWidget(diffLabel, 0, 1);
+    diffLay->addWidget(easyRB, 1, 0);
+    diffLay->addWidget(mediumRB, 1, 1);
+    diffLay->addWidget(hardRB, 1, 2);
+    diffLay->setContentsMargins(0, 0, 0, 0);
+}
+
 void MainMenu::show()
 {
     static_cast<QGroupBox*> (this)->show();
     backgroundShadow->show();
+}
+
+void MainMenu::easyRBClicked()
+{
+    parent->changeDifficult(Difficult::easy);
+}
+
+void MainMenu::mediumRBClicked()
+{
+    parent->changeDifficult(Difficult::medium);
+}
+
+void MainMenu::hardRBClicked()
+{
+    parent->changeDifficult(Difficult::hard);
 }
 
 void MainMenu::placeObjects()
@@ -265,6 +310,7 @@ void MainMenu::placeObjects()
     backgroundShadow->setGeometry(0, 0, parent->width(), parent->height());
     closePB->setGeometry(width() * 0.8, 0, width() * 0.2, height() * 0.2);
     resetGamePB->setGeometry(width() * 0.1, height() * 0.5, width() * 0.8, height() * 0.1);
+    diffLay->setGeometry(QRect(width() * 0.05, height() * 0.65, width() * 0.9, height() * 0.3));
 }
 
 

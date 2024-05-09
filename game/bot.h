@@ -15,6 +15,8 @@ public:
     void motion();
     void reset();
 
+    void changeDifficult(Difficult diff);
+
 private:
 
     QPoint findPosForMakeMissHit();
@@ -34,7 +36,6 @@ private:
     bool tryMakeHit(QPoint &hitPos);
 
     bool missHitOrShipHit(); // false - miss hit, true - ship hit
-
 
     struct MotionTimer {
         MotionTimer(Bot *bot, uint delay);
@@ -57,6 +58,6 @@ private:
     bool hitDirection = rand() % 2; // true - down or right, false - up or left
     bool foundOrientation = false;
 
-    quint8 hard;
+    Difficult diff = Difficult::easy;
 };
 #endif // BOT_H
