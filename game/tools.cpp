@@ -2,9 +2,6 @@
 #include "field.h"
 #include "bot.h"
 
-const QString WinMenu::playerWinStr  = "Ты выйграл";
-const QString WinMenu::botWinStr     = "Бот выйграл";
-
 ToolsBar::ToolsBar(Game *parent, Bot *bot) noexcept
     : QGroupBox(parent)
 {
@@ -14,19 +11,19 @@ ToolsBar::ToolsBar(Game *parent, Bot *bot) noexcept
     setStyleSheet("border: 1px solid black");
 
     mainMenuPB = new QPushButton;
-    mainMenuPB->setText("Main Menu");
+    mainMenuPB->setText(MAINMENU_PB_NAME);
     connect(mainMenuPB, &QPushButton::clicked, this, &ToolsBar::mainMenuPBClicked);
 
     startGamePB = new QPushButton;
-    startGamePB->setText("start game");
+    startGamePB->setText(STARTGAME_PB_NAME);
     connect(startGamePB, &QPushButton::clicked, this, &ToolsBar::startGamePBClicked);
 
     randomMovePlayerShipsPB = new QPushButton;
-    randomMovePlayerShipsPB->setText("random move");
+    randomMovePlayerShipsPB->setText(RANDOMMOVE_PB_NAME);
     connect(randomMovePlayerShipsPB, &QPushButton::clicked, this, &ToolsBar::randomMovePlayerShipsPBClicked);
 
     botMotionPB = new QPushButton;
-    botMotionPB->setText("botMotion");
+    botMotionPB->setText(BOTMOUTION_PB_NAME);
     connect(botMotionPB, &QPushButton::clicked, this, &ToolsBar::botMotionPBClicked);
 
     toolsVBoxLayout = new QVBoxLayout(this);
@@ -165,11 +162,11 @@ void InfoBar::Hint::gameStarted()
 void InfoBar::Hint::gameOver(Gamer win)
 {
     if(win == Gamer::player) {
-        setText(WinMenu::playerWinStr);
+        setText(WinMenu::PLAYERWIN_TEXT);
         setStyleSheet(greenBG);
     }
     else {
-        setText(WinMenu::botWinStr);
+        setText(WinMenu::BOTWIN_TEXT);
         setStyleSheet(redBG);
     }
 }
@@ -215,10 +212,10 @@ Menu::Menu(Game *parent)
     backgroundShadow = new QWidget(parent);
     backgroundShadow->setStyleSheet("background-color: rgba(0, 0, 0, 130);");
 
-    closePB = new QPushButton("close", this);
+    closePB = new QPushButton(CLOSE_PB_NAME, this);
     connect(closePB, &QPushButton::clicked, this, &MainMenu::closePBClicked);
 
-    resetGamePB = new QPushButton("reset", this);
+    resetGamePB = new QPushButton(RESET_PB_NAME, this);
     connect(resetGamePB, &QPushButton::clicked, this, &MainMenu::resetGamePBClicked);
 
     raise();
@@ -257,21 +254,21 @@ void Menu::resetGamePBClicked()
 MainMenu::MainMenu(Game *parent)
     : Menu(parent)
 {
-    easyRB = new QRadioButton;easyRBClicked();
-    easyRB->setText("Легко");
+    easyRB = new QRadioButton;
+    easyRB->setText(EASY_RB_NAME);
     easyRB->click();
     connect(easyRB, &QRadioButton::clicked, this, &MainMenu::easyRBClicked);
 
     mediumRB = new QRadioButton;
-    mediumRB->setText("Средне");
+    mediumRB->setText(MEDIUM_RB_NAME);
     connect(mediumRB, &QRadioButton::clicked, this, &MainMenu::mediumRBClicked);
 
     hardRB = new QRadioButton;
-    hardRB->setText("Тяжело");
+    hardRB->setText(HARD_RB_NAME);
     connect(hardRB, &QRadioButton::clicked, this, &MainMenu::hardRBClicked);
 
     diffLabel = new QLabel;
-    diffLabel->setText("Сложность");
+    diffLabel->setText(DIFFLABEL_TEXT);
     diffLabel->setAlignment(Qt::AlignCenter);
     diffLabel->setStyleSheet("border: 0px");
     diffLabel->setMinimumWidth(62);
@@ -332,8 +329,8 @@ void WinMenu::show(Gamer winner)
 
 void WinMenu::setWinLabel(Gamer wr)
 {
-    if (wr == Gamer::player) winLabel->setText(playerWinStr);
-    else winLabel->setText(botWinStr);
+    if (wr == Gamer::player) winLabel->setText(PLAYERWIN_TEXT);
+    else winLabel->setText(BOTWIN_TEXT);
 }
 
 void WinMenu::placeObjects()

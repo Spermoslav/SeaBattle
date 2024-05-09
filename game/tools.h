@@ -18,6 +18,11 @@ public:
 
     const Game *getParent() const { return parent; }
 
+    const static inline QString MAINMENU_PB_NAME   = "Главное меню";
+    const static inline QString STARTGAME_PB_NAME  = "Начать игру";
+    const static inline QString RANDOMMOVE_PB_NAME = "Разместить корабли в случайном порядке";
+    const static inline QString BOTMOUTION_PB_NAME = "bot moution";
+
 private slots:
 
     void resizeEvent(QResizeEvent *e) override;
@@ -47,6 +52,9 @@ public:
     void hide();
     void resize();
 
+    const static inline QString CLOSE_PB_NAME = "Закрыть";
+    const static inline QString RESET_PB_NAME = "Перезагрузить игру";
+
 private slots:
     void resizeEvent(QResizeEvent *e) override;
     void closePBClicked();
@@ -69,6 +77,11 @@ public:
     MainMenu(Game *parent);
 
     void show();
+
+    const static inline QString EASY_RB_NAME   = "Легко";
+    const static inline QString MEDIUM_RB_NAME = "Средне";
+    const static inline QString HARD_RB_NAME   = "Тяжело";
+    const static inline QString DIFFLABEL_TEXT = "Сложность";
 
 private slots:
     void easyRBClicked();
@@ -93,8 +106,8 @@ public:
 
     void show(Gamer winner);
 
-    const static QString playerWinStr;
-    const static QString botWinStr;
+    const static inline QString PLAYERWIN_TEXT = "Ты выйграл";
+    const static inline QString BOTWIN_TEXT    = "Бот выйграл";
 
 private:
     void setWinLabel(Gamer wr);
