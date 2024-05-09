@@ -7,16 +7,16 @@
 #include <QVBoxLayout>
 #include <QGridLayout>
 #include <QRadioButton>
-#include "widget.h"
+#include "game.h"
 
 class ToolsBar : public QGroupBox
 {
 public:
-    ToolsBar(Widget *parent, Bot *bot) noexcept;
+    ToolsBar(Game *parent, Bot *bot) noexcept;
 
     void reset();
 
-    const Widget *getParent() const { return parent; }
+    const Game *getParent() const { return parent; }
 
 private slots:
 
@@ -27,7 +27,7 @@ private slots:
     void botMotionPBClicked();
 
 private:
-    Widget *parent;
+    Game *parent;
 
     QPushButton *mainMenuPB;
     QPushButton *startGamePB;
@@ -42,7 +42,7 @@ private:
 class Menu : public QGroupBox
 {
 public:
-    Menu(Widget *parent) ;
+    Menu(Game *parent) ;
 
     void hide();
     void resize();
@@ -55,7 +55,7 @@ private slots:
 protected:
     virtual void placeObjects() = 0;
 
-    Widget *parent;
+    Game *parent;
 
     QWidget *backgroundShadow;
 
@@ -66,7 +66,7 @@ protected:
 class MainMenu : public Menu
 {
 public:
-    MainMenu(Widget *parent);
+    MainMenu(Game *parent);
 
     void show();
 
@@ -89,7 +89,7 @@ class WinMenu : public Menu
 {
 public:
 
-    WinMenu(Widget *parent);
+    WinMenu(Game *parent);
 
     void show(Gamer winner);
 
@@ -106,7 +106,7 @@ private:
 class InfoBar : public QGroupBox
 {
 public:
-    InfoBar(Widget *parent) noexcept;
+    InfoBar(Game *parent) noexcept;
 
     void updateLabels();
 
@@ -117,7 +117,7 @@ public:
     void botScoreAdd();
     void botDestroyShipsAdd();
 
-    const Widget *getParent() const { return parent; }
+    const Game *getParent() const { return parent; }
 
     struct Hint : private QLabel
     {
@@ -148,7 +148,7 @@ private slots:
     void resizeEvent(QResizeEvent *e) override;
 
 private:
-    Widget *parent;
+    Game *parent;
 
     QLabel *playerScoreLabel;
     QLabel *playerDestroyShipsLabel;

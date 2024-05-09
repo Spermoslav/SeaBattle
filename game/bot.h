@@ -3,13 +3,13 @@
 
 #include <QPoint>
 #include <QObject>
-#include "widget.h"
+#include "game.h"
 
 class Bot
 {
 
 public:
-    Bot(Widget *game, PlayerField *pf);
+    Bot(Game *game, PlayerField *pf);
 
     void activate();
     void motion();
@@ -49,7 +49,7 @@ private:
     };
 
     PlayerField *playerField;
-    Widget *game;
+    Game *game;
     Ship *targetShip = nullptr;
     MotionTimer *mTimer;
     QPoint lastShipHit;

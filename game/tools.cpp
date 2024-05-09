@@ -5,7 +5,7 @@
 const QString WinMenu::playerWinStr  = "Ты выйграл";
 const QString WinMenu::botWinStr     = "Бот выйграл";
 
-ToolsBar::ToolsBar(Widget *parent, Bot *bot) noexcept
+ToolsBar::ToolsBar(Game *parent, Bot *bot) noexcept
     : QGroupBox(parent)
 {
     this->parent = parent;
@@ -71,7 +71,7 @@ void ToolsBar::botMotionPBClicked()
 }
 
 
-InfoBar::InfoBar(Widget *parent) noexcept
+InfoBar::InfoBar(Game *parent) noexcept
     : QGroupBox(parent)
 {
     this->parent = parent;
@@ -205,7 +205,7 @@ void InfoBar::Hint::resizeEvent(QResizeEvent *e)
     updateFontSize();
 }
 
-Menu::Menu(Widget *parent)
+Menu::Menu(Game *parent)
     : QGroupBox(parent)
 {
     this->parent = parent;
@@ -254,7 +254,7 @@ void Menu::resetGamePBClicked()
 }
 
 
-MainMenu::MainMenu(Widget *parent)
+MainMenu::MainMenu(Game *parent)
     : Menu(parent)
 {
     easyRB = new QRadioButton;easyRBClicked();
@@ -314,7 +314,7 @@ void MainMenu::placeObjects()
 }
 
 
-WinMenu::WinMenu(Widget *parent)
+WinMenu::WinMenu(Game *parent)
     : Menu(parent)
 {
     winLabel = new QLabel(this);

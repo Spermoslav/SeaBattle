@@ -1,5 +1,5 @@
-#ifndef WIDGET_H
-#define WIDGET_H
+#ifndef GAME_H
+#define GAME_H
 
 //#define DEBUG
 
@@ -17,7 +17,7 @@
 
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class Widget; }
+namespace Ui { class Game; }
 QT_END_NAMESPACE
 
 class Field;
@@ -51,12 +51,12 @@ enum GameStatus {
     over
 };
 
-class Widget : public QWidget
+class Game : public QWidget
 {
     Q_OBJECT
 public:
-    Widget(QWidget *parent = nullptr) noexcept;
-    ~Widget();
+    Game(QWidget *parent = nullptr) noexcept;
+    ~Game();
 
     void randomMovePlayerShips();
     void updateWidgetsSize();
@@ -83,7 +83,7 @@ private slots:
     void mouseMoveEvent(QMouseEvent *e)   override;
 
 private:
-    Ui::Widget *ui;
+    Ui::Game *ui;
 
     PlayerField *fieldPlayer;
     BotField *fieldBot;
@@ -99,4 +99,4 @@ private:
 
     GameStatus gameStatus = finished;
 };
-#endif // WIDGET_H
+#endif // GAME_H

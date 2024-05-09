@@ -4,7 +4,7 @@
 #include "tools.h"
 #include <thread>
 
-Bot::Bot(Widget *game, PlayerField *pf)
+Bot::Bot(Game *game, PlayerField *pf)
 {
     this->game = game;
     playerField = pf;

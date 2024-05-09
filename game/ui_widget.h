@@ -15,30 +15,30 @@
 
 QT_BEGIN_NAMESPACE
 
-class Ui_Widget
+class Ui_Game
 {
 public:
 
-    void setupUi(QWidget *Widget)
+    void setupUi(QWidget *Game)
     {
-        if (Widget->objectName().isEmpty())
-            Widget->setObjectName("Widget");
-        Widget->resize(916, 890);
+        if (Game->objectName().isEmpty())
+            Game->setObjectName("Game");
+        Game->resize(916, 890);
 
-        retranslateUi(Widget);
+        retranslateUi(Game);
 
-        QMetaObject::connectSlotsByName(Widget);
+        QMetaObject::connectSlotsByName(Game);
     } // setupUi
 
-    void retranslateUi(QWidget *Widget)
+    void retranslateUi(QWidget *Game)
     {
-        Widget->setWindowTitle(QCoreApplication::translate("Widget", "Widget", nullptr));
+        Game->setWindowTitle(QCoreApplication::translate("Game", "Game", nullptr));
     } // retranslateUi
 
 };
 
 namespace Ui {
-    class Widget: public Ui_Widget {};
+    class Game: public Ui_Game {};
 } // namespace Ui
 
 QT_END_NAMESPACE

@@ -11,7 +11,7 @@
 #include <QSize>
 #include <QMouseEvent>
 #include <QKeyEvent>
-#include "widget.h"
+#include "game.h"
 
 enum Orientation {
     horizontal,

@@ -6,7 +6,7 @@
 
 const QColor Field::MISSHIT_COLOR = QColor(0, 20, 255);
 
-Field::Field(Widget *parent)
+Field::Field(Game *parent)
     : QGroupBox(parent)
 {
     this->parent = parent;

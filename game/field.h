@@ -5,13 +5,13 @@
 #include <QGroupBox>
 #include <QResizeEvent>
 #include <QPainter>
-#include "widget.h"
+#include "game.h"
 
 class Field : public QGroupBox
 {
     Q_OBJECT
 public:
-    Field(Widget *parent);
+    Field(Game *parent);
     void reset();
     void resetFreeSquares();
     void reSize();
@@ -37,7 +37,7 @@ public:
     const std::list<QPoint>  &getMissHits()      const { return missHits;      }
     const std::list<QPoint>  &getFreeSquares()   const { return freeSquares;   }
 
-    const Widget *getParent() const { return parent; }
+    const Game *getParent() const { return parent; }
 
     const static quint8 SQUARES_COUNT       = 100; // Всего квадратов
     const static quint8 ROWS_COUNT          = 10;  // Кол-во квадратов в ряду
@@ -53,7 +53,7 @@ protected:
     void eraseRemainedShip(const Ship* ship);
     void addMissHitsAroundDestroyShip(const Ship* ship);
 
-    Widget *parent;
+    Game *parent;
 
     std::vector<Ship*> allShips;
     std::vector<Ship*> remainedShips;
@@ -67,7 +67,7 @@ class PlayerField : public Field
 {
     Q_OBJECT
 public:
-    PlayerField(Widget *parent) : Field(parent) {}
+    PlayerField(Game *parent) : Field(parent) {}
 
     void shipDestroyed(const Ship *ship) override;
     void spawnShips() override;
@@ -80,7 +80,7 @@ class BotField : public Field
 {
     Q_OBJECT
 public:
-    BotField(Widget *parent) : Field(parent) {}
+    BotField(Game *parent) : Field(parent) {}
 
     void shipDestroyed(const Ship *ship) override;
     void spawnShips() override;

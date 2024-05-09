@@ -1,13 +1,13 @@
-#include "widget.h"
+#include "game.h"
 #include "ui_widget.h"
 #include "field.h"
 #include "ships.h"
 #include "tools.h"
 #include "bot.h"
 
-Widget::Widget(QWidget *parent) noexcept
+Game::Game(QWidget *parent) noexcept
     : QWidget(parent)
-    , ui(new Ui::Widget)
+    , ui(new Ui::Game)
 {
     ui->setupUi(this);
 
@@ -30,17 +30,17 @@ Widget::Widget(QWidget *parent) noexcept
     winMenu = new WinMenu(this);
 }
 
-Widget::~Widget()
+Game::~Game()
 {
     delete ui;
 }
 
-void Widget::randomMovePlayerShips()
+void Game::randomMovePlayerShips()
 {
     if(gameStatus == finished) fieldPlayer->randomMoveAllShips();
 }
 
-void Widget::updateWidgetsSize()
+void Game::updateWidgetsSize()
 {
 
     infoBar->resize(width() , height() * 0.15);
@@ -58,19 +58,19 @@ void Widget::updateWidgetsSize()
     winMenu->resize();
 }
 
-void Widget::showMainMenu()
+void Game::showMainMenu()
 {
     mainMenu->show();
 }
 
-void Widget::changeWhoMove()
+void Game::changeWhoMove()
 {
     if(whoMove == Gamer::bot) whoMove = Gamer::player;
     else whoMove = Gamer::bot;
     infoBar->hint->updateWhoMove();
 }
 
-void Widget::resetGame()
+void Game::resetGame()
 {
     gameStatus = finished;
     bot->reset();
@@ -82,7 +82,7 @@ void Widget::resetGame()
     else whoMove = Gamer::bot;
 }
 
-bool Widget::startGame()
+bool Game::startGame()
 {
     if(gameStatus == finished) {
         for(auto const &targetShip : fieldPlayer->getAllShips()) {
@@ -105,7 +105,7 @@ bool Widget::startGame()
     return false;
 }
 
-void Widget::finishGame(Gamer winner)
+void Game::finishGame(Gamer winner)
 {
     winMenu->show(winner);
     bot->reset();
@@ -113,28 +113,28 @@ void Widget::finishGame(Gamer winner)
     infoBar->hint->gameOver(winner);
 }
 
-void Widget::activateBot()
+void Game::activateBot()
 {
     bot->activate();
 }
 
-void Widget::changeDifficult(Difficult diff)
+void Game::changeDifficult(Difficult diff)
 {
     bot->changeDifficult(diff);
 }
 
-void Widget::resizeEvent(QResizeEvent *e)
+void Game::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
     updateWidgetsSize();
 }
 
-void Widget::mousePressEvent(QMouseEvent *e)
+void Game::mousePressEvent(QMouseEvent *e)
 {
     Q_UNUSED(e)
 }
 
-void Widget::mouseMoveEvent(QMouseEvent *e)
+void Game::mouseMoveEvent(QMouseEvent *e)
 {
     Q_UNUSED(e)
 }
