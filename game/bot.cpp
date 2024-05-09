@@ -9,7 +9,7 @@ Bot::Bot(Game *game, PlayerField *pf)
     this->game = game;
     playerField = pf;
 
-    mTimer = new MotionTimer(this, 500);
+    mTimer = new MotionTimer(this, 750);
 }
 
 void Bot::activate()
